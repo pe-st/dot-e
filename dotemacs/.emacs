@@ -4,8 +4,8 @@
 ;;      Author: Peter Steiner <unistein@isbe.ch>
 ;;     Created: Wed Jul 6 19:52:18 1994
 ;;     $Source: g:/archiv/cvsroot/home/.emacs,v $
-;;   $Revision: 1.30 $
-;;       $Date: 2001/09/04 22:04:50 $
+;;   $Revision: 1.31 $
+;;       $Date: 2002/01/15 22:00:11 $
 ;;     $Author: donnerpesche $
 
 
@@ -22,6 +22,7 @@
     (setq load-path (append '("~/site-lisp") load-path)))
 
 (require 'pesche-tools)
+(require 'pesche-compile)
 
 (setq make-backup-files t)
 (put 'eval-expression 'disabled nil)    ;; enable `eval-expression'

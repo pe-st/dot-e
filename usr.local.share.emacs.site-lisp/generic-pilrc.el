@@ -5,7 +5,7 @@
 ;; Author: Matthew Cravit <mcravit@best.com>
 ;; Maintainer: Matthew Cravit <mcravit@best.com>
 ;; Created: Wed Jul 30 10:46:58 1997
-;; $Id: generic-pilrc.el,v 1.4 1999/04/08 19:41:52 pesche Exp $
+;; $Id: generic-pilrc.el,v 1.5 1999/04/14 19:10:58 pesche Exp $
 
 ;; This file contains a generic mode (which requires generic-mode.el) for
 ;; editing PILRC files. PILRC is the resource compiler for applications to
@@ -36,41 +36,60 @@
         (font-lock-mode 1)
         (font-lock-fontify-buffer))
 
+(defvar pilrc-autovalue-list
+  (list
+   "AUTO" "BOTTOM" "CENTER" "PREVBOTTOM" "PREVHEIGHT" "PREVLEFT"
+   "PREVRIGHT" "PREVTOP" "PREVWIDTH" "RIGHT"
+   )
+  "pilrc autovalues.")
+
+(defvar pilrc-attribute-list
+  (list
+   "AT" "AUTOID" "AUTOSHIFT" "BEGIN" "BOLDFRAME" "CHECKED" "COLUMNS" "COLUMNWIDTHS"
+   "COMPRESS" "CONFIRMATION" "DISABLED" "DYNAMICSIZE" "EDITABLE" "END" "ERROR" "FONT"
+   "FORCECOMPRESS" "FRAME" "GROUP" "INFORMATION" "LEFTALIGN" "LEFTANCHOR" "MAX"
+   "MAXCHARS" "MIN" "MODAL" "MULTIPLELINES" "NOCOMPRESS" "NOFRAME" "NONEDITABLE"
+   "NONUSABLE" "NOSAVEBEHIND" "NUMERIC" "PAGESIZE" "RIGHTALIGN" "RIGHTANCHOR"
+   "ROWS" "SAVEBEHIND" "SEPARATOR" "SINGLELINE" "UNDERLINED" "USABLE" "VALUE"
+   "VISIBLEITEMS" "WARNING"
+   )
+  "pilrc attributes.")
+
+(defvar pilrc-command-list
+  (list
+   "ALERT" "APPLICATION" "APPLICATIONICONNAME" "BITMAP" "BITMAPGRAY" "BITMAPGREY"
+   "FORM" "ICON" "MENU" "SMALLICON" "STRING" "TRANSLATION" "TRAP" "VERSION"
+   )
+  "pilrc commands.")
+
+(defvar pilrc-object-list
+  (list
+   "BUTTON" "BUTTONS" "CHECKBOX" "FIELD" "FORMBITMAP" "GADGET"
+   "GRAFFITISTATEINDICATOR" "LABEL" "LIST" "MENUITEM" "MESSAGE"
+   "POPUPLIST" "POPUPTRIGGER" "PULLDOWN" "PUSHBUTTON"
+   "REPEATBUTTON" "SCROLLBAR" "SELECTORTRIGGER" "TABLE" "TITLE"
+   )
+  "pilrc objects.")
+
 (define-generic-mode 'pilrc-generic-mode
         (list "//")
-        nil
-        '(
+        pilrc-attribute-list
+        (list
           ;; Autovalues
-          ; auto bottom center prevbottom prevheight prevleft
-          ; prevright prevtop prevwidth right
-          ("\\<\\(AUTO\\|BOTTOM\\|CENTER\\|PREV\\(BOTTOM\\|HEIGHT\\|LEFT\\|RIGHT\\|TOP\\|WIDTH\\)\\|RIGHT\\)\\>"
-           1 'font-lock-reference-face)
-          ;; Attributes
-          ; at autoid autoshift begin boldframe checked columns columnwidths
-          ; compress confirmation disabled dynamicsize editable end error font
-          ; forcecompress frame group information leftalign leftanchor max
-          ; maxchars min modal multiplelines nocompress noframe noneditable
-          ; nonusable nosavebehind numeric pagesize rightalign rightanchor
-          ; rows savebehind separator singleline underlined usable value
-          ; visibleitems warning
-          ("\\<\\(AT\\|AUTOID\\|AUTOSHIFT\\|BEGIN\\|BOLDFRAME\\|CHECKED\\|COLUMNS\\|COLUMNWIDTHS\\|COMPRESS\\|CONFIRMATION\\|DISABLED\\|DYNAMICSIZE\\|EDITABLE\\|END\\|ERROR\\|FONT\\|FORCECOMPRESS\\|FRAME\\|GROUP\\|INFORMATION\\|LEFTALIGN\\|LEFTANCHOR\\|MAX\\|MAXCHARS\\|MIN\\|MODAL\\|MULTIPLELINES\\|NOCOMPRESS\\|NOFRAME\\|NONEDITABLE\\|NONUSABLE\\|NOSAVEBEHIND\\|NUMERIC\\|PAGESIZE\\|RIGHTALIGN\\|RIGHTANCHOR\\|ROWS\\|SAVEBEHIND\\|SEPARATOR\\|SINGLELINE\\|UNDERLINED\\|USABLE\\|VALUE\\|VISIBLEITEMS\\|WARNING\\)\\>"
-           1 'font-lock-keyword-face)
+          (generic-make-keywords-list pilrc-autovalue-list
+           'font-lock-type-face)
           ;; Commands
-          ; alert application applicationiconname bitmap bitmapgray bitmapgrey
-          ; form icon menu smallicon string translation trap version
           ;; Objects
-          ; button buttons checkbox field formbitmap gadget
-          ; graffitistateindicator label list menuitem message
-          ; popuplist popuptrigger pulldown pushbutton
-          ; repeatbutton scrollbar selectortrigger table title
-          ("\\<\\(ALERT\\|APPLICATION\\|APPLICATIONICONNAME\\|BITMAP\\|BITMAPGRAY\\|BITMAPGREY\\|BUTTON\\|BUTTONS\\|CHECKBOX\\|FIELD\\|FORM\\|FORMBITMAP\\|GADGET\\|GRAFFITISTATEINDICATOR\\|ICON\\|LABEL\\|LIST\\|MENU\\|MENUITEM\\|MESSAGE\\|POPUPLIST\\|POPUPTRIGGER\\|PULLDOWN\\|PUSHBUTTON\\|REPEATBUTTON\\|SCROLLBAR\\|SELECTORTRIGGER\\|SMALLICON\\|STRING\\|TABLE\\|TITLE\\|TRANSLATION\\|TRAP\\|VERSION\\)\\>"
-           1 'font-lock-type-face)
+          (generic-make-keywords-list
+           (append pilrc-command-list pilrc-object-list)
+           'font-lock-type-face)
           ;; ID-Attributes (with an ID parameter)
           ; defaultbtnid id helpid menuid
-          ("\\b\\(MENUID\\|ID\\|HELPID\\|DEFAULTBTNID\\)\\b\\s +\\b\\(\\(\\w\\|_\\)+\\)\\b"
+          '("\\b\\(MENUID\\|ID\\|HELPID\\|DEFAULTBTNID\\)\\b\\s +\\b\\(\\(\\w\\|_\\)+\\)\\b"
            (1 'font-lock-keyword-face)
            (2 'font-lock-variable-name-face)
           ))
+;          ) nil nil ((?. . "w")))
         (list "\\.rcp$")
         (list 'pilrc-setup)
         "Generic mode for pilrc files.")

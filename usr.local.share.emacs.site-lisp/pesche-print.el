@@ -1,8 +1,8 @@
 ;; Pesche's Druckerei
 ;;
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-print.el#6 $
-;;     $Change: 19564 $
-;;   $DateTime: 2004/08/30 15:24:47 $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-print.el#7 $
+;;     $Change: 20775 $
+;;   $DateTime: 2005/03/11 11:10:32 $
 ;;     $Author: peter.steiner $
 ;;    $Created: 1997/12/19 $
 ;;  $Copyright: Peter Steiner <pesche@schlau.ch>
@@ -51,6 +51,11 @@
         (defvar ghost-dir     "C:\\L\\gs\\gs8.14")
         (defvar ghost-printer "-sDEVICE=ljet4 -r600")
         (defvar ghost-view    "C:\\L\\gs\\gsview\\gsview32.exe")))
+     ((eq (string-match "GIMMELWALD"  (system-name)) 0)
+      (progn                            ; der P4-Renner im Büro
+        (defvar ghost-dir     "C:\\L\\gs\\gs8.50")
+        (defvar ghost-printer "-sDEVICE=ljet4 -r600")
+        (defvar ghost-view    "C:\\L\\gs\\gsview\\gsview32.exe")))
      (t
       (progn                            ; Default-Verzeichnisse
         (defvar ghost-dir     "C:\\gs\\gs8.14")
@@ -58,32 +63,40 @@
         (defvar ghost-view    "C:\\Progra~1\\ghostgum\\gsview\\gsview32.exe")))
      )
 
+    (setq ps-lpr-buffer (concat (getenv "TEMP") "\\psspool.ps"))
+    (setq ps-psnup-buffer (concat (getenv "TEMP") "\\psnup.ps"))
+    (setq ps-pdf-buffer (concat (getenv "TEMP") "\\ps.pdf"))
+
     (setq ps-psnup-command "psnup") ; Name of n-up program (taking ps as input)
     (setq ps-psnup-switches '(" -l -2 -pa4 ")) ; options for program above
-    (setq ps-pdf-command (concat "start /min " ghost-dir "\\lib\\ps2pdf.bat"))
-    (setq ps-pdf-switches '(" -sPAPERSIZE=a4 -dPDFSETTINGS=/printer "))
+    (setq ps-pdf-command (concat "start /min " ghost-dir "\\bin\\gswin32c"))
+    (setq ps-pdf-switches-1 `(,(concat "-q -dSAVER -dNOPAUSE -dBATCH "
+                                       "-sDEVICE=pdfwrite -sPAPERSIZE=a4 "
+                                       "-dPDFSETTINGS=/printer \"-sOutputFile="
+                                       ps-pdf-buffer "\" -c .setpdfwrite -f ")))
+    (setq ps-pdf-switches-2 "")
     (setq ps-lpr-command (concat "start /min " ghost-dir "\\bin\\gswin32"))
     (setq ps-lpr-switches `(,(concat "-q -sPAPERSIZE=a4 "
                                      ghost-printer " -dNOPAUSE")))
     (setq ps-preview-command ghost-view)
-    (setq ps-lpr-buffer (concat (getenv "TEMP") "\\psspool.ps"))
-    (setq ps-psnup-buffer (concat (getenv "TEMP") "\\psnup.ps"))
-    (setq ps-pdf-buffer (concat (getenv "TEMP") "\\ps.pdf"))))
+    ))
  (t (progn ;; die Unix-Variante
       (defvar ghost-printer "-sDEVICE=pdfwrite -r600")
       (defvar ghost-view    "open -a Preview")
 
+      (setq ps-lpr-buffer "~/tmp/psspool.ps")
+      (setq ps-psnup-buffer "~/tmp/psnup.ps")
+      (setq ps-pdf-buffer "~/tmp/ps.pdf")
+
       (setq ps-psnup-command "/sw/bin/psnup") ; Name of n-up program (taking ps as input)
       (setq ps-psnup-switches '(" -l -2 -pa4 ")) ; options for program above
       (setq ps-pdf-command ". /sw/bin/init.sh; ps2pdf")
-      (setq ps-pdf-switches '(" -sPAPERSIZE=a4 -dPDFSETTINGS=/printer "))
+      (setq ps-pdf-switches-1 '(" -sPAPERSIZE=a4 -dPDFSETTINGS=/printer "))
+      (setq ps-pdf-switches-2 (concat " " ps-pdf-buffer))
       (setq ps-lpr-command "/sw/bin/gs")
       (setq ps-lpr-switches `(,(concat "-q -sPAPERSIZE=a4 "
                                        ghost-printer " -dNOPAUSE")))
       (setq ps-preview-command ghost-view)
-      (setq ps-lpr-buffer "~/tmp/psspool.ps")
-      (setq ps-psnup-buffer "~/tmp/psnup.ps")
-      (setq ps-pdf-buffer "~/tmp/ps.pdf")
       )))
 
 
@@ -146,8 +159,8 @@
   (pesche-printfile-region-with-faces from to buffer-p)
   (shell-command
    (apply 'concat (append (list ps-pdf-command " ")
-                          ps-pdf-switches
-                          (list " " ps-lpr-buffer " " ps-pdf-buffer))))
+                          ps-pdf-switches-1
+                          (list " " ps-lpr-buffer " " ps-pdf-switches-2))))
   )
 
 (defun pesche-print-region-with-faces (from to &optional buffer-p)
@@ -202,8 +215,8 @@
   (pesche-printfile-2up-region-with-faces from to buffer-p)
   (shell-command
    (apply 'concat (append (list ps-pdf-command " ")
-                          ps-pdf-switches
-                          (list " " ps-psnup-buffer " " ps-pdf-buffer))))
+                          ps-pdf-switches-1
+                          (list " " ps-psnup-buffer " " ps-pdf-switches-2))))
   )
 
 (defun pesche-print-2up-region-with-faces (from to &optional buffer-p)

@@ -1,12 +1,12 @@
 ;;----------------------------------------------------------- -*- Emacs-Lisp -*-
 ;;  Emacs Startup File
 ;;
-;;      Author: Peter Steiner <unistein@isbe.ch>
-;;     Created: Wed Jul 6 19:52:18 1994
-;;     $Source: g:/archiv/cvsroot/home/.emacs,v $
-;;   $Revision: 1.31 $
-;;       $Date: 2002/01/15 22:00:11 $
-;;     $Author: donnerpesche $
+;;      Author: Peter Steiner <pesche@schlau.ch>
+;;         $Id: //depot/src/phoenix/machine/options.lnt#17 $
+;;     $Change: 668 $
+;;   $DateTime: 2003/08/27 17:05:30 $
+;;     $Author: pesche $
+;;    $Created: Wed Jul 6 19:52:18 1994 $
 
 
 ;; general configuration -------------------------------------------------------
@@ -69,6 +69,7 @@
 ;; 10-75 / 11-82 / 12-90 / 13-97 / 14-105 / 15-112
 (if (eq (string-match "DONNERVOGEL" (system-name)) 0)
     (defvar lucida-font-size "13-97")  ;; auf PIAZZA: etwas grösser (ca. 9.7 Punkt)
+;    (defvar lucida-font-size "10-75")  ;; klein (für 1024x768 Displays)
     (defvar lucida-font-size "11-82")  ;; sonst (ca. 8.2 Punkt)
     )
 

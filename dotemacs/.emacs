@@ -3,31 +3,19 @@
 ;;
 ;;      Author: Peter Steiner <unistein@isbe.ch>
 ;;     Created: Wed Jul 6 19:52:18 1994
-;;    $RCSfile: .emacs,v $
-;;   $Revision: 1.12 $
-;;       $Date: 1998/10/09 20:34:53 $
+;;     $Source: g:/archiv/cvsroot/home/.emacs,v $
+;;   $Revision: 1.13 $
+;;       $Date: 1998/10/10 21:53:13 $
 ;;     $Author: pesche $
 
 
 ;; setup special variables and functions ---------------------------------------
 
-;(defun insert-header ()
-;  "Insert a header into the file. The header consists of the author's name,
-;   his mailing address, the file's creationtime and the filename."
-;  (interactive)
-;  (insert "      Author: \t")
-;  (insert (concat (user-full-name) " <" (user-login-name) "@iam.unibe.ch>"))
-;  (insert "\n     Created:\t")
-;  (insert (current-time-string))
-;  (insert "\n    Filename:\t")
-;  (insert (concat (buffer-file-name) "\n")))
-;
-;(defun insert-time-and-author ()
-;  "Insert the current time and the username."
-;  (interactive)
-;  (insert (current-time-string))
-;  (insert (concat " " (user-full-name) " <" (user-login-name) "@iam.unibe.ch>"))
-;  )
+(defun insert-timestamp ()
+  "Insert the current time."
+  (interactive)
+  (insert (format-time-string "%Y-%m-%d %H:%M:%S" (current-time)))
+  )
 
 (defun uncomment-region (beg end &optional arg)
   "Counterpart to comment-region."
@@ -244,10 +232,9 @@ saving keyboard macros (see insert-kbd-macro)."
 (global-set-key (kbd "<f3>") 'nonincremental-repeat-search-forward)     ;;
 (global-set-key (kbd "S-C-q") 'search-quick)            ;; self-written
 
-;(global-set-key (kbd "C-S-<down>") 'next-error)
+(global-set-key (kbd "<f9>") 'insert-timestamp)         ;; self-written
 
-;(global-set-key "\C-x\C-a" 'insert-time-and-author) ;; self-written
-;(global-set-key "\C-x\C-m" 'insert-header)          ;; self-written
+;(global-set-key (kbd "C-S-<down>") 'next-error)
 
 
 ; mit Maus erzeugtes imenu in der Konsole lässt emacs abstürzen.
@@ -430,9 +417,14 @@ saving keyboard macros (see insert-kbd-macro)."
       (append '(("\\.[pP][Llm]$" . cperl-mode)) auto-mode-alist ))
 (setq interpreter-mode-alist (append interpreter-mode-alist
          '(("miniperl" . cperl-mode))))
-(setq cperl-hairy t)
+
+;; hairy ist etwas allzu haarig...
+;(setq cperl-hairy t)
+
 
 (defun pesche-cperl-mode-hook()
+  ;; einrücken: 4 Zeichen, 'else' darf ohne '{' auf eigener Zeile stehen
+  (cperl-set-style "C++")
   (imenu-add-to-menubar "Index")
   )
 
@@ -486,7 +478,7 @@ saving keyboard macros (see insert-kbd-macro)."
 (add-hook 'c++-mode-hook           'turn-on-font-lock)
 (add-hook 'asm-mode-hook           'turn-on-font-lock)
 (add-hook 'makefile-mode-hook      'turn-on-font-lock)
-(add-hook 'perl-mode-hook          'turn-on-font-lock)
+(add-hook 'cperl-mode-hook         'turn-on-font-lock)
 (add-hook 'html-helper-mode-hook   'turn-on-font-lock)
 (add-hook 'TeX-mode-hook           'turn-on-font-lock)
 (add-hook 'tex-mode-hook           'turn-on-font-lock)
@@ -551,10 +543,12 @@ saving keyboard macros (see insert-kbd-macro)."
 ;(global-set-key [?\C-\(] 'stig-paren-toggle-dingaling-mode)
 ;(global-set-key [?\C-\)] 'stig-paren-toggle-sexp-mode)
 
-;; Gnus-Reader -----------------------------------------------------------------
+;; News und Mail ---------------------------------------------------------------
 ;; weitere Konfiguration siehe .gnus
+(autoload 'epop3-mail "epop3mail" "Get mail from pop server" t)
 (autoload 'gnus-unplugged "gnus-agent" "Start Gnus unplugged." t)
 (setq gnus-directory "~/gnus/")
+
 
 ;; gnuserv
 (require 'gnuserv)

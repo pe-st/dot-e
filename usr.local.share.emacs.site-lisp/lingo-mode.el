@@ -15,7 +15,7 @@
 
 ;;; todo
 ;; Font-Locking-Spezialfälle, auch noch irgendwie behandeln:
-;; after before
+;; after before into long me members done relative short xtras
 
 ;; Indenting:
 ;; - case-Konstrukt
@@ -72,7 +72,7 @@
                     "\\|"))
         (lingo-operator-list
          (mapconcat 'identity
-                    '("and" "contains")
+                    '("and" "contains" "mod" "not" "or" "starts")
                     "\\|"))
         (lingo-command-list
          (mapconcat 'identity
@@ -86,7 +86,22 @@
                       "enableHotSpot" "erase" "externalEvent" "findPos"
                       "findPosNear" "finishIdleLoad" "flushInputEvents"
                       "getaProp" "getAt" "go" "gotoFrame" "gotoNetMovie"
-                      "gotoNetPage")
+                      "gotoNetPage" "halt" "importFileInto" "inflate"
+                      "insertFrame" "installMenu" "mci" "move" "moveToBack"
+                      "moveToFront" "netAbort" "netStatus" "nothing" "nudge"
+                      "open" "openXlib" "pass" "pasteClipBoardInto" "pause"
+                      "play" "playNext" "postNetText" "preLoad" "preLoadBuffer"
+                      "preLoadMember" "preLoadMovie" "printForm" "proxyServer"
+                      "puppetPalette" "puppetSound" "puppetSprite" "puppetTempo"
+                      "puppetTransition" "put" "qtRegisterAccessKey"
+                      "qtUnRegisterAccessKey" "quit" "recordFont" "restart"
+                      "resume" "save" "saveMovie" "scrollByLine" "scrollByPage"
+                      "sendAllSprites" "sendSprite" "set" "setaProp" "setAt"
+                      "setPref" "setProp" "setScriptList" "setTrackEnabled"
+                      "showGlobals" "showLocals" "showProps" "showXlib"
+                      "shutDown" "sort" "startTimer" "stop" "stopEvent" "stream"
+                      "tell" "unload" "unloadMember" "unloadMovie" "updateFrame"
+                      "updateStage" "zoomBox")
                     "\\|"))
         (lingo-function-list
          (mapconcat 'identity
@@ -104,7 +119,27 @@
                       "getLast" "getLatestNetID" "getNetText"
                       "getNthFileNameInFolder" "getOne" "getPixel" "getPlaylist"
                       "getPos" "getPref" "getProp" "getPropAt" "getStreamStatus"
-                      "getVariable")
+                      "getVariable" "handler" "handlers" "hittest" "HMStoFrames"
+                      "hold" "idleLoadDone" "ilk" "ink" "inside" "integer"
+                      "integerP" "interface" "intersect" "isBusy"
+                      "isPastCuePoint" "key" "keyCode" "keyPressed" "label"
+                      "last" "lastClick" "lastEvent" "length" "linePosToLocV"
+                      "list" "listP" "log" "map" "mapMemberToStage"
+                      "mapStageToMember" "marker" "max" "min" "mouseLoc"
+                      "moveVertex" "moveVertexHandle" "netDone" "netError"
+                      "netLastModDate" "netMIME" "netTextResult" "new"
+                      "newCurve" "numToChar" "objectP" "offset" "param"
+                      "paramCount" "pictureP" "point" "pointToChar"
+                      "pointToItem" "pointToLine" "pointToParagraph"
+                      "pointToWord" "power" "preloadNetThing" "ptToHotSpotID"
+                      "queue" "quickTimeVersion" "ramNeeded" "random" "rawNew"
+                      "result" "rewind" "rollover" "runMode" "setAlpha"
+                      "setFlashProperty" "setPixel" "setPlaylist" "setVariable"
+                      "sin" "soundBusy" "sqrt" "stageBottom" "stageLeft"
+                      "stageRight" "stageToFlash" "stageTop" "startFrame"
+                      "string" "stringP" "swing" "symbol" "symbolP" "tan"
+                      "tellStreamStatus" "time" "union" "URLEncode" "value"
+                      "voidP" "volume" "windowPresent" "xtra")
                     "\\|"))
         (lingo-property-list
          (mapconcat 'identity
@@ -130,13 +165,57 @@
                       "font" "fontSize" "fontStyle" "foreColor" "forget" "frame"
                       "frameCount" "frameLabel" "framePalette" "frameRate"
                       "frameScript" "frameSound1" "frameSound2" "frameTempo"
-                      "frameTransition" "gradientType"
-
-                      "locH" "locV")
+                      "frameTransition" "gradientType" "height" "hilite"
+                      "hotspot" "hotSpotEnterCallback" "hotSpotExitCallback"
+                      "HTML" "hyperlink" "hyperlinkRange" "hyperlinks"
+                      "hyperlinkState" "image" "imageCompression" "imageEnabled"
+                      "imageQuality" "interval" "invertMask" "isVRMovie"
+                      "kerning" "kerningThreshold" "left" "leftIndent"
+                      "lineCount" "lineDirection" "lineHeight" "lineSize"
+                      "linkAs" "linked" "loaded" "loc" "locH" "locToCharPos"
+                      "locV" "locVToLinePos" "locZ" "loopBounds" "loopCount"
+                      "loopEndTime" "loopsRemaining" "loopStartTime" "margin"
+                      "mask" "media" "mediaReady" "memberNum" "missingFonts"
+                      "modal" "modified" "modifiedBy" "modifiedDate"
+                      "mostRecentCuePoint" "motionQuality" "mouseLevel"
+                      "mouseOverButton" "moveableSprite" "movieRate" "movieTime"
+                      "name" "node" "nodeEnterCallback" "nodeExitCallback"
+                      "nodeType" "number" "numChannels" "obeyScoreRotation"
+                      "originalFont" "originH" "originMode" "originPoint"
+                      "originV" "pageHeight" "palette" "paletteRef" "pan"
+                      "paragraph" "pathName" "pattern" "pausedAtStart"
+                      "percentPlayed" "percentStreamed" "picture" "playBackMode"
+                      "playing" "pointInHyperlink" "posterFrame" "preLoadMode"
+                      "preLoadTime" "puppet" "purgePriority" "quad" "quality"
+                      "rect" "ref" "regPoint" "regPointVertex" "right"
+                      "rightIndent" "rotation" "RTF" "sampleCount" "sampleRate"
+                      "sampleSize" "scale" "scaleMode" "scoreColor"
+                      "scriptInstanceList" "scriptList" "scriptNum"
+                      "scriptsEnabled" "scriptText" "scriptType" "scrollTop"
+                      "seconds" "selectedText" "selection" "shapeType" "size"
+                      "skew" "sound" "soundChannel" "sourceRect" "spriteNum"
+                      "startTime" "state" "static" "staticQuality" "status"
+                      "stopTime" "streaming" "streamMode" "streamName"
+                      "streamSize" "strokeColor" "strokeWidth" "substituteFont"
+                      "tabCount" "tabs" "text" "thumbnail" "tilt" "timeScale"
+                      "title" "titleVisible" "top" "topSpacing" "trackCount"
+                      "trackEnabled" "trackNextKeyTime" "trackNextSampleTime"
+                      "trackPreviousKeyTime" "trackPreviousSampleTime"
+                      "trackStartTime" "trackStopTime" "trackText" "trackTime"
+                      "trails" "transitionType" "translation" "triggerCallback"
+                      "trimWhitespace" "tweened" "type" "URL" "useAlpha"
+                      "useHypertextStyles" "vertex" "vertexList" "video" "viewH"
+                      "viewPoint" "viewScale" "viewV" "visible" "warpMode"
+                      "width" "windowType" "word" "wordWrap")
                     "\\|"))
         (lingo-object-property-list
          (mapconcat 'identity
-                    '("ancestor")
+                    '("ancestor" "period" "persistent" "script" "target")
+                    "\\|"))
+        (lingo-global-property-list
+         (mapconcat 'identity
+                    '("inlineIMEEnabled" "markerList" "selEnd" "selStart"
+                      "soundMixMedia" "useFastQuads")
                     "\\|"))
         (lingo-movie-property-list
          (mapconcat 'identity
@@ -146,14 +225,39 @@
                       "allowZooming" "beepOn" "buttonStyle" "centerStage"
                       "checkBoxAccess" "checkBoxType" "currentSpriteNum"
                       "editShortCutsEnabled" "exitLock" "fixStageSize"
-                      "floatPrecision")
+                      "floatPrecision" "idleHandlerPeriod" "lastChannel"
+                      "lastFrame" "movieAboutInfo" "movieCopyrightInfo"
+                      "movieFileFreeSize" "movieFileSize" "movieFileVersion"
+                      "movieImageCompression" "movieImageQuality" "movieName"
+                      "moviePath" "movieXtraList" "organizationName"
+                      "paletteMapping" "pauseState" "preLoadEventAbort" "score"
+                      "scoreSelection" "serialNumber" "trace" "traceLoad"
+                      "updateLock" "userName")
                     "\\|"))
         (lingo-system-property-list
          (mapconcat 'identity
                     '("activeCastLib" "alertHook" "applicationPath" "bgColor"
                       "browserName" "colorDepth" "cpuHogTicks" "desktopRectList"
                       "digitalVideoTimeScale" "emulateMultiButtonMouse"
-                      "environment" "frontWindow" "globals")
+                      "environment" "frontWindow" "globals" "idleLoadMode"
+                      "idleLoadPeriod" "idleLoadTag" "idleReadChunkSize"
+                      "itemDelimiter" "keyboardFocusSprite"
+                      "keyDownScript" "keyUpScript" "labelList" "lastKey"
+                      "lastRoll" "maxInteger" "memorySize"
+                      "milliseconds" "mouseChar" "mouseDownScript" "mouseH"
+                      "mouseItem" "mouseLine" "mouseMember" "mouseUpScript"
+                      "mouseV" "mouseWord" "multiSound" "netPresent"
+                      "netThrottleTicks" "optionDown" "platform" "preLoadRAM"
+                      "randomSeed" "romanLingo" "safePlayer"
+                      "searchCurrentFolder" "searchPaths"
+                      "shiftDown" "soundDevice" "soundDeviceList" "soundEnabled"
+                      "soundKeepDevice" "soundLevel" "stage" "stageColor"
+                      "stillDown" "switchColorDepth" "systemDate" "ticks"
+                      "timeoutHandler" "timeoutKeyDown" "timeoutLapsed"
+                      "timeoutLength" "timeoutList" "timeoutMouse" "timeoutPlay"
+                      "timeoutScript" "timer" "traceLogFile"
+                      "updateMovieEnabled" "videoForWindowsPresent" "windowList"
+                      "xtraList")
                     "\\|"))
         (lingo-event-list
          (mapconcat 'identity
@@ -161,12 +265,18 @@
                       "closeWindow" "cuePassed" "deactivateApplication"
                       "deactivateWindow" "endSprite" "enterFrame" "evalScript"
                       "exitFrame" "getBehaviorDescription" "getBehaviorTooltip"
-                      "getPropertyDescriptionList"
-                      "startMovie")
+                      "getPropertyDescriptionList" "hyperlinkClicked" "idle"
+                      "isOKToAttach" "keyDown" "keyUp" "mouseDown" "mouseEnter"
+                      "mouseLeave" "mouseUp" "mouseUpOutside" "mouseWithin"
+                      "moveWindow" "openWindow" "prepareFrame" "prepareMovie"
+                      "resizeWindow" "rightMouseDown" "rightMouseUp"
+                      "runPropertyDialog" "savedLocal" "startMovie" "stepFrame"
+                      "stopMovie" "streamStatus" "timeout" "zoomWindow")
                     "\\|"))
         (lingo-constant-list
          (mapconcat 'identity
-                    '("backspace" "empty" "enter" "false" "true")
+                    '("BACKSPACE" "EMPTY" "ENTER" "FALSE" "INF" "NAN" "PI"
+                      "QUOTE" "RETURN" "SPACE" "TAB" "TRUE" "VOID")
                     "\\|"))
         )
     (list
@@ -182,6 +292,7 @@
      `(,(concat "\\b\\("
                lingo-property-list "\\|"
                lingo-object-property-list "\\|"
+               lingo-global-property-list "\\|"
                lingo-movie-property-list "\\|"
                lingo-system-property-list
                "\\)\\b[ \n\t(]") 1 font-lock-variable-name-face)

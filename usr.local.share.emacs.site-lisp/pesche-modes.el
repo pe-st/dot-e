@@ -1,8 +1,8 @@
 ;; Pesche' Modes
 ;;
 ;;     $Source: g:/archiv/cvsroot/site-lisp/pesche-modes.el,v $
-;;   $Revision: 1.8 $
-;;       $Date: 2001/09/04 22:01:37 $
+;;   $Revision: 1.9 $
+;;       $Date: 2001/09/08 09:55:05 $
 ;;     $Author: donnerpesche $
 
 ;; lisp modes ------------------------------------------------------------------
@@ -238,9 +238,26 @@ Javadoc comments."
   (setq filladapt-mode-line-string nil)
 
   ;; das hier sollte eigentlich bei globalem font-lock nicht nötig sein...
-  (turn-on-font-lock)
+;  (turn-on-font-lock)
 )
 (add-hook 'text-mode-hook 'pesche-text-mode-hook)
+
+
+;; outline-mode ----------------------------------------------------------------
+(defun pesche-outline-mode-hook()
+  ;(turn-on-auto-fill)
+;;   (filladapt-mode 1)
+;;   (setq filladapt-mode-line-string nil)
+
+  ;; das hier sollte eigentlich bei globalem font-lock nicht nötig sein...
+;  (turn-on-font-lock)
+
+  ;; imenu expression ist zwar eingebaut, aber nicht so gut...
+  (setq imenu-generic-expression
+        (list (list nil (concat "^" outline-regexp ".*$") 0)))
+  (imenu-add-to-menubar "Index")
+)
+(add-hook 'outline-mode-hook 'pesche-outline-mode-hook)
 
 
 ;; html/sgml/xml allgemeines ---------------------------------------------------

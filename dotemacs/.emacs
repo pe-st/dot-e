@@ -2,9 +2,9 @@
 ;;  Emacs Startup File
 ;;
 ;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id: //netzadmin/emacs/pesche/.emacs#35 $
-;;     $Change: 17903 $
-;;   $DateTime: 2003/11/03 17:11:01 $
+;;         $Id: //netzadmin/emacs/pesche/.emacs#36 $
+;;     $Change: 17963 $
+;;   $DateTime: 2003/11/07 22:22:21 $
 ;;     $Author: peter.steiner $
 ;;    $Created: Wed Jul 6 19:52:18 1994 $
 
@@ -65,74 +65,100 @@
 (column-number-mode 1)
 
 ;; fonts -----------------------------------------------------------------------
-;; Paare von Werten (mindestens für Lucida Sans Typewriter)
-;; 10-75 / 11-82 / 12-90 / 13-97 / 14-105 / 15-112
-(if (eq (string-match "DONNERVOGEL" (system-name)) 0)
-    (defvar lucida-font-size "13-97")  ;; auf PIAZZA: etwas grösser (ca. 9.7 Punkt)
-;    (defvar lucida-font-size "10-75")  ;; klein (für 1024x768 Displays)
-    (defvar lucida-font-size "11-82")  ;; sonst (ca. 8.2 Punkt)
-    )
+;; Paare von Werten (gilt unter Windows; der erste Werte ist die Höhe in
+;; Pixel, der zweite die Grösse in Zehntel-Punkt). Die Paare findet man
+;; zB durch Evaluieren von (insert (prin1-to-string (w32-select-font)))
+;; 9-67 / 10-75 / 11-82 / 12-90 / 13-97 / 14-105 / 15-112 / 16-120
+;; Unter Linux kommt es auf die Auflösung drauf an.
+;;  75 dpi : 10-100 / 11-110 / 12-120 / ...
+;; 100 dpi : 11-80 / 14-100 / ...
+(defvar pesche-font-size nil "Pesches bevorzugte Fontgrösse je nach Maschine")
+(defvar pesche-family    nil "Pesches bevorzugte Schriftart je nach Maschine")
 
-; emacs 21 mit (w32-select-font) ergibt:
-;-outline-Lucida Sans Typewriter-normal-r-normal-normal-11-82-96-96-c-*-iso8859-15
-(defvar lucida-typewriter-regular
-  (concat "-*-Lucida Sans Typewriter-normal-r-*-*-"
-          lucida-font-size "-*-*-c-*-iso8859-15"))
-(defvar lucida-typewriter-italic
-  (concat "-*-Lucida Sans Typewriter-normal-i-*-*-"
-          lucida-font-size "-*-*-c-*-iso8859-15"))
-(defvar lucida-typewriter-bold
-  (concat "-*-Lucida Sans Typewriter-semibold-r-*-*-"
-          lucida-font-size "-*-*-c-*-iso8859-15"))
-(defvar lucida-typewriter-bold-italic
-  (concat "-*-Lucida Sans Typewriter-semibold-i-*-*-"
-          lucida-font-size "-*-*-c-*-iso8859-15"))
-
-
-;(defvar courier-font-size "10-100-75-75-m-60")
-;(defvar courier-font-size "11-80-100-100-m-60")
-(defvar courier-font-size "12-120-75-75-m-70")
-;(defvar courier-font-size "14-100-100-100-m-90")
-;(defvar courier-font-size "14-140-75-75-m-90")
-
-(defvar courier-regular
-  (concat "-*-courier-medium-r-normal-*-"
-          courier-font-size "-iso8859-1"))
-(defvar courier-italic
-  (concat "-*-courier-medium-o-normal-*-"
-          courier-font-size "-iso8859-1"))
-(defvar courier-bold
-  (concat "-*-courier-bold-r-normal-*-"
-          courier-font-size "-iso8859-1"))
-(defvar courier-bold-italic
-  (concat "-*-courier-bold-o-normal-*-"
-          courier-font-size "-iso8859-1"))
-
-
-; WindowsNT und Linux haben immer noch verschiedene Schriften...
-(if (or (eq window-system 'win32)
-        (eq window-system 'w32))
-    (progn
-      ; Workaround für 20.3.7.1 von Jason Rumney <jasonr@altavista.net>
-      ; (03 Apr 1999 in ntemacs-users)
-      (if (not (eq (string-match "20.3.7.1" (emacs-version)) nil))
-          (set-w32-system-coding-system 'raw-text))
-      (setq win32-enable-italics t)
-      (setq w32-enable-italics t)
-      (defvar pesche-default-regular     lucida-typewriter-regular)
-      (defvar pesche-default-bold        lucida-typewriter-bold)
-      (defvar pesche-default-italic      lucida-typewriter-italic)
-      (defvar pesche-default-bold-italic lucida-typewriter-bold-italic)
-      )
+(cond
+ ((or (eq window-system 'win32)
+      (eq window-system 'w32))
   (progn
-    ; die Linux-Variante
-    (defvar pesche-default-regular     courier-regular)
-    (defvar pesche-default-bold        courier-bold)
-    (defvar pesche-default-italic      courier-italic)
-    (defvar pesche-default-bold-italic courier-bold-italic)
-    )
-  )
+    ;; Workaround für 20.3.7.1 von Jason Rumney <jasonr@altavista.net>
+    ;; (03 Apr 1999 in ntemacs-users)
+    (if (not (eq (string-match "20.3.7.1" (emacs-version)) nil))
+        (set-w32-system-coding-system 'raw-text))
+    (setq win32-enable-italics t)
+    (setq w32-enable-italics t)
+    (defvar font09pix "9-67-*-*-c-*-")
+    (defvar font10pix "10-75-*-*-c-*-")
+    (defvar font11pix "11-82-*-*-c-*-")
+    (defvar font12pix "12-90-*-*-c-*-")
+    (defvar font13pix "13-97-*-*-c-*-")
+    (defvar fontcharset "iso10646-1")
+    (defvar fontstring-courier "Courier New")
+    (defvar font-rr-courier "normal-r")
+    (defvar font-ri-courier "normal-i")
+    (defvar font-br-courier "bold-r")
+    (defvar font-bi-courier "bold-i")
+    (defvar fontstring-lucida "Lucida Sans Typewriter")
+    (defvar font-rr-lucida "normal-r")
+    (defvar font-ri-lucida "normal-i")
+    (defvar font-br-lucida "semibold-r")
+    (defvar font-bi-lucida "semibold-i")
+    ))
+ (t (progn ;; die Linux-Variante
+      (defvar font10pix "10-100-75-75-m-*-")
+      (defvar font12pix "12-120-75-75-m-*-")
+      (defvar font14pix "14-140-75-75-m-*-")
+      (defvar fontcharset "iso8859-1")
+      (defvar fontstring-courier "courier")
+      (defvar font-rr-courier "medium-r")
+      (defvar font-ri-courier "medium-o")
+      (defvar font-br-courier "bold-r")
+      (defvar font-bi-courier "bold-o")
+      )))
 
+(cond
+ ((eq (string-match "DONNERVOGEL" (system-name)) 0)
+  (progn (setq pesche-family "lucida")  (setq pesche-font-size font13pix)))
+ ((eq (string-match "PIAZZABOOK"  (system-name)) 0)
+  (progn (setq pesche-family "courier") (setq pesche-font-size font12pix)))
+ (t
+  (progn (setq pesche-family "lucida") (setq pesche-font-size font11pix)))
+ )
+
+; Beispiel "-outline-Lucida Sans Typewriter-normal-r-normal-normal-16-120-96-96-c-*-iso10646-1"
+(defvar pesche-lucida-rr
+  (concat "-*-" fontstring-lucida "-" font-rr-lucida "-*-*-" pesche-font-size fontcharset))
+(defvar pesche-lucida-ri
+  (concat "-*-" fontstring-lucida "-" font-ri-lucida "-*-*-" pesche-font-size fontcharset))
+(defvar pesche-lucida-br
+  (concat "-*-" fontstring-lucida "-" font-br-lucida "-*-*-" pesche-font-size fontcharset))
+(defvar pesche-lucida-bi
+  (concat "-*-" fontstring-lucida "-" font-bi-lucida "-*-*-" pesche-font-size fontcharset))
+
+; Beispiel "-outline-Courier New-normal-r-normal-normal-16-120-96-96-c-*-iso10646-1"
+(defvar pesche-courier-rr
+  (concat "-*-" fontstring-courier "-" font-rr-courier "-*-*-" pesche-font-size fontcharset))
+(defvar pesche-courier-ri
+  (concat "-*-" fontstring-courier "-" font-ri-courier "-*-*-" pesche-font-size fontcharset))
+(defvar pesche-courier-br
+  (concat "-*-" fontstring-courier "-" font-br-courier "-*-*-" pesche-font-size fontcharset))
+(defvar pesche-courier-bi
+  (concat "-*-" fontstring-courier "-" font-bi-courier "-*-*-" pesche-font-size fontcharset))
+
+(cond
+ ((eq (string-match "lucida" pesche-family) 0)
+  (progn
+    (defvar pesche-default-regular     pesche-lucida-rr)
+    (defvar pesche-default-italic      pesche-lucida-ri)
+    (defvar pesche-default-bold        pesche-lucida-br)
+    (defvar pesche-default-bold-italic pesche-lucida-bi)))
+ (t
+  (progn
+    (defvar pesche-default-regular     pesche-courier-rr)
+    (defvar pesche-default-italic      pesche-courier-ri)
+    (defvar pesche-default-bold        pesche-courier-br)
+    (defvar pesche-default-bold-italic pesche-courier-bi))))
+
+;; Doch noch eine weitere Fallunterscheidung: Beim Mac arbeiten wir
+;; bereits mit fontsets
 (cond (window-system
        (if (not (eq window-system 'mac))
            (progn

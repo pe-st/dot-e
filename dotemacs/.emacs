@@ -2,9 +2,9 @@
 ;;  Emacs Startup File
 ;;
 ;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id: //netzadmin/emacs/pesche/.emacs#38 $
-;;     $Change: 18140 $
-;;   $DateTime: 2003/11/25 19:04:06 $
+;;         $Id: //netzadmin/emacs/pesche/.emacs#39 $
+;;     $Change: 18323 $
+;;   $DateTime: 2004/01/05 09:09:46 $
 ;;     $Author: peter.steiner $
 ;;    $Created: Wed Jul 6 19:52:18 1994 $
 
@@ -70,8 +70,8 @@
 ;; zB durch Evaluieren von (insert (prin1-to-string (w32-select-font)))
 ;; 9-67 / 10-75 / 11-82 / 12-90 / 13-97 / 14-105 / 15-112 / 16-120
 ;; Unter Linux kommt es auf die Auflösung drauf an.
-;;  75 dpi : 10-100 / 11-110 / 12-120 / ...
-;; 100 dpi : 11-80 / 14-100 / ...
+;;  75 dpi : 10-100 / 12-120 / 14-140 / 18-180 / 24-240
+;; 100 dpi : 11-80 / 14-100 / 17-120 / 20-140 / 25-180
 (defvar pesche-font-size nil "Pesches bevorzugte Fontgrösse je nach Maschine")
 (defvar pesche-family    nil "Pesches bevorzugte Schriftart je nach Maschine")
 
@@ -112,6 +112,11 @@
       (defvar font-ri-courier "medium-o")
       (defvar font-br-courier "bold-r")
       (defvar font-bi-courier "bold-o")
+      (defvar fontstring-lucida "lucidatypewriter")
+      (defvar font-rr-lucida "medium-r")
+      (defvar font-ri-lucida "medium-i")
+      (defvar font-br-lucida "bold-r")
+      (defvar font-bi-lucida "bold-i")
       )))
 
 (cond
@@ -122,7 +127,7 @@
  ((eq (string-match "PIAZZABOOK"  (system-name)) 0)
   (progn (setq pesche-family "courier") (setq pesche-font-size font12pix)))
  (t
-  (progn (setq pesche-family "lucida") (setq pesche-font-size font11pix)))
+  (progn (setq pesche-family "courier") (setq pesche-font-size font12pix)))
  )
 
 ; Beispiel "-outline-Lucida Sans Typewriter-normal-r-normal-normal-16-120-96-96-c-*-iso10646-1"

@@ -1,9 +1,11 @@
 ;; Pesche' Tools
 ;;
-;;     $Source: g:/archiv/cvsroot/site-lisp/pesche-tools.el,v $
-;;   $Revision: 1.1 $
-;;       $Date: 1999/06/02 21:09:17 $
-;;     $Author: pesche $
+;;      Author: Peter Steiner <pesche@schlau.ch>
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-tools.el#2 $
+;;     $Change: 19205 $
+;;   $DateTime: 2004/06/07 16:45:31 $
+;;     $Author: peter.steiner $
+;;    $Created: 1999/06/02 $
 
 
 ;; Funktionen ------------------------------------------------------------------
@@ -100,6 +102,12 @@ This function is the opposite of `bury-buffer'."
     (if (stringp string)
         (nonincremental-search-forward string))))
 
+(defun tags-quick ()
+  "quick tags search."
+  (interactive)
+  (let ((string (thing-at-point 'word)))
+    (if (stringp string)
+        (tags-search string))))
 
 
 ;; Modul abschliessen ----------------------------------------------------------

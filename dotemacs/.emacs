@@ -2,9 +2,9 @@
 ;;  Emacs Startup File
 ;;
 ;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id: //netzadmin/emacs/pesche/.emacs#39 $
-;;     $Change: 18323 $
-;;   $DateTime: 2004/01/05 09:09:46 $
+;;         $Id: //netzadmin/emacs/pesche/.emacs#40 $
+;;     $Change: 19205 $
+;;   $DateTime: 2004/06/07 16:45:31 $
 ;;     $Author: peter.steiner $
 ;;    $Created: Wed Jul 6 19:52:18 1994 $
 
@@ -273,6 +273,7 @@ saving keyboard macros (see insert-kbd-macro)."
 (global-set-key (kbd "S-C-s") 'nonincremental-repeat-search-forward)    ;;
 (global-set-key (kbd "<f3>") 'nonincremental-repeat-search-forward)     ;;
 (global-set-key (kbd "S-C-q") 'search-quick)            ;; self-written
+(global-set-key (kbd "S-C-t") 'tags-quick)              ;; self-written
 
 (global-set-key (kbd "<f9>") 'insert-timestamp)         ;; self-written
 

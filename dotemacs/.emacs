@@ -41,6 +41,10 @@
 ;; general configuration -------------------------------------------------------
 
 ;; Emacs-Päckli auch in meinem lokalen emacs-Verzeichnis suchen
+(if (file-accessible-directory-p "~/emacs/gnus/lisp/")
+    (setq load-path (append (list "~/emacs/gnus/lisp/") load-path)))
+(if (file-accessible-directory-p "~/emacs/custom/")
+    (setq load-path (append (list "~/emacs/custom/") load-path)))
 (setq-default load-path (append '("~/emacs") load-path))
 
 (setq-default fill-column 77)           ;; column for line breaking in auto-fill-mode
@@ -54,6 +58,7 @@
 (setq-default hscroll-mode t)
 (setq-default hscroll-mode-name nil)
 (hscroll-mode)
+(require 'scroll-in-place)
 
 (require 'pc-select)
 (pc-bindings-mode)
@@ -181,7 +186,8 @@
 ;(if (not (eq pesche-emacs-version 'lucid))
 ;    (progn
 
-      (define-key global-map [(C-kp-space)] 'recenter)         ;; Ctrl-Keypad-5
+      (define-key global-map [(C-kp-space)] 'recenter)         ;; Ctrl-Keypad-5 (NT)
+      (define-key global-map [(C-kp-begin)] 'recenter)         ;; Ctrl-Keypad-5 (Linux)
 ;      (define-key global-map [(home)] 'beginning-of-line)
 ;      (define-key global-map [(kp-7)] 'beginning-of-line)
 ;      (define-key global-map [(end)] 'end-of-line)
@@ -401,6 +407,12 @@
 (setq paren-sexp-mode nil)
 ;(global-set-key [?\C-\(] 'stig-paren-toggle-dingaling-mode)
 ;(global-set-key [?\C-\)] 'stig-paren-toggle-sexp-mode)
+
+
+;; Gnus-Reader -----------------------------------------------------------------
+;; weitere Konfiguration siehe .gnus
+(autoload 'gnus-unplugged "gnus-agent" "Start Gnus unplugged." t)
+
 
 ;;; ********************
 ;;; Load ange-ftp, which uses the FTP protocol as a pseudo-filesystem.

@@ -4,8 +4,8 @@
 ;;      Author: Peter Steiner <unistein@isbe.ch>
 ;;     Created: Wed Jul 6 19:52:18 1994
 ;;     $Source: g:/archiv/cvsroot/home/.emacs,v $
-;;   $Revision: 1.18 $
-;;       $Date: 1999/04/22 22:28:56 $
+;;   $Revision: 1.19 $
+;;       $Date: 1999/05/06 21:12:07 $
 ;;     $Author: pesche $
 
 
@@ -233,8 +233,6 @@ saving keyboard macros (see insert-kbd-macro)."
 
 (global-set-key (kbd "<f6>") 'other-window)             ;; C-x o
 (global-set-key (kbd "C-<f6>") 'bury-buffer)            ;;
-(global-set-key (kbd "C-<tab>") 'bury-buffer)           ;;
-(global-set-key (kbd "S-C-<tab>") 'unbury-buffer)       ;;
 
 (global-set-key (kbd "C-f") 'nonincremental-re-search-forward)          ;;
 (global-set-key (kbd "S-C-f") 'nonincremental-repeat-re-search-forward) ;;
@@ -245,6 +243,16 @@ saving keyboard macros (see insert-kbd-macro)."
 (global-set-key (kbd "<f9>") 'insert-timestamp)         ;; self-written
 
 ;(global-set-key (kbd "C-S-<down>") 'next-error)
+
+;; pc-bufsw implementiert ein Umschalten zwischen Buffern mit Ctrl-Tab
+;; ähnlich wie Alt-Tab unter Windows die Applikationen umschaltet
+(require 'pc-bufsw)
+(global-set-key (kbd "C-<tab>") 'pc-bufsw::previous)
+(global-set-key (kbd "S-C-<tab>") 'pc-bufsw::lru)
+; pc-bufsw scheint rekursiv zu funktionieren, denn mit dem default-Wert 300
+; für folgende Variable ist ab ca. 40 Buffer Schluss mit Ctrl-Tab :-(
+; mit 1000 ist dann bei etwa 80 Buffer finito, aber aus einem andern Grund
+(setq max-lisp-eval-depth 1000)
 
 
 ; mit Maus erzeugtes imenu in der Konsole lässt emacs abstürzen.
@@ -325,6 +333,9 @@ saving keyboard macros (see insert-kbd-macro)."
 (add-hook 'emacs-lisp-mode-hook 'pesche-emacs-lisp-mode-hook)
 
 ;; C mode und alle Verwandten --------------------------------------------------
+;; Files auf .rh sollen auch Header Files sein (resource header)
+(setq auto-mode-alist (append '(("\\.rh\\'" . c-mode)) auto-mode-alist))
+
 ;; cc-mode 5.21 kennt das "richtige" Verhalten von Delete und Backspace
 ;; (aber nur wenn delete-key-deletes-forward existiert)
 (if (not (boundp 'delete-key-deletes-forward))

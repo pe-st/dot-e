@@ -3,26 +3,46 @@
 ;; Copyright (C) 2002 Peter Steiner
 ;;
 ;; Author:  Peter Steiner
-;; Created: 2002-05-13 17:39:58
+;; Created: 2002-05-13
 ;; Keywords: lingo, director
 
 ;; This file is not part of GNU Emacs.
 
-;;; Put this in your .emacs file to enable lingo-mode
+;; This file may be distributed under the same terms as GNU Emacs.
+
+;; GNU Emacs is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 2, or (at your option)
+;; any later version.
+
+;; GNU Emacs is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs; see the file COPYING.  If not, write to the
+;; Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+;; Boston, MA 02111-1307, USA.
+
+;;; Commentary:
+
+;; Put this in your .emacs file to enable lingo-mode
 
 ;; (autoload 'lingo-mode "lingo-mode" "Major mode for editing Lingo files." t)
 ;; (setq auto-mode-alist (append '(("\\.[Ll][Ss]\\'" . lingo-mode)) auto-mode-alist))
 
 ;;; todo
-;; Font-Locking-Spezialfälle, auch noch irgendwie behandeln:
-;; after before into long me members done relative short xtras
+;; font-locking: words are not colored if followed by a bracket. Why?
+;; Indenting: comments
 
-;; Indenting:
-;; - case-Konstrukt
-;; - Kommentare
+;;; History:
 
+;; 0.9 First public release
 
-(defconst lingo-version "0.1"
+;;; Code:
+
+(defconst lingo-version "0.9"
   "`lingo-mode' version number.")
 
 (defvar lingo-indent-offset 2
@@ -35,19 +55,15 @@
 
 (defconst lingo-handler-end-regexp"^[ \t]*[Ee]nd\\([ \t]+.*\\)?$")
 
-;; ;; all lines starting with "end" except "end if", "end case" and "end repeat"
-;; (defconst lingo-handler-end-regexp
-;;   (concat "^[ \t]*end[ \t]*\\("
-;;           "[abd-hj-qs-z].*"
-;;           ;; some lines missing here...
-;;           "\\)?$"))
-
 (defconst lingo-if-regexp "^[ \t]*[Ii]f[ \t]+.*")
 (defconst lingo-ifthen-regexp "^[ \t]*[Ii]f.+\\<[Tt]hen\\>\\s-\\S-+")
 (defconst lingo-else-regexp "^[ \t]*[Ee]lse\\([Ii]f\\)?")
 (defconst lingo-endif-regexp "^[ \t]*[Ee]nd[ \t]*[Ii]f")
 
 (defconst lingo-case-regexp "^[ \t]*[Cc]ase[ \t]+.*")
+(defconst lingo-case-expr-regexp "^[ \t]*\\S-.*:.*$")
+(defconst lingo-case-otherwise-regexp "^[ \t]*[Oo]therwise\\([ \t]+.*\\)?$")
+;;(defconst lingo-case-expr-regexp "^[ \t]*\\w+\\(,[ \t]*\\w+\\)[ \t]*:.*")
 (defconst lingo-case-end-regexp "^[ \t]*[Ee]nd[ \t]*[Cc]ase")
 
 (defconst lingo-repeat-regexp "^[ \t]*[Rr]epeat[ \t]+.*")
@@ -65,7 +81,7 @@
                     '("beginRecording" "case" "castLib" "char" "down"
                       "else" "end"
                       "endRecording" "exit" "field" "global" "if" "item"
-                      "in" "intersects" "line" "list" "loop" "member"
+                      "in" "intersects" "line" "list" "loop" "me" "member"
                       "menu" "next" "of" "on" "otherwise" "previous" "property"
                       "repeat" "return" "sprite" "the" "then" "to"
                       "version" "while" "window" "with" "within")
@@ -76,18 +92,18 @@
                     "\\|"))
         (lingo-command-list
          (mapconcat 'identity
-                    '("abort" "add" "addAt" "addProp" "addVertex" "alert"
-                      "append" "appMinimize" "beep" "call" "callAncestor"
+                    '("abort" "add" "addAt" "addProp" "addVertex" "after"
+                      "alert" "append" "appMinimize" "beep" "before" "call" "callAncestor"
                       "cancelIdleLoad" "clearCache" "clearError" "clearFrame"
                       "clearGlobals" "close" "closeXlib" "copyToClipBoard"
                       "delay" "delete" "deleteAll" "deleteAt" "deleteFrame"
-                      "deleteOne" "deleteProp" "deleteVertex" "do"
+                      "deleteOne" "deleteProp" "deleteVertex" "do" "done"
                       "downloadNetThing" "duplicateFrame" "duplicate"
                       "enableHotSpot" "erase" "externalEvent" "findPos"
                       "findPosNear" "finishIdleLoad" "flushInputEvents"
                       "getaProp" "getAt" "go" "gotoFrame" "gotoNetMovie"
                       "gotoNetPage" "halt" "importFileInto" "inflate"
-                      "insertFrame" "installMenu" "mci" "move" "moveToBack"
+                      "insertFrame" "installMenu" "into" "mci" "move" "moveToBack"
                       "moveToFront" "netAbort" "netStatus" "nothing" "nudge"
                       "open" "openXlib" "pass" "pasteClipBoardInto" "pause"
                       "play" "playNext" "postNetText" "preLoad" "preLoadBuffer"
@@ -124,7 +140,7 @@
                       "integerP" "interface" "intersect" "isBusy"
                       "isPastCuePoint" "key" "keyCode" "keyPressed" "label"
                       "last" "lastClick" "lastEvent" "length" "linePosToLocV"
-                      "list" "listP" "log" "map" "mapMemberToStage"
+                      "list" "listP" "log" "long" "map" "mapMemberToStage"
                       "mapStageToMember" "marker" "max" "min" "mouseLoc"
                       "moveVertex" "moveVertexHandle" "netDone" "netError"
                       "netLastModDate" "netMIME" "netTextResult" "new"
@@ -135,7 +151,7 @@
                       "queue" "quickTimeVersion" "ramNeeded" "random" "rawNew"
                       "result" "rewind" "rollover" "runMode" "setAlpha"
                       "setFlashProperty" "setPixel" "setPlaylist" "setVariable"
-                      "sin" "soundBusy" "sqrt" "stageBottom" "stageLeft"
+                      "short" "sin" "soundBusy" "sqrt" "stageBottom" "stageLeft"
                       "stageRight" "stageToFlash" "stageTop" "startFrame"
                       "string" "stringP" "swing" "symbol" "symbolP" "tan"
                       "tellStreamStatus" "time" "union" "URLEncode" "value"
@@ -175,7 +191,7 @@
                       "linkAs" "linked" "loaded" "loc" "locH" "locToCharPos"
                       "locV" "locVToLinePos" "locZ" "loopBounds" "loopCount"
                       "loopEndTime" "loopsRemaining" "loopStartTime" "margin"
-                      "mask" "media" "mediaReady" "memberNum" "missingFonts"
+                      "mask" "media" "mediaReady" "memberNum" "members" "missingFonts"
                       "modal" "modified" "modifiedBy" "modifiedDate"
                       "mostRecentCuePoint" "motionQuality" "mouseLevel"
                       "mouseOverButton" "moveableSprite" "movieRate" "movieTime"
@@ -206,7 +222,7 @@
                       "trimWhitespace" "tweened" "type" "URL" "useAlpha"
                       "useHypertextStyles" "vertex" "vertexList" "video" "viewH"
                       "viewPoint" "viewScale" "viewV" "visible" "warpMode"
-                      "width" "windowType" "word" "wordWrap")
+                      "width" "windowType" "word" "wordWrap" "xtras")
                     "\\|"))
         (lingo-object-property-list
          (mapconcat 'identity
@@ -288,8 +304,9 @@
      `(,(concat "\\b\\("
                lingo-command-list
                "\\)\\b[ \n\t(]") 1 font-lock-variable-name-face)
-     ;; properties
+     ;; properties and functions
      `(,(concat "\\b\\("
+               lingo-function-list "\\|"
                lingo-property-list "\\|"
                lingo-object-property-list "\\|"
                lingo-global-property-list "\\|"
@@ -300,7 +317,7 @@
      `(,(concat "\\b\\("
                lingo-event-list
                "\\)\\b[ \n\t(]") 1 font-lock-function-name-face)
-     ;; functions
+     ;; handler names
      (list lingo-handler-regexp
        1 font-lock-variable-name-face)
      ;; constants
@@ -366,11 +383,8 @@
   ;; users don't know them and expect `forward-word' and `backward-word'
   ;; to treat underscores the same as letters.
   (modify-syntax-entry ?\_ "w"  lingo-mode-syntax-table)
-;;   ;; Both single quote and double quote are string delimiters
-;;   (modify-syntax-entry ?\' "\"" lingo-mode-syntax-table)
+  ;; use only double quotes for strings
   (modify-syntax-entry ?\" "\"" lingo-mode-syntax-table)
-;;   ;; backquote is open and close paren
-;;   (modify-syntax-entry ?\` "$"  lingo-mode-syntax-table)
   ;; comment delimiters
   (modify-syntax-entry ?\- ". 12"  lingo-mode-syntax-table)
   (modify-syntax-entry ?\n ">"  lingo-mode-syntax-table)
@@ -513,7 +527,7 @@ lingo-indent-offset\t\tindentation increment"
 (defun lingo-find-matching-begin ()
   (let ((original-point (point)))
     (lingo-find-matching-stmt lingo-begin-regexp
-                                     lingo-end-begin-regexp)
+                              lingo-end-begin-regexp)
     (if (bobp) ;failed to find a matching begin so assume that it is
                ;an end statement instead and use the indent of the
                ;preceding line.
@@ -523,7 +537,7 @@ lingo-indent-offset\t\tindentation increment"
 
 ;; borrowed from visual-basic-mode
 (defun lingo-calculate-indent ()
-  "calculate the indentation for the current line."
+  "Calculate the indentation for the current line."
   (let ((original-point (point)))
     (save-excursion
       (beginning-of-line)
@@ -548,6 +562,12 @@ lingo-indent-offset\t\tindentation increment"
        ((or (looking-at lingo-handler-regexp)
             (looking-at lingo-handler-end-regexp))
         0)
+
+       ;; case expressions are indented one level
+       ((or (looking-at lingo-case-expr-regexp)
+            (looking-at lingo-case-otherwise-regexp))
+        (lingo-find-matching-case)
+        (+ (current-indentation) lingo-indent-offset))
 
        ;; all other cases depend on the previous line
        (t
@@ -584,6 +604,10 @@ lingo-indent-offset\t\tindentation increment"
            (let ((indent (current-indentation)))
              ;; All the various +indent regexps.
              (cond ((looking-at lingo-handler-regexp)
+                    (+ indent lingo-indent-offset))
+
+                   ((or (looking-at lingo-case-expr-regexp)
+                        (looking-at lingo-case-otherwise-regexp))
                     (+ indent lingo-indent-offset))
 
                    ((and (or (looking-at lingo-if-regexp)

@@ -1,9 +1,10 @@
 ;; Pesche' Modes
 ;;
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#14 $
-;;     $Change: 19163 $
-;;   $DateTime: 2004/05/28 09:35:56 $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#15 $
+;;     $Change: 19560 $
+;;   $DateTime: 2004/08/30 09:52:43 $
 ;;     $Author: peter.steiner $
+;;    $Created: 1999/06/02 $
 ;;  $Copyright: Peter Steiner <pesche@schlau.ch>
 
 ;; lisp modes ------------------------------------------------------------------
@@ -28,6 +29,14 @@
 ;; C mode und alle Verwandten --------------------------------------------------
 ;; Files auf .rh sollen auch Header Files sein (resource header)
 (setq auto-mode-alist (append '(("\\.rh\\'" . c-mode)) auto-mode-alist))
+
+;; In bestimmten Verzeichnissen gehen wir von HW C Files aus...
+(setq auto-mode-alist
+      (append '(("/hal/[^/]+/[^/]+\\.[ch]\\'" . hw-c-mode)
+                ("/subsys/[^/]+/[^/]+\\.[ch]\\'" . hw-c-mode)
+                ("/vmi/[^/]+\\.[ch]\\'" . hw-c-mode))
+              auto-mode-alist))
+(autoload 'hw-c-mode "hw-c-mode" "Major mode for HW C files." t)
 
 ;; cc-mode 5.21 kennt das "richtige" Verhalten von Delete und Backspace
 ;; (aber nur wenn delete-key-deletes-forward existiert)
@@ -122,7 +131,9 @@ Javadoc comments."
 (require 'doxymacs)
 (add-hook 'c-mode-common-hook 'doxymacs-mode)
 (defun my-doxymacs-font-lock-hook ()
-  (if (or (eq major-mode 'c-mode) (eq major-mode 'c++-mode))
+  (if (or (eq major-mode 'c-mode)
+          (eq major-mode 'hw-c-mode)
+          (eq major-mode 'c++-mode))
       (doxymacs-font-lock)))
 (add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)
 

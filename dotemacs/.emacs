@@ -2,9 +2,9 @@
 ;;  Emacs Startup File
 ;;
 ;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id: //netzadmin/emacs/pesche/.emacs#41 $
-;;     $Change: 19539 $
-;;   $DateTime: 2004/08/23 22:46:03 $
+;;         $Id: //netzadmin/emacs/pesche/.emacs#42 $
+;;     $Change: 19560 $
+;;   $DateTime: 2004/08/30 09:52:43 $
 ;;     $Author: peter.steiner $
 ;;    $Created: Wed Jul 6 19:52:18 1994 $
 
@@ -392,8 +392,7 @@ saving keyboard macros (see insert-kbd-macro)."
 (setq font-lock-maximum-decoration t
       font-lock-maximum-size       1048576)     ; 1 MB
 (require 'font-lock)
-(if (not (eq window-system 'mac))
-    (require 'pesche-font-lock))
+(require 'pesche-font-lock)
 
 (cond (window-system
        (if (<= emacs-major-version 19)
@@ -435,11 +434,11 @@ saving keyboard macros (see insert-kbd-macro)."
 ;(global-set-key [?\C-\(] 'stig-paren-toggle-dingaling-mode)
 ;(global-set-key [?\C-\)] 'stig-paren-toggle-sexp-mode)
 
-;; News und Mail ---------------------------------------------------------------
-;; weitere Konfiguration siehe .gnus
-(autoload 'epop3-mail "epop3mail" "Get mail from pop server" t)
-(autoload 'gnus-unplugged "gnus-agent" "Start Gnus unplugged." t)
-(setq gnus-directory "~/gnus/")
+;; ;; News und Mail ---------------------------------------------------------------
+;; ;; weitere Konfiguration siehe .gnus
+;; (autoload 'epop3-mail "epop3mail" "Get mail from pop server" t)
+;; (autoload 'gnus-unplugged "gnus-agent" "Start Gnus unplugged." t)
+;; (setq gnus-directory "~/gnus/")
 
 
 ;; gnuserv (nur mit NT), sonst emacsserver
@@ -481,7 +480,8 @@ saving keyboard macros (see insert-kbd-macro)."
 ;; (require 'info), welches dann zu einem Zugriff auf source-directory
 ;; führt. Da dieses bei 20.3.1 auf d:\\irgendwas zeigt, kommt es zum
 ;; Zugriff auf das möglicherweise leere MO-Laufwerk.
-(setq source-directory "c:\\emacs\\")   ;; Inhalt unwichtig, solange nicht D:
+(if (eq system-type 'windows-nt)
+    (setq source-directory "c:\\emacs\\"))  ;; Inhalt unwichtig, solange nicht D:
 
 (desktop-read)
 

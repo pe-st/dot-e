@@ -1,8 +1,8 @@
 ;; Pesche' Modes
 ;;
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#16 $
-;;     $Change: 20009 $
-;;   $DateTime: 2004/10/29 17:01:14 $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#17 $
+;;     $Change: 20182 $
+;;   $DateTime: 2004/12/07 07:37:04 $
 ;;     $Author: peter.steiner $
 ;;    $Created: 1999/06/02 $
 ;;  $Copyright: Peter Steiner <pesche@schlau.ch>
@@ -258,6 +258,8 @@ Javadoc comments."
       (append '(("\\.py\\'" . python-mode)
                 ("\\.pyw\\'" . python-mode))
               auto-mode-alist))
+(setq interpreter-mode-alist (cons '("python" . python-mode)
+                                   interpreter-mode-alist))
 (autoload 'python-mode "python-mode" nil t)
 
 ;; lingo-mode ------------------------------------------------------------------

@@ -1,10 +1,10 @@
 ;; Pesche's Menu
 ;;
 ;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id: //netzadmin/emacs/pesche/.emacs#39 $
-;;     $Change: 18323 $
-;;   $DateTime: 2004/01/05 09:09:46 $
-;;     $Author: peter.steiner $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-menu.el#11 $
+;;     $Change: 18727 $
+;;   $DateTime: 2004/02/26 10:33:54 $
+;;     $Author: p4admin $
 ;;    $Created: Wed Jul 6 19:52:18 1994 $
 
 

@@ -1,9 +1,9 @@
 ;; Pesche's Druckerei
 ;;
 ;;     $Source: g:/archiv/cvsroot/site-lisp/pesche-print.el,v $
-;;   $Revision: 1.3 $
-;;       $Date: 1999/02/13 00:05:50 $
-;;     $Author: pesche $
+;;   $Revision: 1.4 $
+;;       $Date: 2001/08/10 21:11:35 $
+;;     $Author: donnerpesche $
 
 ;; Wir benötigen als Basis das Postscript-Modul von Emacs
 (require 'ps-print)
@@ -14,21 +14,31 @@
 
 ; die Schrift etwas verstellen
 (setq ps-font-size 8)
+;(setq ps-font-size 7)
+
 ; Zeichenbreite zur Berechnung des Zeilenumbruchs meine Schrift anpassen
 ; Originalwerte für Courier 10: 5.6 6
+; Werte für Courier 8: 4.48 5
+; Werte für Courier 7: 3.92 4
 (setq ps-avg-char-width (if (fboundp 'float) 4.48 5))
 (setq ps-space-width (if (fboundp 'float) 4.48 5))
+;(setq ps-avg-char-width (if (fboundp 'float) 3.92 4))
+;(setq ps-space-width (if (fboundp 'float) 3.92 4))
+
 ; Zeilenhöhe zur Berechnung des Seitenumbruchs meine Schrift anpassen
 ; Originalwerte für Courier 10: 11.29 11
+; Werte für Courier 8: 9.03 9
+; Werte für Courier 7: 7.90 8
 (setq ps-line-height (if (fboundp 'float) 9.03 9))
+;(setq ps-line-height (if (fboundp 'float) 7.90 8))
 
 ; einiges ist zuhause anders als im Büro
-(if (eq (string-match "PIAZZA" (system-name)) 0)
+(if (eq (string-match "DONNERVOGEL" (system-name)) 0)
     (progn  ; Zuhause
-      (defvar ghost-dir     "C:\\Progra~1\\gstools\\gs5.03")
+      (defvar ghost-dir     "F:\\Progra~1\\gs\\gs7.00")
       (defvar ghost-printer "-sDEVICE=djet500 -r300")
-      (defvar ghost-fonts   "C:\\psfonts")
-      (defvar ghost-view    "C:\\Progra~1\\gstools\\gsview\\gsview32.exe"))
+      (defvar ghost-fonts   "F:\\Progra~1\\gs\\fonts")
+      (defvar ghost-view    "F:\\Progra~1\\gs\\gsview\\gsview32.exe"))
     (progn  ; im Büro
       (defvar ghost-dir     "L:\\tools\\ghost\\gs5.03")
       (defvar ghost-printer "-sDEVICE=ljet4 -r600")
@@ -39,10 +49,10 @@
 
 (setq ps-psnup-command "psnup") ; Name of n-up program (taking ps as input)
 (setq ps-psnup-switches '(" -l -2 -pa4 ")) ; options for program above
-(setq ps-lpr-command (concat "start /min " ghost-dir "\\gswin32"))
+(setq ps-lpr-command (concat "start /min " ghost-dir "\\bin\\gswin32"))
 (setq ps-lpr-switches `(,(concat "-q -sPAPERSIZE=a4 "
                                 ghost-printer " -dNOPAUSE -I"
-                                ghost-dir ";" ghost-dir "\\fonts;" ghost-fonts)))
+                                ghost-dir ";" ghost-fonts)))
 (setq ps-preview-command ghost-view)
 (setq ps-lpr-buffer (concat (getenv "TEMP") "\\psspool.ps"))
 (setq ps-psnup-buffer (concat (getenv "TEMP") "\\psnup.ps"))
@@ -148,10 +158,24 @@
 (define-key menu-bar-tools-menu [ps-print-buffer] nil)
 (define-key menu-bar-tools-menu [ps-print-region] nil)
 (define-key menu-bar-tools-menu [separator-print] nil)
-; die Druck-Einträge von Emacs 20.3 aus dem Print-Menu entfernen (vgl. menu-bar.el)
-(define-key menu-bar-print-menu [ps-print-buffer] nil)
-(define-key menu-bar-print-menu [ps-print-region] nil)
-(define-key menu-bar-print-menu [separator-ps-print] nil)
+
+(if (< emacs-major-version 21)
+    (progn
+      ; die Druck-Einträge von Emacs 20.3 aus dem Print-Menu entfernen (vgl. menu-bar.el)
+      (define-key menu-bar-print-menu [ps-print-buffer] nil)
+      (define-key menu-bar-print-menu [ps-print-region] nil)
+      (define-key menu-bar-print-menu [separator-ps-print] nil)
+      )
+  (progn
+    ; die Druck-Einträge von Emacs 21 aus dem Print-Menu entfernen (vgl. menu-bar.el)
+    (define-key menu-bar-files-menu [ps-print-region] nil)
+    (define-key menu-bar-files-menu [ps-print-buffer] nil)
+    (define-key menu-bar-files-menu [ps-print-region-faces] nil)
+    (define-key menu-bar-files-menu [ps-print-buffer-faces] nil)
+    (define-key menu-bar-files-menu [print-region] nil)
+    (define-key menu-bar-files-menu [print-buffer] nil)
+    (define-key menu-bar-files-menu [separator-print] nil)
+    ))
 
 ; Submenus für Print/Print-to-file/Preview in das File-Menu einhängen
 (define-key-after menu-bar-files-menu [preview]

@@ -37,7 +37,7 @@
 ;; which provide basic comment and font-lock support. Jam-mode depends on
 ;; this mode.
 
-(require 'generic-mode)
+(require 'generic)
 (require 'cl)
 
 (define-generic-mode 'jam-mode
@@ -154,6 +154,14 @@
 ;   (local-set-key "&" 'jam-mode-insert-double-punctuation)
   (local-set-key [tab] 'indent-for-tab-command)
   (setq fill-paragraph-function 'jam-mode-fill-paragraph)
+  (setq imenu-generic-expression
+        `(("Rules" "^rule\\s-+\\([-+A-Za-z0-9_]+\\)" 1)
+          ("Actions" ,(concat "^actions\\s-+"
+                              "\\(?:\\(?:"
+                              "piecemeal\\|together\\|updated"
+                              "\\)\\s-+\\)*"
+                              "\\([-+A-Za-z0-9_]+\\)") 1)))
+  (imenu-add-to-menubar "Index")
   (make-local-variable 'indent-line-function)
   (setq indent-line-function 'jam-mode-indent-line)
    )

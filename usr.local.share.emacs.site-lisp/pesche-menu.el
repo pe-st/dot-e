@@ -94,6 +94,9 @@ files will be brought to foreground"
 (define-key menu-bar-pesche-menu [pesche-eol-dos]
   '("EOL CRLF" . (lambda()(interactive) (set-buffer-file-coding-system 'undecided-dos))))
 
+(define-key menu-bar-pesche-menu [pesche-eol-mac]
+  '("EOL CR" . (lambda()(interactive) (set-buffer-file-coding-system 'undecided-mac))))
+
 (define-key menu-bar-pesche-menu [pesche-separator-2]
   '("--"))
 

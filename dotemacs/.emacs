@@ -59,7 +59,9 @@
 
 
 ;; display configuration -------------------------------------------------------
-(standard-display-european t)           ;; vollen 8-Bit Zeichensatz verwenden
+(if (or (eq window-system 'win32)
+        (eq window-system 'w32))
+    (standard-display-european t))      ;; vollen 8-Bit Zeichensatz verwenden
 (column-number-mode 1)
 
 ;; fonts -----------------------------------------------------------------------
@@ -131,12 +133,27 @@
   )
 
 (cond (window-system
-       (set-default-font           pesche-default-regular)
-       (set-face-font 'default     pesche-default-regular)
-       (set-face-font 'bold        pesche-default-bold)
-       (set-face-font 'italic      pesche-default-italic)
-       (set-face-font 'bold-italic pesche-default-bold-italic)
-))
+       (if (not (eq window-system 'mac))
+           (progn
+             ; Windows oder Linux
+             (set-default-font           pesche-default-regular)
+             (set-face-font 'default     pesche-default-regular)
+             (set-face-font 'bold        pesche-default-bold)
+             (set-face-font 'italic      pesche-default-italic)
+             (set-face-font 'bold-italic pesche-default-bold-italic)
+             )
+         (progn
+           ; Mac
+
+           (create-fontset-from-fontset-spec
+            "-apple-monaco-medium-r-normal--9-*-*-*-*-*-fontset-monaco,
+ascii:-apple-monaco-medium-r-normal--9-90-75-75-m-90-mac-roman,
+latin-iso8859-1:-apple-monaco-medium-r-normal--9-90-75-75-m-90-mac-roman")
+
+           (set-frame-font "fontset-monaco")
+           (setq mac-keyboard-text-encoding kTextEncodingISOLatin1)
+           )
+         )))
 
 (cond (window-system
        ;; default-Parameter für alle Fenster
@@ -331,17 +348,17 @@ saving keyboard macros (see insert-kbd-macro)."
 (setq font-lock-maximum-decoration t
       font-lock-maximum-size       1048576)     ; 1 MB
 (require 'font-lock)
-(require 'pesche-font-lock)
+(if (not (eq window-system 'mac))
+    (require 'pesche-font-lock))
 
 (cond (window-system
        (if (<= emacs-major-version 19)
            (font-lock-make-faces))))
 
 
-; WindowsNT und Linux haben immer noch verschiedene Schriften...
-; (if (or (eq window-system 'win32)
-;         (eq window-system 'w32))
-(cond (window-system
+; Für alle Window-System ausser Mac
+(if (and (not (eq window-system nil))
+         (not (eq window-system 'mac)))
     (progn
       (set-face-font 'font-lock-comment-face       pesche-default-italic)
       (set-face-font 'font-lock-string-face        pesche-default-regular)
@@ -354,8 +371,7 @@ saving keyboard macros (see insert-kbd-macro)."
       (set-face-font 'html-helper-italic-face      pesche-default-italic)
       (set-face-font 'html-helper-underline-face   pesche-default-bold)
       (set-face-font 'html-tag-face                pesche-default-regular)
-      )))
-;       ))
+      ))
 
 
 

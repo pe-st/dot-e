@@ -4,8 +4,8 @@
 ;;      Author: Peter Steiner <unistein@isbe.ch>
 ;;     Created: Wed Jul 6 19:52:18 1994
 ;;     $Source: g:/archiv/cvsroot/home/.emacs,v $
-;;   $Revision: 1.26 $
-;;       $Date: 1999/12/12 23:24:20 $
+;;   $Revision: 1.27 $
+;;       $Date: 2000/03/27 23:17:49 $
 ;;     $Author: pesche $
 
 
@@ -192,6 +192,9 @@ saving keyboard macros (see insert-kbd-macro)."
 (global-set-key (kbd "<f6>") 'other-window)             ;; C-x o
 (global-set-key (kbd "C-<f6>") 'bury-buffer)            ;;
 
+(global-set-key (kbd "<f5>") '(lambda()(interactive)(revert-buffer t)))
+(global-set-key (kbd "S-<f5>") '(lambda()(interactive)(revert-buffer t t)))
+
 (global-set-key (kbd "C-f") 'nonincremental-re-search-forward)          ;;
 (global-set-key (kbd "S-C-f") 'nonincremental-repeat-re-search-forward) ;;
 (global-set-key (kbd "S-C-s") 'nonincremental-repeat-search-forward)    ;;
@@ -287,14 +290,7 @@ saving keyboard macros (see insert-kbd-macro)."
 (set-face-foreground 'font-lock-constant-face "ForestGreen")
 (copy-face 'font-lock-constant-face 'font-lock-reference-face)
 
-; die Farben für die HTML faces müssen ebenfalls mit Gewalt geändert werden
-(setq font-lock-background-mode 'light)
-(require 'html-helper-mode)
-(set-face-foreground  html-helper-bold-face        "Peru")
-(set-face-foreground  html-helper-italic-face      "Peru")
-(set-face-foreground  html-helper-underline-face   "Peru")
-(set-face-foreground  html-tag-face                "Firebrick")
-
+; die Farben für die eingebauten Faces anpassen
 (setq font-lock-face-attributes
       '((font-lock-comment-face       "SlateGray")
         (font-lock-string-face        "Sienna" "LightBlue")
@@ -400,6 +396,7 @@ saving keyboard macros (see insert-kbd-macro)."
 ;; führt. Da dieses bei 20.3.1 auf d:\\irgendwas zeigt, kommt es zum
 ;; Zugriff auf das möglicherweise leere MO-Laufwerk.
 (setq source-directory "c:\\emacs\\")   ;; Inhalt unwichtig, solange nicht D:
+
 (desktop-read)
 
 ;; verschiedene Histories verkürzen, damit mit 'desktop' nicht zu viel

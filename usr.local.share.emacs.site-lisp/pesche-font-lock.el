@@ -3,8 +3,8 @@
 ;; Author: Pesche <unistein@isbe.ch>
 ;;
 ;;     $Source: g:/archiv/cvsroot/site-lisp/pesche-font-lock.el,v $
-;;   $Revision: 1.10 $
-;;       $Date: 1999/12/11 19:53:54 $
+;;   $Revision: 1.11 $
+;;       $Date: 2000/03/27 23:12:48 $
 ;;     $Author: pesche $
 
 ;;; This package provides some improvements to `font-lock-mode':
@@ -40,6 +40,31 @@
 ;      (set-face-background 'pesche-hardspace-face  "LightSalmon")
 ;      (set-face-background 'pesche-hardspace-face  "Wheat")
       (set-face-foreground 'hw-keyword-face        "Red")
+      (defvar html-tag-face
+        (defface html-tag-face
+          '((t (:foreground "Firebrick" :bold t)))
+          "Face to use for HTML tags."
+          :group 'html-helper-faces))
+      (defvar html-helper-bold-face
+        (defface html-helper-bold-face
+          '((t (:foreground "Peru" :bold t)))
+          "Custom bold face."
+          :group 'html-helper-faces))
+      (defvar html-helper-italic-face
+        (defface html-helper-italic-face
+          '((t (:foreground "Peru" :italic t)))
+          "Custom italic face."
+          :group 'html-helper-faces))
+      (defvar html-helper-bold-italic-face
+        (defface html-helper-bold-italic-face
+          '((t (:foreground "Orange" :bold t :italic t)))
+          "Custom bold italic face."
+          :group 'html-helper-faces))
+      (defvar html-helper-underline-face
+        (defface html-helper-underline-face
+          '((t (:foreground "Peru" :underline t)))
+          "Custom underline face."
+          :group 'html-helper-faces))
       ))
 
 ;(if (fboundp 'facemenu-unlisted-faces)

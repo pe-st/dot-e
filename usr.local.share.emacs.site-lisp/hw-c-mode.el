@@ -1,8 +1,8 @@
 ;; Hug-Witschi C Mode derived from CC Mode
 ;;
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#14 $
-;;     $Change: 19163 $
-;;   $DateTime: 2004/05/28 09:35:56 $
+;;         $Id: //netzadmin/emacs/site-lisp/hw-c-mode.el#2 $
+;;     $Change: 19646 $
+;;   $DateTime: 2004/09/13 17:09:49 $
 ;;     $Author: peter.steiner $
 ;;    $Created: 2004/08/28 from Martin Stjernholm's derived-mode-ex.el $
 
@@ -137,6 +137,7 @@ Key bindings:
   ;; analysis and similar things working.
   (c-common-init 'hw-c-mode)
   (easy-menu-add hw-c-menu)
+  (cc-imenu-init cc-imenu-c-generic-expression)
   (run-hooks 'c-mode-common-hook)
   (run-hooks 'hw-c-mode-hook)
   (c-update-modeline))

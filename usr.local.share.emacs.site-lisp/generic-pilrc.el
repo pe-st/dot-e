@@ -2,6 +2,10 @@
 ;;;
 ;;; Copyright (c) 1997 by Matthew Cravit.
 
+;;     $Source: g:/archiv/cvsroot/site-lisp/generic-pilrc.el,v $
+;;   $Revision: 1.2 $
+;;       $Date: 1999/03/31 14:04:10 $
+;;     $Author: pesche $
 ;; Author: Matthew Cravit <mcravit@best.com>
 ;; Maintainer: Matthew Cravit <mcravit@best.com>
 ;; Created: Wed Jul 30 10:46:58 1997
@@ -33,7 +37,7 @@
 ;;
 ;;   do get fontified correctly.
 
-(require 'generic-mode)
+(require 'generic)
 (require 'font-lock)
 
 (defun pilrc-setup nil

@@ -234,6 +234,40 @@
  )
 
 
+
+; font-lock-Definitionen von make-mode.el korrigieren
+(load "make-mode")
+
+; korrigiere regexp für Abhängigkeiten
+(setq makefile-dependency-regex
+      "^\\([^ \n\t#:]+\\([ \t]+[^ \t\n#:=]+\\)*\\)[ \t]*:\\([ \t]*$\\|\\([^=\n].*$\\)\\)")
+;   dieses '=' fehlt in make-mode.el  --^--
+
+(setq makefile-font-lock-keywords
+  (list
+   ;; Zuweisungen
+   (list makefile-macroassign-regex 1 'font-lock-variable-name-face)
+
+   ;; Makro-Expansionen
+   '("\\$[({]\\([a-zA-Z0-9_]+\\)[:})]" 1 font-lock-reference-face prepend)
+   ;;                          --^-- dieses ':' fehlt in make-mode.el
+
+   ;; Abhängigkeiten
+   (list makefile-dependency-regex 1 'font-lock-function-name-face 'prepend)
+
+   ;; Highlight lines that contain just whitespace.
+   ;; They can cause trouble, especially if they start with a tab.
+   '("^[ \t]+$" . makefile-space-face)
+
+   ;; Highlight shell comments that Make treats as commands,
+   ;; since these can fool people.
+   '("^\t+#" 0 makefile-space-face t)
+
+   ;; Highlight spaces that precede tabs.
+   ;; They can make a tab fail to be effective.
+   '("^\\( +\\)\t" 1 makefile-space-face)))
+
+
 (provide 'pesche-font-lock)
 
 ;; eof

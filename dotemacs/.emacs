@@ -174,18 +174,39 @@ Covers (and equates) both horizontal and vertical splits."
   )
 
 ;; keyboard configuration ------------------------------------------------------
+;; der portabelste Weg zur Tasten-Definition scheint mittels (read-kbd-macro XX)
+;; zu sein. In neueren Emacsen gibt es dafür die kürzere Form (kbd XX). In
+;; älteren Emacsen kann mit folgendem Code auch schon (kbd XX) verwendet werden:
+(or (fboundp 'kbd)                      ; nur wenn noch nicht definiert
+    (defmacro kbd (keys)
+      "Convert KEYS to the internal Emacs key representation.
+KEYS should be a string constant in the format used for
+saving keyboard macros (see insert-kbd-macro)."
+      (let ((f 'read-kbd-macro))
+        (funcall f keys))))
 
-(global-set-key "\C-g" 'goto-line)
+
+(global-set-key (kbd "C-g") 'goto-line)
+(global-set-key (kbd "C-z") 'undo)
+(global-set-key (kbd "C-x C-<") 'uncomment-region)      ;; self-written
+(global-set-key (kbd "C-x C-\\") 'uncomment-region)     ;; zB Dos-Box: C-< == C-\
+(global-set-key (kbd "C-x C->") 'comment-region)        ;; standard emacs lisp
+(global-set-key (kbd "C-<kp-space>") 'recenter)         ;; Shift-Ctrl-Keypad-5 (NT)
+(global-set-key (kbd "C-<kp-begin>") 'recenter)         ;; Shift-Ctrl-Keypad-5 (Linux)
+(global-set-key (kbd "C-<return>") 'duplicate-line)     ;; self-written
+(global-set-key (kbd "C-<kp-enter>") 'duplicate-line)   ;; self-written
+(global-set-key (kbd "<f6>") 'other-window)             ;; C-x o
+
+;(global-set-key (kbd "C-S-<down>") 'next-error)
+
 ;(global-set-key "\C-x\C-a" 'insert-time-and-author) ;; self-written
 ;(global-set-key "\C-x\C-m" 'insert-header)          ;; self-written
-(global-set-key "\C-z" 'undo)
-(define-key ctl-x-map [(control <)] 'uncomment-region)     ;; self-written
-(define-key ctl-x-map [(control >)] 'comment-region)       ;; standard emacs lisp
-(define-key global-map [(C-return)] 'duplicate-line)       ;; self-written
-(define-key global-map [(C-kp-enter)] 'duplicate-line)     ;; self-written
 
+
+; mit Maus erzeugtes imenu in der Konsole lässt emacs abstürzen.
 (cond (window-system 
-        (define-key global-map [S-mouse-2] 'imenu)))
+       (global-set-key (kbd "S-<mouse-2>") 'imenu)))
+
 
 ;(if (eq window-system 'x)
 ;    (progn
@@ -222,72 +243,6 @@ Covers (and equates) both horizontal and vertical splits."
 ;    ))
 ; )
 
-;(if (eq pesche-emacs-version 'lucid)
-;    (progn
-;      (define-key global-map 'begin 'recenter)              ;; Keypad-5
-;      (define-key global-map [(f31)] 'recenter)             ;; Keypad-5
-;      (define-key global-map 'f9 'compile)
-;      (define-key global-map '(control shift down) 'next-error)
-;      (define-key global-map '(control f34) 'next-error)    ;; sometimes S-down = f34
-;
-;      ;; define combinations with the SUN `Alt' key as Umlauts
-;      (define-key global-map [(symbol a)] [adiaeresis])
-;      (define-key global-map [(symbol o)] [odiaeresis])
-;      (define-key global-map [(symbol u)] [udiaeresis])
-;      (define-key global-map [(symbol A)] [Adiaeresis])
-;      (define-key global-map [(symbol O)] [Odiaeresis])
-;      (define-key global-map [(symbol U)] [Udiaeresis])
-;
-;      ;; define the german umlauts as in LaTeX german option
-;      (define-key global-map [adiaeresis] "\"a")
-;      (define-key global-map [odiaeresis] "\"o")
-;      (define-key global-map [udiaeresis] "\"u")
-;      (define-key global-map [Adiaeresis] "\"A")
-;      (define-key global-map [Odiaeresis] "\"O")
-;      (define-key global-map [Udiaeresis] "\"U")
-;
-;      ;; horizontal scrolling
-;      (define-key global-map [(symbol home)] 'scroll-right);; Alt-Home
-;      (define-key global-map [(symbol end)] 'scroll-left);; Alt-End
-;
-;      ;; needed on SUN workstations
-;      (define-key global-map [(f25)] "/");; grey-/
-;      (define-key global-map [(f26)] "*");; grey-*
-;      (define-key global-map [(control f27)] 'beginning-of-buffer);; Ctrl-Home
-;      (define-key global-map [(control left)] 'backward-word)
-;      (define-key global-map [(control right)] 'forward-word)
-;      (define-key global-map [(f33)] 'end-of-line);; End (num)
-;      (define-key global-map [(control r13)] 'end-of-buffer);; Ctrl-End
-;      (define-key global-map [(control f33)] 'end-of-buffer);; Ctrl-End (num)
-;      (define-key global-map [(control end)] 'end-of-buffer);; Ctrl-End (grey)
-;      (define-key global-map [(control home)] 'beginning-of-buffer);; Ctrl-Home (grey)
-;      (define-key global-map [(next)] 'scroll-up);; PgDn (grey)
-;      (define-key global-map [(prior)] 'scroll-down);; PgUp (grey)
-;      )
-;  )
-;(if (not (eq pesche-emacs-version 'lucid))
-;    (progn
-
-      (define-key global-map [(C-kp-space)] 'recenter)         ;; Ctrl-Keypad-5 (NT)
-      (define-key global-map [(C-kp-begin)] 'recenter)         ;; Ctrl-Keypad-5 (Linux)
-;      (define-key global-map [(home)] 'beginning-of-line)
-;      (define-key global-map [(kp-7)] 'beginning-of-line)
-;      (define-key global-map [(end)] 'end-of-line)
-;      (define-key global-map [(kp-1)] 'end-of-line)
-;      (define-key global-map [(C-home)] 'beginning-of-buffer);; Ctrl-Home (grey)
-;      (define-key global-map [(C-end)] 'end-of-buffer);; Ctrl-End (grey)
-;      (define-key global-map [(f9)] 'compile)
-      (define-key global-map [(C-S-down)] 'next-error)
-
-;      ;; define the german umlauts as in LaTeX german option
-;      (define-key global-map [?\344] "\"a")
-;      (define-key global-map [?\366] "\"o")
-;      (define-key global-map [?\374] "\"u")
-;      (define-key global-map [?\304] "\"A")
-;      (define-key global-map [?\326] "\"O")
-;      (define-key global-map [?\334] "\"U")
-;      ))
-
 
 
 ;; mode specific configuration -------------------------------------------------
@@ -318,6 +273,12 @@ Covers (and equates) both horizontal and vertical splits."
           (function (lambda ()
                       (setq-default tab-width        8
                                     indent-tabs-mode nil)
+
+                      ;; alle Kommentarzeilen, die mit mindestens drei '-' aufhören,
+                      ;; in das 'Outline'-Menü eintragen
+                      (setq lisp-imenu-generic-expression 
+                            (append lisp-imenu-generic-expression
+                                    '(("Outline" ";+[ \\t]+\\([ A-Za-z0-9+]+\\)---*[ \\t]*$" 1))))
                       (imenu-add-to-menubar "Index")
                       )))
 
@@ -348,6 +309,17 @@ Covers (and equates) both horizontal and vertical splits."
                                     indent-tabs-mode         nil
                                     c-tab-always-indent      nil
                                     c++-tab-always-indent    nil)
+
+                      ;; alle 'Kästchen' in das 'Outline'-Menü aufnehmen
+                      (setq imenu-generic-expression 
+                            (append imenu-generic-expression
+                                    '(("Outline" 
+                                       "^/\\*[-]+\\+[ \t]*\n|[ \t]+\\([^ \t][- A-Za-z0-9+]*\\).*|" 
+                                       1)
+                                      ("Types"
+                                       "^[ \t]*typedef[ \t]+\\(struct[ \t]+[_A-Za-z0-9]+\\)"
+                                       1)
+                                      )))
                       (imenu-add-to-menubar "Index")
                       )))
 
@@ -361,6 +333,13 @@ Covers (and equates) both horizontal and vertical splits."
           (function (lambda ()
                       (setq-default tab-width        8
                                     indent-tabs-mode t)
+
+                      ; korrigiere regexp für Zuweisungen (Fehler tritt nur
+                      ; bei imenu auf, font-lock ist okay)
+		      (setq makefile-macroassign-regex
+                            "^\\([^ \n\t#][^:#= \t\n]*\\)[ \t]*[*:+]?:?=")
+                      ;               --^--  dieses '#' fehlt in make-mode.el
+
                       (imenu-add-to-menubar "Index")
                       )))
 
@@ -430,6 +409,10 @@ Covers (and equates) both horizontal and vertical splits."
 
 ;; packages configuration ------------------------------------------------------
 
+;; dynamische Abkürzungen (dabbrev): immer case-sensitiv
+(setq dabbrev-case-fold-search nil)
+(setq dabbrev-case-replace nil)
+
 ;; hiliting
 (setq font-lock-maximum-decoration t)
 (add-hook 'emacs-lisp-mode-hook	   'turn-on-font-lock)
@@ -458,9 +441,11 @@ Covers (and equates) both horizontal and vertical splits."
         (font-lock-variable-name-face "Black")
         (font-lock-type-face          "Black")
         (font-lock-reference-face     "ForestGreen")
+        (makefile-space-face          nil "HotPink")
         ))
 
-(font-lock-make-faces)
+(cond (window-system 
+       (font-lock-make-faces)))
 
 ; WindowsNT und Linux haben immer noch verschiedene Schriften...
 (if (eq window-system 'win32)

@@ -2,8 +2,8 @@
 ;;  Emacs Startup File
 ;;
 ;;      Author: Peter Steiner <unistein@isbe.ch>
-;;     Created:	Wed Jul 6 19:52:18 1994
-;;     changed: 
+;;     Created: Wed Jul 6 19:52:18 1994
+;;     changed:
 
 
 ;; setup special variables and functions ---------------------------------------
@@ -35,7 +35,7 @@
       (comment-region beg end (- arg))
     (comment-region beg end (- 1))
     )
-  ) 
+  )
 
 (defun modify-syntax-for-umlaut ()
   "Sets the german umlauts to 'word constituent' in current syntax table."
@@ -57,7 +57,7 @@
 
   ;; local variables for start and end of line
   (let ((bol (save-excursion (beginning-of-line) (point)))
-	eol)
+        eol)
     (save-excursion
 
       ;; don't use forward-line for this, because you would have
@@ -67,13 +67,13 @@
 
       ;; store the line and disable the recording of undo information
       (let ((line (buffer-substring bol eol))
-	    (buffer-undo-list t)
-	    (count arg))
+            (buffer-undo-list t)
+            (count arg))
         ;; insert the line arg times
-	(while (> count 0)
+        (while (> count 0)
           (newline)         ;; because there is no newline in 'line'
-	  (insert line)
-	  (setq count (1- count)))
+          (insert line)
+          (setq count (1- count)))
         )
 
       ;; create the undo information
@@ -115,10 +115,13 @@ This function is the opposite of `bury-buffer'."
 ;; general configuration -------------------------------------------------------
 
 ;; Emacs-Päckli auch in meinem lokalen emacs-Verzeichnis suchen
-(if (file-accessible-directory-p "~/emacs/gnus/lisp")
-    (setq load-path (append '("~/emacs/gnus/lisp") load-path)))
-(if (file-accessible-directory-p "~/emacs/custom")
-    (setq load-path (append '("~/emacs/custom") load-path)))
+;(if (file-accessible-directory-p "~/emacs/gnus/lisp")
+;    (setq load-path (append '("~/emacs/gnus/lisp") load-path)))
+;(if (file-accessible-directory-p "~/emacs/custom")
+;    (setq load-path (append '("~/emacs/custom") load-path)))
+(if (<= emacs-major-version 19)
+    (if (file-accessible-directory-p "~/emacs/emacs19")
+        (setq load-path (append '("~/emacs/emacs19") load-path))))
 (if (file-accessible-directory-p "~/emacs")
     (setq load-path (append '("~/emacs") load-path)))
 
@@ -128,27 +131,32 @@ This function is the opposite of `bury-buffer'."
 
 ;; Zeilen nicht automatisch umbrechen, wenn sie zu lang sind; dafür
 ;; einen Minor-Mode laden, damit bei langen Zeilen automatisch gescrollt wird
+;; (ab Emacs 20 über customize...)
 (setq-default truncate-lines t)
-(require 'hscroll)
-(setq-default hscroll-mode t)
-(setq-default hscroll-mode-name nil)
-(hscroll-mode)
-(require 'scroll-in-place)
+(if (<= emacs-major-version 19)
+    (progn
+      (require 'hscroll)
+      (setq-default hscroll-mode t)
+      (setq-default hscroll-mode-name nil)
+      (hscroll-mode)
+      (require 'scroll-in-place)
+      )
+    )
 
 (require 'pc-select)
 (pc-bindings-mode)
 (pc-selection-mode)
 
+
 ;; display configuration -------------------------------------------------------
 (standard-display-european t)           ;; vollen 8-Bit Zeichensatz verwenden
 (column-number-mode 1)
-;(require 'column)
-;(display-column-mode 1)
+
 
 ;; fonts -----------------------------------------------------------------------
 ;; Paare von Werten (mindestens für Lucida Sans Typewriter)
 ;; 10-75 / 11-82 / 12-90 / 13-97 / 14-105 / 15-112
-(if (eq (string-match "PIAZZA" (system-name)) 0) 
+(if (eq (string-match "PIAZZA" (system-name)) 0)
     (defvar my-font-size "13-97")  ;; auf PIAZZA: etwas grösser (ca. 9.7 Punkt)
     (defvar my-font-size "11-82")  ;; sonst (ca. 8.2 Punkt)
     )
@@ -157,7 +165,7 @@ This function is the opposite of `bury-buffer'."
   (concat "-*-Lucida Sans Typewriter-normal-r-*-*-"
           my-font-size "-*-*-c-*-*-ansi-"))
 (defvar lucida-typewriter-italic
-  (concat "-*-Lucida Sans Typewriter-normal-i-*-*-" 
+  (concat "-*-Lucida Sans Typewriter-normal-i-*-*-"
           my-font-size "-*-*-c-*-*-ansi-"))
 (defvar lucida-typewriter-bold
   (concat "-*-Lucida Sans Typewriter-semibold-r-*-*-"
@@ -165,6 +173,21 @@ This function is the opposite of `bury-buffer'."
 (defvar lucida-typewriter-bold-italic
   (concat "-*-Lucida Sans Typewriter-semibold-i-*-*-"
           my-font-size "-*-*-c-*-*-ansi-"))
+
+
+; WindowsNT und Linux haben immer noch verschiedene Schriften...
+(if (or (eq window-system 'win32)
+        (eq window-system 'w32))
+    (progn
+      (setq win32-enable-italics t)
+      (setq w32-enable-italics t)
+      (set-default-font           lucida-typewriter-regular)
+      (set-face-font 'default     lucida-typewriter-regular)
+      (set-face-font 'bold        lucida-typewriter-bold)
+      (set-face-font 'italic      lucida-typewriter-italic)
+      (set-face-font 'bold-italic lucida-typewriter-bold-italic)
+      )
+  )
 
 (cond (window-system
        ;; default-Parameter für alle Fenster
@@ -174,7 +197,6 @@ This function is the opposite of `bury-buffer'."
                (foreground-color  . "Black")
                (background-color  . "WhiteSmoke")
                (cursor-color      . "MediumBlue")
-;               (font              . "-*-Lucida Sans Typewriter-normal-r-*-*-13-97-*-*-c-*-*-ansi-")
                (icon-type         . t)         ; gnu picture as Emacs icon
                (icon-name         . nil)       ; use frame title
                ))
@@ -187,17 +209,6 @@ This function is the opposite of `bury-buffer'."
        (setq icon-title-format  "Emacs - %b")  ; set  icon title to buffer name
        ))
 
-; WindowsNT und Linux haben immer noch verschiedene Schriften...
-(if (eq window-system 'win32)
-    (progn
-      (setq win32-enable-italics t)
-      (set-default-font           lucida-typewriter-regular)
-      (set-face-font 'default     lucida-typewriter-regular)
-      (set-face-font 'bold        lucida-typewriter-bold)
-      (set-face-font 'italic      lucida-typewriter-italic)
-      (set-face-font 'bold-italic lucida-typewriter-bold-italic)
-      )
-  )
 
 ;; keyboard configuration ------------------------------------------------------
 ;; der portabelste Weg zur Tasten-Definition scheint mittels (read-kbd-macro XX)
@@ -240,50 +251,27 @@ saving keyboard macros (see insert-kbd-macro)."
 
 
 ; mit Maus erzeugtes imenu in der Konsole lässt emacs abstürzen.
-(cond (window-system 
+(cond (window-system
        (global-set-key (kbd "S-<mouse-2>") 'imenu)))
+
+;; für mehrere Modi gemeinsames Zeugs ------------------------------------------
 
 ; Menus etwas anpassen an grosse Bildschirme
 (setq imenu-max-items 40)
 (setq buffers-menu-max-size 30)
 
+(require 'msb)
 
-;(if (eq window-system 'x)
-;    (progn
-;      (load "x-compose")
-;      ;; use shift-control-section as compose key
-;      (define-key global-map [(control degree)] compose-map)
-;      ;; disable degree as a dead key
-;      (define-key global-map [degree] 'self-insert-command)
-;      ))
-
-;;; conditional keyboard configuration
-;(cond 
-; ((eq pesche-emacs-version 'emacs-x) 
-;  (progn
-;    ;; Delete-Taste nicht wie BackSpace verwenden (wegen x-win.elc noetig)
-;    (put 'delete 'ascii-character 'delete)
-;    (define-key function-key-map [delete] [delete])
-;    (define-key global-map [delete] 'delete-char)
-;    ))
-; ((eq pesche-emacs-version 'lucid)
-;  (progn
-;    (define-key global-map [delete] 'delete-char)
-;    (define-key global-map [backspace] 'delete-backward-char)
-;    (define-key shared-lisp-mode-map [delete] 'delete-char)
-;    (define-key shared-lisp-mode-map [backspace] 'backward-delete-char-untabify)
-;    ;; change mouse button 2 to insert at text cursor point and not mouse position
-;    ;; (define-key global-map 'button2 'x-insert-selection)
-;    ;; other keymaps: see below when setting up modes
-;    ))
-; (t
-;  (progn
-;    ;; terminal-based (with X these has been done by xmodmap)
-;    (define-key function-key-map "\e[G" [begin])       ;; Keypad-5
-;    ))
-; )
-
-
+; Anzeige des Funktionsnamens in der Modeline
+(setq which-func-maxout         0         ;; enabled, regardless buffer size
+      which-func-mode-global    t)
+(if (< emacs-major-version 20)
+    (require 'which-function)
+  (require 'which-func))
+(add-to-list 'which-func-modes 'cperl-mode)
+; aus irgendeinem Grund muss man den Modus zweimal toggeln...
+(which-func-mode 0)
+(which-func-mode 1)
 
 ;; mode specific configuration -------------------------------------------------
 ;;(setq default-major-mode 'text-mode)
@@ -310,7 +298,7 @@ saving keyboard macros (see insert-kbd-macro)."
           (aset path i ?/))
         ;; den hinteren Teil des Pfades durch 'man' ersetzen
         (string-match "H-i386-cygwin32/lib/gcc-lib/" path)
-        (setq man-path (list (replace-match "man" t t path)))
+        (setq woman-manpath (list (replace-match "man" t t path)))
         )))
 
 ;(setq man-path '("x:/gnuwin32/b18/man"))
@@ -347,7 +335,8 @@ saving keyboard macros (see insert-kbd-macro)."
                       (local-set-key [delete] 'delete-char)
                       (local-set-key [backspace] 'c-electric-delete)
                       ;; auch in C die neuen C++-Kommentare verwenden
-                      (c-enable-//-in-c-mode)
+                      (if (fboundp 'c-enable-//-in-c-mode)
+                          (c-enable-//-in-c-mode))
                       (setq comment-start "// "
                             comment-end ""
                             comment-multi-line nil
@@ -411,12 +400,24 @@ saving keyboard macros (see insert-kbd-macro)."
                       )))
 
 ;; perl mode
-(add-hook 'perl-mode-hook
+(autoload 'cperl-mode "cperl-mode" "alternate mode for editing Perl programs" t)
+(setq cperl-hairy t)
+(setq auto-mode-alist
+      (append '(("\\.[pP][Llm]$" . cperl-mode))  auto-mode-alist ))
+(setq interpreter-mode-alist (append interpreter-mode-alist
+         '(("miniperl" . cperl-mode))))
+(add-hook 'cperl-mode-hook
           (function (lambda ()
-;                      (setq-default tab-width        8
-;                                    indent-tabs-mode t)
                       (imenu-add-to-menubar "Index")
                       )))
+
+; (add-hook 'perl-mode-hook
+;           (function (lambda ()
+; ;                      (setq-default tab-width        8
+; ;                                    indent-tabs-mode t)
+;                       (imenu-add-to-menubar "Index")
+;                       )))
+
 
 ;; TeX and related modes
 ;(cond
@@ -475,13 +476,19 @@ saving keyboard macros (see insert-kbd-macro)."
 (setq html-helper-use-expert-menu t)
 
 
+;;; pplog mode
+(require 'pplog-mode)
+
+
 ;; packages configuration ------------------------------------------------------
 
 ;; dynamische Abkürzungen (dabbrev): immer case-sensitiv
 (setq dabbrev-case-fold-search nil)
 (setq dabbrev-case-replace nil)
 
-;; hiliting
+;; font lock -------------------------------------------------------------------
+; (global-font-lock-mode t)
+; (setq font-lock-support-mode 'lazy-lock-mode)
 (setq font-lock-maximum-decoration t)
 (add-hook 'emacs-lisp-mode-hook    'turn-on-font-lock)
 (add-hook 'lisp-mode-hook          'turn-on-font-lock)
@@ -497,10 +504,12 @@ saving keyboard macros (see insert-kbd-macro)."
 (add-hook 'texinfo-mode-hook       'turn-on-font-lock)
 (add-hook 'postscript-mode-hook    'turn-on-font-lock)
 
-(require 'font-lock)
-(require 'fast-lock)
-(add-hook 'font-lock-mode-hook 'turn-on-fast-lock)
-(require 'pesche-font-lock)
+
+;; cperl verändert auf 'unfreundliche' Art constant-face,
+;; aber wir setzen unserer Kopf durch!
+(copy-face 'bold-italic 'font-lock-constant-face)
+(set-face-foreground 'font-lock-constant-face "ForestGreen")
+(copy-face 'font-lock-constant-face 'font-lock-reference-face)
 
 (setq font-lock-face-attributes
       '((font-lock-comment-face       "SlateGray")
@@ -509,15 +518,27 @@ saving keyboard macros (see insert-kbd-macro)."
         (font-lock-function-name-face "Blue")
         (font-lock-variable-name-face "Black")
         (font-lock-type-face          "Black")
-        (font-lock-reference-face     "ForestGreen")
+; nicht mehr nötig, da dies weiter oben mit dem 'Brecheisen' geschieht
+;        (font-lock-constant-face      "ForestGreen")    ;; 20.x
+;        (font-lock-reference-face     "ForestGreen")    ;; 19.x
+        (info-node                    "Blue")
+        (info-xref                    "Blue")
         (makefile-space-face          nil "HotPink")
         ))
 
+(require 'font-lock)
+; (require 'fast-lock)
+; (add-hook 'font-lock-mode-hook 'turn-on-fast-lock)
+(require 'pesche-font-lock)
+
 (cond (window-system
-       (font-lock-make-faces)))
+       (if (<= emacs-major-version 19)
+           (font-lock-make-faces))))
+
 
 ; WindowsNT und Linux haben immer noch verschiedene Schriften...
-(if (eq window-system 'win32)
+(if (or (eq window-system 'win32)
+        (eq window-system 'w32))
     (progn
       (set-face-font 'font-lock-comment-face       lucida-typewriter-italic)
       (set-face-font 'font-lock-string-face        lucida-typewriter-regular)
@@ -525,23 +546,11 @@ saving keyboard macros (see insert-kbd-macro)."
       (set-face-font 'font-lock-function-name-face lucida-typewriter-bold)
       (set-face-font 'font-lock-variable-name-face lucida-typewriter-regular)
       (set-face-font 'font-lock-type-face          lucida-typewriter-bold)
-      (set-face-font 'font-lock-reference-face     lucida-typewriter-bold-italic)
+; nicht mehr nötig, da dies weiter oben mit dem 'Brecheisen' geschieht
+;       (set-face-font 'font-lock-constant-face      lucida-typewriter-bold-italic)
+;       (if (eq window-system 'win32)
+;           (set-face-font 'font-lock-reference-face lucida-typewriter-bold-italic))
       ))
-
-
-;(eval-after-load
-; "font-lock"
-; '(setq font-lock-defaults-alist
-;       (append '(;;(lisp-mode .           (lisp-font-lock-keywords-2))
-;                 ;;(emacs-lisp-mode .     (lisp-font-lock-keywords-2))
-;                 (cc-mode .             (c-font-lock-keywords-3 nil nil ((?\_ . "w"))))
-;                 ;;(latex-mode .          (tex-font-lock-keywords-2))
-;                 ;;(plain-tex-mode .      (tex-font-lock-keywords-2))
-;                 ;;(tex-mode .            (tex-font-lock-keywords-2))
-;                 (dired-mode .          (dired-font-lock-keywords))
-;                 )
-;               font-lock-defaults-alist)))
-;(eval-after-load "font-lock" '(require 'font-lock-extra))
 
 
 ;; Klammer-Gegenstücke anfärben
@@ -554,7 +563,7 @@ saving keyboard macros (see insert-kbd-macro)."
 
 ;; Gnus-Reader -----------------------------------------------------------------
 ;; weitere Konfiguration siehe .gnus
-(autoload 'gnus-unplugged "gnus-agent" "Start Gnus unplugged." t)
+;;(autoload 'gnus-unplugged "gnus-agent" "Start Gnus unplugged." t)
 
 
 ;; gnuserv
@@ -569,52 +578,10 @@ saving keyboard macros (see insert-kbd-macro)."
 (require 'pesche-menu)
 
 
-
-;;; ********************
-;;; Load ange-ftp, which uses the FTP protocol as a pseudo-filesystem.
-;;; When this is loaded, the pathname syntax /user@host:/remote/path
-;;; refers to files accessible through ftp.
-;;;
-;(require 'dired)
-;(require 'ange-ftp)
-;(setq ange-ftp-default-user "anonymous"      ; id to use for /host:/remote/path
-;      ange-ftp-generate-anonymous-password t ; use $USER@`hostname`
-;      ange-ftp-binary-file-name-regexp "."   ; always transfer in binary mode
-;      )
-
-
-;;; ********************
-;;; Load the auto-save.el package, which lets you put all of your autosave
-;;; files in one place, instead of scattering them around the file system.
-;;;
-;(setq auto-save-directory (expand-file-name "~/autosaves/")
-;      auto-save-directory-fallback auto-save-directory
-;      auto-save-hash-p nil
-;      ;ange-ftp-auto-save t
-;      ;ange-ftp-auto-save-remotely nil
-;      ;; now that we have auto-save-timeout, let's crank this up
-;      ;; for better interactive response.
-;      auto-save-interval 2000
-;      )
-;(require 'auto-save)
-
-;;; ********************
-;;; Load crypt, which is a package for automatically decoding and reencoding
-;;; files by various methods - for example, you can visit a .Z or .gz file,
-;;; edit it, and have it automatically re-compressed when you save it again.
-;;; 
-;(setq crypt-encryption-type 'pgp   ; default encryption mechanism
-;      crypt-confirm-password t     ; make sure new passwords are correct
-;      ;crypt-never-ever-decrypt t  ; if you don't encrypt anything, set this to
-;                                   ; tell it not to assume that "binary" files
-;                                   ; are encrypted and require a password.
-;      )
-;(require 'crypt)
-
 ;; desktop ---------------------------------------------------------------------
 ;; die letzte gespeicherte Session (= Desktop) laden
 (load "desktop")
-; fur NT den Default-Namen ändern; für andere Systeme können wir seinlassen
+; für NT den Default-Namen ändern; für andere Systeme können wir seinlassen
 (if (eq system-type 'windows-nt)
     (setq desktop-basefilename ".emacs.desktop"))
 (setq desktop-missing-file-warning nil)
@@ -626,7 +593,7 @@ saving keyboard macros (see insert-kbd-macro)."
                                              desktop-locals-to-save))
 (desktop-load-default)
 (desktop-read)
-;; verschiedene Histories verkürzen, damit mit 'desktop' nicht zu viel 
+;; verschiedene Histories verkürzen, damit mit 'desktop' nicht zu viel
 ;; gespeichert wird
 (add-hook 'kill-emacs-hook
           '(lambda ()
@@ -637,4 +604,23 @@ saving keyboard macros (see insert-kbd-macro)."
 ;; Verkünden wir, dass die Arbeit getan
 (message "Finished initialization from .emacs")
 
-;; eof .emacs
+;; customize -------------------------------------------------------------------
+
+;; falls unser emacs custom noch nicht hat, definieren wir einige Dummies,
+;; damit es keine Fehlermeldungen gibt
+(or (fboundp 'custom-set-variables)     ; nur wenn noch nicht definiert
+    (defun custom-set-variables (&rest args)
+      ;; do nothing
+      ))
+(or (fboundp 'custom-set-faces)         ; nur wenn noch nicht definiert
+    (defun custom-set-faces (&rest args)
+      ;; do nothing
+      ))
+
+(custom-set-variables
+ '(hscroll-mode-name nil)
+ '(resize-minibuffer-mode t nil (rsz-mini))
+ '(scroll-preserve-screen-position t t)
+ '(hscroll-global-mode t nil (hscroll)))
+(custom-set-faces)
+

@@ -18,15 +18,20 @@
 (require 'font-lock)
 
 ;; Definition tab und space face ---------------------------------------
+;; für Tabs zwei Faces, eines für solche Modi, wo Tab nicht erwünscht ist
+;; (strong) und eines für erwünschte Tabs (zB assembler/makefile)
 (if (memq (framep (selected-frame)) '(x pc win32))
     (progn
       (make-face 'pesche-tab-face)
+      (make-face 'pesche-strong-tab-face)
       (make-face 'pesche-space-face)
       (make-face 'hw-keyword-face)
-      (set-face-background 'pesche-tab-face   "Moccasin")
-;      (set-face-background 'pesche-tab-face   "CornflowerBlue")
-      (set-face-background 'pesche-space-face "Gold")
-      (set-face-foreground 'hw-keyword-face "Red")
+;      (set-face-background 'pesche-tab-face        "Snow")
+      (set-face-background 'pesche-tab-face        "LemonChiffon")
+      (set-face-background 'pesche-strong-tab-face "Moccasin")
+;      (set-face-background 'pesche-strong-tab-face "CornflowerBlue")
+      (set-face-background 'pesche-space-face      "Gold")
+      (set-face-foreground 'hw-keyword-face        "Red")
       ))
 
 ;(if (fboundp 'facemenu-unlisted-faces)
@@ -35,6 +40,8 @@
 ;      (add-to-list 'facemenu-unlisted-faces 'pesche-space-face)))
 (defvar pesche-tab-face 'pesche-tab-face
   "Face to use for highlighting tab characters in Font-Lock mode.")
+(defvar pesche-strong-tab-face 'pesche-strong-tab-face
+  "Face to use for strong highlighting tab characters in Font-Lock mode.")
 (defvar pesche-space-face 'pesche-space-face
   "Face to use for highlighting trailing spaces in Font-Lock mode.")
 (defvar hw-keyword-face 'hw-keyword-face
@@ -173,7 +180,7 @@
 	    font-lock-variable-name-face))))
    ;;
    ;; Highlight tabs
-   '("[\t]+" . pesche-tab-face)
+   '("[\t]+" . pesche-strong-tab-face)
    ;;
    ;; Highlight trailing whitespace
    '("[ \t]+$" . pesche-space-face)

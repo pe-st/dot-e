@@ -297,7 +297,7 @@ saving keyboard macros (see insert-kbd-macro)."
 ;  )
 
 ;; WoMan stuff for reading man pages in emacs
-(autoload 'woman "woman" 
+(autoload 'woman "woman"
   "Decode and browse a UN*X man page." t)
 (autoload 'woman-find-file "woman"
   "Find, decode and browse a specific UN*X man-page file." t)
@@ -329,7 +329,7 @@ saving keyboard macros (see insert-kbd-macro)."
 
                       ;; alle Kommentarzeilen, die mit mindestens drei '-' aufhören,
                       ;; in das 'Outline'-Menü eintragen
-                      (setq imenu-generic-expression 
+                      (setq imenu-generic-expression
                             (append imenu-generic-expression
                                     '(("Outline" ";+[ \\t]+\\([ A-Za-z0-9äöüÄÖÜ/+]+\\)---*[ \\t]*$" 1))))
                       (imenu-add-to-menubar "Index")
@@ -367,9 +367,9 @@ saving keyboard macros (see insert-kbd-macro)."
                                     c++-tab-always-indent    nil)
 
                       ;; alle 'Kästchen' in das 'Outline'-Menü aufnehmen
-                      (setq imenu-generic-expression 
+                      (setq imenu-generic-expression
                             (append imenu-generic-expression
-                                    '(("Outline" 
+                                    '(("Outline"
                                        "^/\\*[-]+\\+[ \t]*\n|[ \t]+\\([^ \t][- A-Za-z0-9+]*\\).*|" 
                                        1)
                                       ("Types"
@@ -392,11 +392,22 @@ saving keyboard macros (see insert-kbd-macro)."
 
                       ; korrigiere regexp für Zuweisungen (Fehler tritt nur
                       ; bei imenu auf, font-lock ist okay)
-		      (setq makefile-macroassign-regex
+                      (setq makefile-macroassign-regex
                             "^\\([^ \n\t#][^:#= \t\n]*\\)[ \t]*[*:+]?:?=")
                       ;               --^--  dieses '#' fehlt in make-mode.el
 
                       (imenu-add-to-menubar "Index")
+                      )))
+
+;; assembler mode
+(add-hook 'asm-mode-hook
+          (function (lambda ()
+                      (local-unset-key (kbd "<tab>"))
+                      (local-unset-key (kbd ":"))
+                      (local-unset-key (kbd ";"))
+                      (setq-default tab-width        8
+                                    indent-tabs-mode t)
+;                      (imenu-add-to-menubar "Index")
                       )))
 
 ;; perl mode
@@ -457,10 +468,11 @@ saving keyboard macros (see insert-kbd-macro)."
 
 
 ;;; html mode
-;(autoload 'html-mode "html-mode" "HTML major mode." t)
-;(setq auto-mode-alist (append '(("\\.html$" . html-mode)
-;                                ("\\.htm$" . html-mode)
-;                                ) auto-mode-alist))
+(autoload 'html-helper-mode "html-helper-mode" "HTML major mode." t)
+(setq auto-mode-alist (append '(("\\.html$" . html-helper-mode)
+                                ("\\.htm$" . html-helper-mode)
+                                ) auto-mode-alist))
+(setq html-helper-use-expert-menu t)
 
 
 ;; packages configuration ------------------------------------------------------
@@ -471,13 +483,14 @@ saving keyboard macros (see insert-kbd-macro)."
 
 ;; hiliting
 (setq font-lock-maximum-decoration t)
-(add-hook 'emacs-lisp-mode-hook	   'turn-on-font-lock)
+(add-hook 'emacs-lisp-mode-hook    'turn-on-font-lock)
 (add-hook 'lisp-mode-hook          'turn-on-font-lock)
-(add-hook 'c-mode-hook		   'turn-on-font-lock)
-(add-hook 'c++-mode-hook	   'turn-on-font-lock)
+(add-hook 'c-mode-hook             'turn-on-font-lock)
+(add-hook 'c++-mode-hook           'turn-on-font-lock)
 (add-hook 'asm-mode-hook           'turn-on-font-lock)
 (add-hook 'makefile-mode-hook      'turn-on-font-lock)
 (add-hook 'perl-mode-hook          'turn-on-font-lock)
+(add-hook 'html-helper-mode-hook   'turn-on-font-lock)
 (add-hook 'TeX-mode-hook           'turn-on-font-lock)
 (add-hook 'tex-mode-hook           'turn-on-font-lock)
 (add-hook 'bibtex-mode-hook        'turn-on-font-lock)
@@ -500,7 +513,7 @@ saving keyboard macros (see insert-kbd-macro)."
         (makefile-space-face          nil "HotPink")
         ))
 
-(cond (window-system 
+(cond (window-system
        (font-lock-make-faces)))
 
 ; WindowsNT und Linux haben immer noch verschiedene Schriften...
@@ -551,35 +564,11 @@ saving keyboard macros (see insert-kbd-macro)."
 
 ;; printing --------------------------------------------------------------------
 (require 'pesche-print)
-;(require 'ps-print)
-;(setq ps-paper-type 'ps-a4)
-;(setq ps-lpr-command "C:\\Progra~1\\gstools\\gs5.03\\gswin32")
-;(setq ps-lpr-switches '("-q -sDEVICE=djet500 -r300 -dNOPAUSE -IC:\\Progra~1\\gstools\\gs5.03;C:\\Progra~1\\gstools\\gs5.03\\fonts;c:\\psfonts"))
-;(setq ps-lpr-buffer (concat (getenv "TEMP") "\\psspool.ps"))
 
-;(defun win32-ps-print-buffer ()
-;  (interactive)
-;  (setq ps-print-color-p nil)
-;  (setq ps-bold-faces '(font-lock-keyword-face))
-;  (setq ps-italic-faces '(font-lock-comment-face))
-;  (ps-print-buffer-with-faces ps-lpr-buffer)
-;  (shell-command
-;   (apply 'concat (append (list ps-lpr-command " ")
-;                          ps-lpr-switches
-;                          (list " " ps-lpr-buffer " -c quit"))))
-;  )
+;; Pesches menu ----------------------------------------------------------------
+(require 'pesche-menu)
 
-;(setq lpr-command "print")
-;(setq ps-lpr-command "print")
-;(setq lpr-destination '("/D:\\\\host\\share-name"));; for normal printer
-;(setq ps-lpr-destination '("/D:\\\\host\\share-name"));; for postscript printer
 
-;(setq ps-print-use-gs t)                ; t - use ghostscript, nil - do not
-;(setq gs-print-command "C:\\Progra~1\\gstools\\gs5.03\\gswin32")
-;(setq gs-print-switches '("-q -sDEVICE=djet500 -r300 -dNOPAUSE -IC:\\Progra~1\\gstools\\gs5.03;C:\\Progra~1\\gstools\\gs5.03\\fonts;c:\\psfonts"))
-;(setq gs-view-command  "c:\\Progra~1\\gstools\\gsview\\gsview32.exe")
-;(setq ps-paper-type 'ps-a4)
-;(require  'print-nt)
 
 ;;; ********************
 ;;; Load ange-ftp, which uses the FTP protocol as a pseudo-filesystem.

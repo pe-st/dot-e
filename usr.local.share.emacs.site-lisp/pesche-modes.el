@@ -1,8 +1,8 @@
 ;; Pesche' Modes
 ;;
 ;;     $Source: g:/archiv/cvsroot/site-lisp/pesche-modes.el,v $
-;;   $Revision: 1.2 $
-;;       $Date: 1999/07/19 21:38:12 $
+;;   $Revision: 1.3 $
+;;       $Date: 1999/08/11 13:45:30 $
 ;;     $Author: pesche $
 
 ;; lisp modes
@@ -165,11 +165,16 @@
 (add-hook 'cperl-mode-hook 'pesche-cperl-mode-hook)
 
 
-;; html mode -------------------------------------------------------------------
+;; html/sgml/xml allgemeines ---------------------------------------------------
+
+
+;; html-helper-mode mode -------------------------------------------------------
 (autoload 'html-helper-mode "html-helper-mode" "HTML major mode." t)
-;; html-helper-mode statt html-mode verwenden
-(setq auto-mode-alist
-      (append '(("\\.s?html?\\'" . html-helper-mode)) auto-mode-alist))
+
+; ;; html-helper-mode statt html-mode verwenden
+; (setq auto-mode-alist
+;       (append '(("\\.s?html?\\'" . sgml-html-mode)) auto-mode-alist))
+; ;;      (append '(("\\.s?html?\\'" . html-helper-mode)) auto-mode-alist))
 (setq html-helper-use-expert-menu t)
 
 ;; HTML-Files im msb-Buffermenü als solche einordnen (bei cperl abgeschaut)
@@ -191,6 +196,136 @@
   )
 
 (add-hook 'html-helper-mode-hook 'pesche-html-helper-mode-hook)
+
+
+;; sgml mode -------------------------------------------------------------------
+(autoload 'sgml-mode "psgml" "Major mode to edit SGML files." t )
+
+;; in sgml documents, parse dtd immediately to allow immediate
+;; syntax coloring
+(setq sgml-auto-activate-dtd t)
+
+;; here we set the syntax color information for psgml
+(setq-default sgml-set-face t)
+
+(setq-default sgml-indent-data t)
+(setq sgml-always-quote-attributes       t
+      sgml-auto-insert-required-elements t
+      sgml-auto-activate-dtd             t
+      sgml-indent-data                   t
+      sgml-indent-step                   2
+      sgml-minimize-attributes           nil
+      sgml-omittag                       nil
+      sgml-shorttag                      nil
+      )
+
+;; PSGML menus for creating new documents
+(setq sgml-custom-dtd
+      '(
+;         ("HTML 2.0 Strict Level 1"
+;          "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0 Strict Level 1//EN\">")
+;         ("HTML 2.0 Level 1"
+;          "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0 Level 1//EN\">")
+;         ("HTML 2.0"
+;          "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">")
+        ("HTML 3.2"
+         "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2 Final//EN\">")
+        ("HTML 4 Loose/Transitional"
+         "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">")
+        ("HTML 4 Strict"
+         "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\">")
+        ("HTML 4 Frameset"
+         "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Frameset//EN\">")
+        ("DocBook 3.1"
+         "<!DOCTYPE Book PUBLIC \"-//OASIS//DTD DocBook V3.1//EN\">")
+        )
+      )
+
+;; ecat support
+(setq sgml-ecat-files
+      (list
+       (expand-file-name (concat (getenv "SGML") "/dtd/html/ecatalog"))
+       (expand-file-name (concat (getenv "SGML") "/dtd/docbook-3.1/ecatalog"))
+;       (expand-file-name "x:/l/sgml/dtd/html/ecatalog")
+;       (expand-file-name "x:/l/sgml/dtd/docbook-3.1/ecatalog")
+       ))
+
+;; psgml-dsssl -----------------------------------------------------------------
+(autoload 'sgml-dsssl-make-spec "psgml-dsssl" nil t)
+
+;; psgml-jade ------------------------------------------------------------------
+
+; the default commands are unix ones
+(setq sgml-command-list
+  (list
+   (list "Jade" "jade -c%catalogs -t%backend -d%stylesheet %file"
+         'sgml-run-command t
+         '(("jade:\\(.*\\):\\(.*\\):\\(.*\\):E:" 1 2 3)))
+   (list "JadeTeX" "tex \"&jadetex\" %tex"
+         'sgml-run-command nil)
+   (list "JadeTeX PDF" "virpdftex \"&pdfjadetex\" %tex"
+         'sgml-run-command t)
+   (list "dvips" "dvips %dvi"
+         'sgml-run-command nil)
+   (list "View dvi" "yap %dvi"
+         'sgml-run-background t)
+   (list "View PDF" "gsview32 %pdf"
+         'sgml-run-command nil)
+   (list "View ps" "gsview32 %ps"
+         'sgml-run-command nil))
+  )
+
+; the default sgml-shell is hardcoded to /bin/sh
+(setq sgml-shell shell-file-name)
+
+;; load psgml-jade extension
+(add-hook 'sgml-mode-hook '(lambda () (require 'psgml-jade)))
+
+
+;; sgml-html-mode mode ---------------------------------------------------------
+(defun sgml-html-mode ()
+  "This version of html mode is just a wrapper around sgml mode."
+  (interactive)
+  (sgml-mode)
+  (make-local-variable 'sgml-declaration)
+  (make-local-variable 'sgml-default-doctype-name)
+  (setq sgml-default-doctype-name    "html"
+        sgml-declaration             (concat (getenv "SGML") "/dtd/html/html.dcl")
+;        sgml-declaration             "x:/l/sgml/dtd/html/html.dcl"
+        sgml-always-quote-attributes t
+        sgml-indent-step             2
+        sgml-indent-data             t
+        sgml-minimize-attributes     nil
+        sgml-omittag                 t
+        sgml-shorttag                t
+        )
+  )
+
+;; xml-mode --------------------------------------------------------------------
+(setq auto-mode-alist
+      (append '(("\\.xml\\'" . xml-mode)) auto-mode-alist))
+(autoload 'xml-mode "psgml" nil t)
+(setq sgml-xml-declaration (concat (getenv "SGML") "/dtd/html/xml.dcl"))
+;(setq sgml-xml-declaration "X:/L/sgml/dtd/html/xml.dcl")
+
+
+;; dtd-mode --------------------------------------------------------------------
+(autoload 'dtd-mode "tdtd" "Major mode for SGML and XML DTDs." t)
+(autoload 'dtd-etags "tdtd"
+  "Execute etags on FILESPEC and match on DTD-specific regular expressions."
+  t)
+(autoload 'dtd-grep "tdtd" "Grep for PATTERN in files matching FILESPEC." t)
+
+(setq auto-mode-alist
+      (append
+       (list
+        '("\\.dcl\\'" . dtd-mode)
+        '("\\.dec\\'" . dtd-mode)
+        '("\\.dtd\\'" . dtd-mode)
+        '("\\.ele\\'" . dtd-mode)
+        '("\\.ent\\'" . dtd-mode)
+        '("\\.mod\\'" . dtd-mode))
+       auto-mode-alist))
 
 
 ;; Modul abschliessen ----------------------------------------------------------

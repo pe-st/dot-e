@@ -4,8 +4,8 @@
 ;;      Author: Peter Steiner <unistein@isbe.ch>
 ;;     Created: Wed Jul 6 19:52:18 1994
 ;;     $Source: g:/archiv/cvsroot/home/.emacs,v $
-;;   $Revision: 1.22 $
-;;       $Date: 1999/06/02 21:09:29 $
+;;   $Revision: 1.23 $
+;;       $Date: 1999/08/11 13:47:02 $
 ;;     $Author: pesche $
 
 
@@ -197,7 +197,8 @@ saving keyboard macros (see insert-kbd-macro)."
 (setq max-lisp-eval-depth 1000)
 
 
-; mit Maus erzeugtes imenu in der Konsole lässt emacs abstürzen.
+; mit Maus erzeugtes imenu in der Konsole liess emacs < 20 abstürzen.
+; Aber auch in Emacs 20.3 funktionieren noch keine Menüs mit der Maus...
 (cond (window-system
        (global-set-key (kbd "S-<mouse-2>") 'imenu)))
 
@@ -269,11 +270,19 @@ saving keyboard macros (see insert-kbd-macro)."
 (autoload 'todo-insert-item "todo-mode"
   "Add TODO item." t)
 
-; Der Mauszeiger soll vor dem herannahenden Cursor flüchten
-(mouse-avoidance-mode 'exile)
+; ; Der Mauszeiger soll vor dem herannahenden Cursor flüchten
+; (mouse-avoidance-mode 'exile)
 
-
+;; ausgelagerte Mode-Anpassungen ----------------------------------------------
 (require 'pesche-modes)
+
+;; Welcher mode soll für HTML verwendet werden? in pesche-modes werden
+;; sowohl html-helper-mode wie sgml-html-mode unterstützt.
+(setq auto-mode-alist
+      (append '(("\\.s?html?\\'" . sgml-html-mode))
+;;      (append '(("\\.s?html?\\'" . html-helper-mode))
+              auto-mode-alist))
+
 
 ;; dynamische Abkürzungen ------------------------------------------------------
 ;; immer case-sensitiv !

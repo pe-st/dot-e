@@ -4,8 +4,8 @@
 ;;      Author: Peter Steiner <unistein@isbe.ch>
 ;;     Created: Wed Jul 6 19:52:18 1994
 ;;     $Source: g:/archiv/cvsroot/home/.emacs,v $
-;;   $Revision: 1.17 $
-;;       $Date: 1999/04/22 20:22:41 $
+;;   $Revision: 1.18 $
+;;       $Date: 1999/04/22 22:28:56 $
 ;;     $Author: pesche $
 
 
@@ -255,6 +255,7 @@ saving keyboard macros (see insert-kbd-macro)."
 
 ; Menus etwas anpassen an grosse Bildschirme
 (setq imenu-max-items 40)
+(setq imenu-sort-function 'imenu--sort-by-name)
 (setq buffers-menu-max-size 30)
 
 (require 'msb)
@@ -305,9 +306,6 @@ saving keyboard macros (see insert-kbd-macro)."
 
 
 ;; lisp modes
-(setq auto-mode-alist (append '(("\\.el$" . emacs-lisp-mode)
-                                ("\\.emacs$" . emacs-lisp-mode)
-                                ) auto-mode-alist))
 (defun pesche-emacs-lisp-mode-hook()
   (setq-default tab-width        8
                 indent-tabs-mode nil)
@@ -440,7 +438,7 @@ saving keyboard macros (see insert-kbd-macro)."
 (autoload 'cperl-mode "cperl-mode" "alternate mode for editing Perl programs" t)
 ;; cperl-mode statt perl-mode verwenden
 (setq auto-mode-alist
-      (append '(("\\.[pP][Llm]$" . cperl-mode)) auto-mode-alist ))
+      (append '(("\\.[pP][Llm]\\'" . cperl-mode)) auto-mode-alist ))
 (setq interpreter-mode-alist (append interpreter-mode-alist
          '(("miniperl" . cperl-mode))))
 
@@ -491,24 +489,6 @@ saving keyboard macros (see insert-kbd-macro)."
 (setq dabbrev-case-replace nil)
 
 ;; font lock -------------------------------------------------------------------
-; (global-font-lock-mode t)
-; (setq font-lock-support-mode 'lazy-lock-mode)
-(setq font-lock-maximum-decoration t)
-(add-hook 'emacs-lisp-mode-hook    'turn-on-font-lock)
-(add-hook 'lisp-mode-hook          'turn-on-font-lock)
-(add-hook 'c-mode-hook             'turn-on-font-lock)
-(add-hook 'c++-mode-hook           'turn-on-font-lock)
-(add-hook 'asm-mode-hook           'turn-on-font-lock)
-(add-hook 'makefile-mode-hook      'turn-on-font-lock)
-(add-hook 'cperl-mode-hook         'turn-on-font-lock)
-(add-hook 'html-helper-mode-hook   'turn-on-font-lock)
-(add-hook 'TeX-mode-hook           'turn-on-font-lock)
-(add-hook 'tex-mode-hook           'turn-on-font-lock)
-(add-hook 'bibtex-mode-hook        'turn-on-font-lock)
-(add-hook 'texinfo-mode-hook       'turn-on-font-lock)
-(add-hook 'postscript-mode-hook    'turn-on-font-lock)
-(add-hook 'outline-mode-hook       'turn-on-font-lock)
-
 
 ;; cperl verändert auf 'unfreundliche' Art constant-face,
 ;; aber wir setzen unserer Kopf durch!
@@ -531,9 +511,9 @@ saving keyboard macros (see insert-kbd-macro)."
         (makefile-space-face          nil "HotPink")
         ))
 
+(global-font-lock-mode t)
+(setq font-lock-maximum-decoration t)
 (require 'font-lock)
-; (require 'fast-lock)
-; (add-hook 'font-lock-mode-hook 'turn-on-fast-lock)
 (require 'pesche-font-lock)
 
 (cond (window-system

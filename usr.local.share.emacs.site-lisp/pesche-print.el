@@ -1,8 +1,8 @@
 ;; Pesche's Druckerei
 ;;
 ;;     $Source: g:/archiv/cvsroot/site-lisp/pesche-print.el,v $
-;;   $Revision: 1.4 $
-;;       $Date: 2001/08/10 21:11:35 $
+;;   $Revision: 1.5 $
+;;       $Date: 2001/09/04 21:59:38 $
 ;;     $Author: donnerpesche $
 
 ;; Wir benötigen als Basis das Postscript-Modul von Emacs
@@ -40,9 +40,9 @@
       (defvar ghost-fonts   "F:\\Progra~1\\gs\\fonts")
       (defvar ghost-view    "F:\\Progra~1\\gs\\gsview\\gsview32.exe"))
     (progn  ; im Büro
-      (defvar ghost-dir     "L:\\tools\\ghost\\gs5.03")
+      (defvar ghost-dir     "L:\\tools\\ghost\\gs7.00")
       (defvar ghost-printer "-sDEVICE=ljet4 -r600")
-      (defvar ghost-fonts   "I:\\win\\psfonts")
+      (defvar ghost-fonts   "L:\\tools\\ghost\\psfonts")
       (defvar ghost-view    "L:\\tools\\ghost\\gsview\\gsview32.exe"))
     )
 
@@ -51,8 +51,7 @@
 (setq ps-psnup-switches '(" -l -2 -pa4 ")) ; options for program above
 (setq ps-lpr-command (concat "start /min " ghost-dir "\\bin\\gswin32"))
 (setq ps-lpr-switches `(,(concat "-q -sPAPERSIZE=a4 "
-                                ghost-printer " -dNOPAUSE -I"
-                                ghost-dir ";" ghost-fonts)))
+                                ghost-printer " -dNOPAUSE")))
 (setq ps-preview-command ghost-view)
 (setq ps-lpr-buffer (concat (getenv "TEMP") "\\psspool.ps"))
 (setq ps-psnup-buffer (concat (getenv "TEMP") "\\psnup.ps"))
@@ -60,7 +59,18 @@
 (setq ps-bold-faces '(font-lock-keyword-face info-xref info-node woman-bold-face))
 (setq ps-italic-faces '(font-lock-comment-face info-node woman-italic-face))
 
+; Variablen zum Verschönern des Output
+; (Zeilennummern und Zebra können via Menu ein- und ausgeschaltet werden,
+; siehe toggle-print-line-numbers-mode und toggle-print-zebra-stripes-mode)
+(setq ps-line-number t)
+(setq ps-line-number-step 5)
+(setq ps-line-number-start 5)
+(setq ps-zebra-stripes t)
+(setq ps-zebra-stripe-height 1)
+(setq ps-zebra-color 0.92)
+
 ;; Hilfsfunktionen -------------------------------------------------------------
+(require 'time-stamp)
 (defun pesche-time-stamp ()
   "Format time and date for inclusion in print header."
   ;; die time-stamp-Funktionen sind aus time-stamp.el
@@ -187,6 +197,24 @@
 (define-key-after menu-bar-files-menu [print]
   '("Print" . menu-bar-print-menu)
   'kill-buffer)
+
+; toggle für die Zebrastreifen beim Drucken
+(define-key-after menu-bar-files-menu [toggle-print-zebra-stripes-mode]
+  (menu-bar-make-toggle toggle-print-zebra-stripes-mode ps-zebra-stripes
+                        "Print Zebra Stripes"
+                        "Zebra Stripe mode %s"
+                        "Print Zebra Stripes")
+  'kill-buffer)
+
+; toggle für das Zeilennummern-Drucken
+(define-key-after menu-bar-files-menu [toggle-print-line-numbers-mode]
+  (menu-bar-make-toggle toggle-print-line-numbers-mode ps-line-number
+                        "Print Line Numbers"
+                        "Line Number mode %s"
+                        "Print line numbers")
+  'kill-buffer)
+
+; abschliessender Separator im File-Menu
 (define-key-after menu-bar-files-menu [separator-print]
   '("--")
   'kill-buffer)

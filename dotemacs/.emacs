@@ -4,8 +4,8 @@
 ;;      Author: Peter Steiner <unistein@isbe.ch>
 ;;     Created: Wed Jul 6 19:52:18 1994
 ;;     $Source: g:/archiv/cvsroot/home/.emacs,v $
-;;   $Revision: 1.28 $
-;;       $Date: 2000/03/30 20:34:44 $
+;;   $Revision: 1.29 $
+;;       $Date: 2000/10/30 21:24:50 $
 ;;     $Author: pesche $
 
 
@@ -23,10 +23,17 @@
 
 (require 'pesche-tools)
 
-
-(setq-default fill-column 77)           ;; column for line breaking in auto-fill-mode
 (setq make-backup-files t)
 (put 'eval-expression 'disabled nil)    ;; enable `eval-expression'
+
+;; filling and sentences -------------------------------------------------------
+;; fill: Zeilenumbruch etc.
+(setq-default fill-column 72)
+(require 'filladapt)
+
+;; Sätze mit einem Leerzeichen abschliessen. Vgl. Info Node 'Sentences'
+(setq-default sentence-end-double-space nil
+              sentence-end "[.?!][]\"')]*\\($\\|\t\\| \\)[ \t\n]*")
 
 ;; Zeilen nicht automatisch umbrechen, wenn sie zu lang sind; dafür
 ;; einen Minor-Mode laden, damit bei langen Zeilen automatisch gescrollt wird
@@ -195,6 +202,10 @@ saving keyboard macros (see insert-kbd-macro)."
 (global-set-key (kbd "<f5>") '(lambda()(interactive)(revert-buffer t)))
 (global-set-key (kbd "S-<f5>") '(lambda()(interactive)(revert-buffer t t)))
 
+;; IDE-Tastenkombinationen wie bei Visual Studio
+(global-set-key (kbd "<f4>") 'next-error)
+(global-set-key (kbd "S-<f4>") 'previous-error)
+
 (global-set-key (kbd "C-f") 'nonincremental-re-search-forward)          ;;
 (global-set-key (kbd "S-C-f") 'nonincremental-repeat-re-search-forward) ;;
 (global-set-key (kbd "S-C-s") 'nonincremental-repeat-search-forward)    ;;
@@ -239,7 +250,7 @@ saving keyboard macros (see insert-kbd-macro)."
 (require 'recentf)
 (setq recentf-max-saved-items 100)
 (setq recentf-max-menu-items 30)
-(recentf-mode)
+(recentf-mode 1)
 
 ; Anzeige des Funktionsnamens in der Modeline
 (setq which-func-maxout         0         ;; enabled, regardless buffer size
@@ -261,7 +272,6 @@ saving keyboard macros (see insert-kbd-macro)."
 
 ;; mode specific configuration -------------------------------------------------
 ;;(setq default-major-mode 'text-mode)
-;=(setq text-mode-hook 'turn-on-auto-fill)
 ;;(setq indent-tabs-mode 't)
 
 ;;; info system: find local info files
@@ -312,7 +322,8 @@ saving keyboard macros (see insert-kbd-macro)."
         ))
 
 (global-font-lock-mode t)
-(setq font-lock-maximum-decoration t)
+(setq font-lock-maximum-decoration t
+      font-lock-maximum-size       1048576)     ; 1 MB
 (require 'font-lock)
 (require 'pesche-font-lock)
 

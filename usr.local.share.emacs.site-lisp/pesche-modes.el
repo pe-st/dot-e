@@ -1,9 +1,9 @@
 ;; Pesche' Modes
 ;;
-;;     $Source: g:/archiv/cvsroot/site-lisp/pesche-modes.el,v $
-;;   $Revision: 1.9 $
-;;       $Date: 2001/09/08 09:55:05 $
-;;     $Author: donnerpesche $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#10 $
+;;   $DateTime: 2003/08/13 09:11:56 $
+;;     $Author: peter.steiner $
+;;  $Copyright: Peter Steiner <pesche@schlau.ch>
 
 ;; lisp modes ------------------------------------------------------------------
 (defun pesche-emacs-lisp-mode-hook()
@@ -156,6 +156,10 @@ Javadoc comments."
   )
 
 (add-hook 'makefile-mode-hook 'pesche-makefile-mode-hook)
+
+
+;; jam mode --------------------------------------------------------------------
+(require 'jam-mode)
 
 
 ;; assembler mode --------------------------------------------------------------

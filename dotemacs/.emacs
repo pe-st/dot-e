@@ -4,8 +4,8 @@
 ;;      Author: Peter Steiner <unistein@isbe.ch>
 ;;     Created: Wed Jul 6 19:52:18 1994
 ;;     $Source: g:/archiv/cvsroot/home/.emacs,v $
-;;   $Revision: 1.20 $
-;;       $Date: 1999/05/18 19:04:20 $
+;;   $Revision: 1.21 $
+;;       $Date: 1999/06/02 19:41:24 $
 ;;     $Author: pesche $
 
 
@@ -149,22 +149,42 @@ This function is the opposite of `bury-buffer'."
 ;; Paare von Werten (mindestens für Lucida Sans Typewriter)
 ;; 10-75 / 11-82 / 12-90 / 13-97 / 14-105 / 15-112
 (if (eq (string-match "PIAZZA" (system-name)) 0)
-    (defvar my-font-size "13-97")  ;; auf PIAZZA: etwas grösser (ca. 9.7 Punkt)
-    (defvar my-font-size "11-82")  ;; sonst (ca. 8.2 Punkt)
+    (defvar lucida-font-size "13-97")  ;; auf PIAZZA: etwas grösser (ca. 9.7 Punkt)
+    (defvar lucida-font-size "11-82")  ;; sonst (ca. 8.2 Punkt)
     )
 
 (defvar lucida-typewriter-regular
   (concat "-*-Lucida Sans Typewriter-normal-r-*-*-"
-          my-font-size "-*-*-c-*-iso8859-1"))
+          lucida-font-size "-*-*-c-*-iso8859-1"))
 (defvar lucida-typewriter-italic
   (concat "-*-Lucida Sans Typewriter-normal-i-*-*-"
-          my-font-size "-*-*-c-*-iso8859-1"))
+          lucida-font-size "-*-*-c-*-iso8859-1"))
 (defvar lucida-typewriter-bold
   (concat "-*-Lucida Sans Typewriter-semibold-r-*-*-"
-          my-font-size "-*-*-c-*-iso8859-1"))
+          lucida-font-size "-*-*-c-*-iso8859-1"))
 (defvar lucida-typewriter-bold-italic
   (concat "-*-Lucida Sans Typewriter-semibold-i-*-*-"
-          my-font-size "-*-*-c-*-iso8859-1"))
+          lucida-font-size "-*-*-c-*-iso8859-1"))
+
+
+;(defvar courier-font-size "10-100-75-75-m-60")
+;(defvar courier-font-size "11-80-100-100-m-60")
+(defvar courier-font-size "12-120-75-75-m-70")
+;(defvar courier-font-size "14-100-100-100-m-90")
+;(defvar courier-font-size "14-140-75-75-m-90")
+
+(defvar courier-regular
+  (concat "-*-courier-medium-r-normal-*-"
+          courier-font-size "-iso8859-1"))
+(defvar courier-italic
+  (concat "-*-courier-medium-o-normal-*-"
+          courier-font-size "-iso8859-1"))
+(defvar courier-bold
+  (concat "-*-courier-bold-r-normal-*-"
+          courier-font-size "-iso8859-1"))
+(defvar courier-bold-italic
+  (concat "-*-courier-bold-o-normal-*-"
+          courier-font-size "-iso8859-1"))
 
 
 ; WindowsNT und Linux haben immer noch verschiedene Schriften...
@@ -177,13 +197,27 @@ This function is the opposite of `bury-buffer'."
           (set-w32-system-coding-system 'raw-text))
       (setq win32-enable-italics t)
       (setq w32-enable-italics t)
-      (set-default-font           lucida-typewriter-regular)
-      (set-face-font 'default     lucida-typewriter-regular)
-      (set-face-font 'bold        lucida-typewriter-bold)
-      (set-face-font 'italic      lucida-typewriter-italic)
-      (set-face-font 'bold-italic lucida-typewriter-bold-italic)
+      (defvar pesche-default-regular     lucida-typewriter-regular)
+      (defvar pesche-default-bold        lucida-typewriter-bold)
+      (defvar pesche-default-italic      lucida-typewriter-italic)
+      (defvar pesche-default-bold-italic lucida-typewriter-bold-italic)
       )
+  (progn
+    ; die Linux-Variante
+    (defvar pesche-default-regular     courier-regular)
+    (defvar pesche-default-bold        courier-bold)
+    (defvar pesche-default-italic      courier-italic)
+    (defvar pesche-default-bold-italic courier-bold-italic)
+    )
   )
+
+(cond (window-system
+       (set-default-font           pesche-default-regular)
+       (set-face-font 'default     pesche-default-regular)
+       (set-face-font 'bold        pesche-default-bold)
+       (set-face-font 'italic      pesche-default-italic)
+       (set-face-font 'bold-italic pesche-default-bold-italic)
+))
 
 (cond (window-system
        ;; default-Parameter für alle Fenster
@@ -549,20 +583,22 @@ saving keyboard macros (see insert-kbd-macro)."
 
 
 ; WindowsNT und Linux haben immer noch verschiedene Schriften...
-(if (or (eq window-system 'win32)
-        (eq window-system 'w32))
+; (if (or (eq window-system 'win32)
+;         (eq window-system 'w32))
+(cond (window-system
     (progn
-      (set-face-font 'font-lock-comment-face       lucida-typewriter-italic)
-      (set-face-font 'font-lock-string-face        lucida-typewriter-regular)
-      (set-face-font 'font-lock-keyword-face       lucida-typewriter-bold)
-      (set-face-font 'font-lock-function-name-face lucida-typewriter-bold)
-      (set-face-font 'font-lock-variable-name-face lucida-typewriter-regular)
-      (set-face-font 'font-lock-type-face          lucida-typewriter-bold)
+      (set-face-font 'font-lock-comment-face       pesche-default-italic)
+      (set-face-font 'font-lock-string-face        pesche-default-regular)
+      (set-face-font 'font-lock-keyword-face       pesche-default-bold)
+      (set-face-font 'font-lock-function-name-face pesche-default-bold)
+      (set-face-font 'font-lock-variable-name-face pesche-default-regular)
+      (set-face-font 'font-lock-type-face          pesche-default-bold)
 ; nicht mehr nötig, da dies weiter oben mit dem 'Brecheisen' geschieht
 ;       (set-face-font 'font-lock-constant-face      lucida-typewriter-bold-italic)
 ;       (if (eq window-system 'win32)
 ;           (set-face-font 'font-lock-reference-face lucida-typewriter-bold-italic))
-      ))
+      )))
+;       ))
 
 
 ;; verschiedene andere Modi ----------------------------------------------------

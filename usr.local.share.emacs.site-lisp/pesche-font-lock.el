@@ -3,8 +3,8 @@
 ;; Author: Pesche <unistein@isbe.ch>
 ;;
 ;;     $Source: g:/archiv/cvsroot/site-lisp/pesche-font-lock.el,v $
-;;   $Revision: 1.7 $
-;;       $Date: 1999/02/15 22:06:05 $
+;;   $Revision: 1.8 $
+;;       $Date: 1999/03/06 18:11:30 $
 ;;     $Author: pesche $
 
 ;;; This package provides some improvements to `font-lock-mode':
@@ -30,12 +30,15 @@
       (make-face 'pesche-tab-face)
       (make-face 'pesche-strong-tab-face)
       (make-face 'pesche-space-face)
+      (make-face 'pesche-hardspace-face)
       (make-face 'hw-keyword-face)
-;      (set-face-background 'pesche-tab-face        "Snow")
       (set-face-background 'pesche-tab-face        "LemonChiffon")
       (set-face-background 'pesche-strong-tab-face "Moccasin")
-;      (set-face-background 'pesche-strong-tab-face "CornflowerBlue")
       (set-face-background 'pesche-space-face      "Gold")
+      (set-face-background 'pesche-hardspace-face  "PaleGreen")
+;      (set-face-background 'pesche-hardspace-face  "CornflowerBlue")
+;      (set-face-background 'pesche-hardspace-face  "LightSalmon")
+;      (set-face-background 'pesche-hardspace-face  "Wheat")
       (set-face-foreground 'hw-keyword-face        "Red")
       ))
 
@@ -49,11 +52,13 @@
   "Face to use for strong highlighting tab characters in Font-Lock mode.")
 (defvar pesche-space-face 'pesche-space-face
   "Face to use for highlighting trailing spaces in Font-Lock mode.")
+(defvar pesche-hardspace-face 'pesche-hardspace-face
+  "Face to use for highlighting hard spaces in Font-Lock mode.")
 (defvar hw-keyword-face 'hw-keyword-face
   "Face to use for highlighting keywords according HW coding guide.")
 
 ;; C/C++ font lock -----------------------------------------------------
-;; Kopie aus font-lock.el (Emacs 19.34.6), 
+;; Kopie aus font-lock.el (Emacs 19.34.6),
 ;; aber Präprozessor-Kommandi dürfen eingerückt sein
 ;; spezieller Font hw-keyword-face für HW-Schlüsselwörter (nach Richtlinien)
 (let ((c-keywords
@@ -61,31 +66,31 @@
        "break\\|continue\\|do\\|else\\|for\\|if\\|return\\|switch\\|while")
       (c-type-types
 ;      ("auto" "extern" "register" "static" "typedef" "struct" "union" "enum"
-;	"signed" "unsigned" "short" "long" "int" "char" "float" "double"
-;	"void" "volatile" "const")
+;       "signed" "unsigned" "short" "long" "int" "char" "float" "double"
+;       "void" "volatile" "const")
        (concat "auto\\|c\\(har\\|onst\\)\\|double\\|e\\(num\\|xtern\\)\\|"
-	       "float\\|int\\|long\\|register\\|"
-	       "s\\(hort\\|igned\\|t\\(atic\\|ruct\\)\\)\\|typedef\\|"
-	       "un\\(ion\\|signed\\)\\|vo\\(id\\|latile\\)"))	; 6 ()s deep.
+               "float\\|int\\|long\\|register\\|"
+               "s\\(hort\\|igned\\|t\\(atic\\|ruct\\)\\)\\|typedef\\|"
+               "un\\(ion\\|signed\\)\\|vo\\(id\\|latile\\)"))   ; 6 ()s deep.
       (c++-keywords
 ;      ("break" "continue" "do" "else" "for" "if" "return" "switch" "while"
-;	"asm" "catch" "delete" "new" "operator" "sizeof" "this" "throw" "try"
+;       "asm" "catch" "delete" "new" "operator" "sizeof" "this" "throw" "try"
 ;       "protected" "private" "public")
        (concat "asm\\|break\\|c\\(atch\\|ontinue\\)\\|d\\(elete\\|o\\)\\|"
-	       "else\\|for\\|if\\|new\\|"
-	       "p\\(r\\(ivate\\|otected\\)\\|ublic\\)\\|return\\|"
-	       "s\\(izeof\\|witch\\)\\|t\\(h\\(is\\|row\\)\\|ry\\)\\|while"))
+               "else\\|for\\|if\\|new\\|"
+               "p\\(r\\(ivate\\|otected\\)\\|ublic\\)\\|return\\|"
+               "s\\(izeof\\|witch\\)\\|t\\(h\\(is\\|row\\)\\|ry\\)\\|while"))
       (c++-type-types
 ;      ("auto" "extern" "register" "static" "typedef" "struct" "union" "enum"
-;	"signed" "unsigned" "short" "long" "int" "char" "float" "double"
-;	"void" "volatile" "const" "class" "inline" "friend" "bool"
-;	"virtual" "complex" "template")
+;       "signed" "unsigned" "short" "long" "int" "char" "float" "double"
+;       "void" "volatile" "const" "class" "inline" "friend" "bool"
+;       "virtual" "complex" "template")
        (concat "auto\\|bool\\|c\\(har\\|lass\\|o\\(mplex\\|nst\\)\\)\\|"
-	       "double\\|e\\(num\\|xtern\\)\\|f\\(loat\\|riend\\)\\|"
-	       "in\\(line\\|t\\)\\|long\\|register\\|"
-	       "s\\(hort\\|igned\\|t\\(atic\\|ruct\\)\\)\\|"
-	       "t\\(emplate\\|ypedef\\)\\|un\\(ion\\|signed\\)\\|"
-	       "v\\(irtual\\|o\\(id\\|latile\\)\\)"))		; 11 ()s deep.
+               "double\\|e\\(num\\|xtern\\)\\|f\\(loat\\|riend\\)\\|"
+               "in\\(line\\|t\\)\\|long\\|register\\|"
+               "s\\(hort\\|igned\\|t\\(atic\\|ruct\\)\\)\\|"
+               "t\\(emplate\\|ypedef\\)\\|un\\(ion\\|signed\\)\\|"
+               "v\\(irtual\\|o\\(id\\|latile\\)\\)"))           ; 11 ()s deep.
       (hw-c-keywords
 ;      ("bool" "true" "false" "uint8" "uint16" "uint32" "int8" "int16" "int32"
 ;       "smallint" "smalluint" "_plm_call" "_bit" "_rom_mem" "_rom_ptr"
@@ -156,25 +161,25 @@
     ;;
     ;; Fontify all storage classes and type specifiers, plus their items.
     (list (concat "\\<\\(" c-type-types "\\)\\>"
-		  "\\([ \t*&]+\\sw+\\>\\)*")
-	  ;; Fontify each declaration item.
-	  '(font-lock-match-c++-style-declaration-item-and-skip-to-next
-	    ;; Start with point after all type specifiers.
-	    (goto-char (or (match-beginning 8) (match-end 1)))
-	    ;; Finish with point after first type specifier.
-	    (goto-char (match-end 1))
-	    ;; Fontify as a variable or function name.
-	    (1 (if (match-beginning 4)
-		   font-lock-function-name-face
-		 font-lock-variable-name-face))))
+                  "\\([ \t*&]+\\sw+\\>\\)*")
+          ;; Fontify each declaration item.
+          '(font-lock-match-c++-style-declaration-item-and-skip-to-next
+            ;; Start with point after all type specifiers.
+            (goto-char (or (match-beginning 8) (match-end 1)))
+            ;; Finish with point after first type specifier.
+            (goto-char (match-end 1))
+            ;; Fontify as a variable or function name.
+            (1 (if (match-beginning 4)
+                   font-lock-function-name-face
+                 font-lock-variable-name-face))))
     ;;
     ;; Fontify structures, or typedef names, plus their items.
     '("\\(}\\)[ \t*]*\\sw"
       (font-lock-match-c++-style-declaration-item-and-skip-to-next
        (goto-char (match-end 1)) nil
        (1 (if (match-beginning 4)
-	      font-lock-function-name-face
-	    font-lock-variable-name-face))))
+              font-lock-function-name-face
+            font-lock-variable-name-face))))
     ;;
     ;; Fontify anything at beginning of line as a declaration or definition.
     '("^\\(\\sw+\\)\\>\\([ \t*]+\\sw+\\>\\)*"
@@ -182,11 +187,14 @@
       (font-lock-match-c++-style-declaration-item-and-skip-to-next
        (goto-char (or (match-beginning 2) (match-end 1))) nil
        (1 (if (match-beginning 4)
-	      font-lock-function-name-face
-	    font-lock-variable-name-face))))
+              font-lock-function-name-face
+            font-lock-variable-name-face))))
    ;;
    ;; Highlight tabs
    '("[\t]+" . pesche-strong-tab-face)
+   ;;
+   ;; Highlight hard spaces
+   '("[\240]+" . pesche-hardspace-face)
    ;;
    ;; Highlight trailing whitespace
    '("[ \t]+$" . pesche-space-face)
@@ -203,8 +211,8 @@
    (list
     '("^\\(\\sw+\\)\\(::\\(\\sw+\\)\\)?[ \t]*("
       (1 (if (match-beginning 2)
-	     font-lock-type-face
-	   font-lock-function-name-face))
+             font-lock-type-face
+           font-lock-function-name-face))
       (3 font-lock-function-name-face nil t))
     )))
 
@@ -238,28 +246,28 @@
     ;;
     ;; Fontify all storage classes and type specifiers, plus their items.
     (list (concat "\\<\\(" c++-type-types "\\)\\>"
-		  "\\([ \t*&]+\\sw+\\>\\)*")
-	  ;; Fontify each declaration item.
-	  '(font-lock-match-c++-style-declaration-item-and-skip-to-next
-	    ;; Start with point after all type specifiers.
-	    (goto-char (or (match-beginning 13) (match-end 1)))
-	    ;; Finish with point after first type specifier.
-	    (goto-char (match-end 1))
-	    ;; Fontify as a variable or function name.
-	    (1 (cond ((match-beginning 2) font-lock-type-face)
-		     ((match-beginning 4) font-lock-function-name-face)
-		     (t font-lock-variable-name-face)))
-	    (3 (if (match-beginning 4)
-		   font-lock-function-name-face
-		 font-lock-variable-name-face) nil t)))
+                  "\\([ \t*&]+\\sw+\\>\\)*")
+          ;; Fontify each declaration item.
+          '(font-lock-match-c++-style-declaration-item-and-skip-to-next
+            ;; Start with point after all type specifiers.
+            (goto-char (or (match-beginning 13) (match-end 1)))
+            ;; Finish with point after first type specifier.
+            (goto-char (match-end 1))
+            ;; Fontify as a variable or function name.
+            (1 (cond ((match-beginning 2) font-lock-type-face)
+                     ((match-beginning 4) font-lock-function-name-face)
+                     (t font-lock-variable-name-face)))
+            (3 (if (match-beginning 4)
+                   font-lock-function-name-face
+                 font-lock-variable-name-face) nil t)))
     ;;
     ;; Fontify structures, or typedef names, plus their items.
     '("\\(}\\)[ \t*]*\\sw"
       (font-lock-match-c++-style-declaration-item-and-skip-to-next
        (goto-char (match-end 1)) nil
        (1 (if (match-beginning 4)
-	      font-lock-function-name-face
-	    font-lock-variable-name-face))))
+              font-lock-function-name-face
+            font-lock-variable-name-face))))
     ;;
     ;; Fontify anything at beginning of line as a declaration or definition.
     '("^\\(\\sw+\\)\\>\\([ \t*]+\\sw+\\>\\)*"
@@ -267,11 +275,11 @@
       (font-lock-match-c++-style-declaration-item-and-skip-to-next
        (goto-char (or (match-beginning 2) (match-end 1))) nil
        (1 (cond ((match-beginning 2) font-lock-type-face)
-		((match-beginning 4) font-lock-function-name-face)
-		(t font-lock-variable-name-face)))
+                ((match-beginning 4) font-lock-function-name-face)
+                (t font-lock-variable-name-face)))
        (3 (if (match-beginning 4)
-	      font-lock-function-name-face
-	    font-lock-variable-name-face) nil t)))
+              font-lock-function-name-face
+            font-lock-variable-name-face) nil t)))
     )))
  )
 
@@ -312,11 +320,12 @@
 
 ;; font lock für jeden major mode anpassen -----------------------------
 (add-hook 'font-lock-mode-hook
-	  '(lambda()
-	     (setq font-lock-keywords
-		   (append font-lock-keywords
-			   '(("[\t]+" (0 'pesche-tab-face t))
-			     ("[\040\t]+$" (0 'pesche-space-face t)))))))
+          '(lambda()
+             (setq font-lock-keywords
+                   (append font-lock-keywords
+                           '(("[\t]+" (0 'pesche-tab-face t))
+                             ("[\240]+" (0 'pesche-hardspace-face t))
+                             ("[\040\t]+$" (0 'pesche-space-face t)))))))
 
 
 (provide 'pesche-font-lock)

@@ -266,7 +266,15 @@
   )
 
 
-(defun lingo-mode ()
+(defvar lingo-imenu-generic-expression
+  (list (list nil lingo-handler-regexp 1))
+  "Extract handler names for `imenu'.")
+
+;; (defvar lingo-outline-regexp
+;;   ...)
+
+
+(define-derived-mode lingo-mode fundamental-mode "lingo"
   "Major mode for editing Lingo files.
 This mode knows about Lingo indentation, tokens, comments and
 continuation lines.
@@ -305,8 +313,8 @@ lingo-indent-offset\t\tindentation increment"
 ;;      comment-indent-function 'lingo-comment-indent-function
         indent-line-function    'lingo-indent-line
         )
-  (setq imenu-generic-expression
-        (list (list nil lingo-handler-regexp 1)))
+  (set (make-local-variable 'imenu-generic-expression)
+       lingo-imenu-generic-expression)
   (use-local-map lingo-mode-map)
 
   ;; Run the mode hook.

@@ -3,7 +3,10 @@
 ;;
 ;;      Author: Peter Steiner <unistein@isbe.ch>
 ;;     Created: Wed Jul 6 19:52:18 1994
-;;     changed:
+;;    $RCSfile: .emacs,v $
+;;   $Revision: 1.12 $
+;;       $Date: 1998/10/09 20:34:53 $
+;;     $Author: pesche $
 
 
 ;; setup special variables and functions ---------------------------------------
@@ -115,10 +118,7 @@ This function is the opposite of `bury-buffer'."
 ;; general configuration -------------------------------------------------------
 
 ;; Emacs-Päckli auch in meinem lokalen emacs-Verzeichnis suchen
-;(if (file-accessible-directory-p "~/emacs/gnus/lisp")
-;    (setq load-path (append '("~/emacs/gnus/lisp") load-path)))
-;(if (file-accessible-directory-p "~/emacs/custom")
-;    (setq load-path (append '("~/emacs/custom") load-path)))
+;; für Emacsen < 20 noch ein zusätzliches Verzeichnis emacs19
 (if (<= emacs-major-version 19)
     (if (file-accessible-directory-p "~/emacs/emacs19")
         (setq load-path (append '("~/emacs/emacs19") load-path))))
@@ -323,72 +323,96 @@ saving keyboard macros (see insert-kbd-macro)."
                       (imenu-add-to-menubar "Index")
                       )))
 
-;; c++ mode
-(setq auto-mode-alist (append '(("\\.C$"  . c-mode)
-                                ("\\.cc$" . c++-mode)
-                                ("\\.hh$" . c++-mode)
-                                ("\\.c$"  . c-mode)
-                                ("\\.h$"  . c-mode)
-                                ) auto-mode-alist))
-(add-hook 'c-mode-common-hook
-          (function (lambda ()
-                      (local-set-key [delete] 'delete-char)
-                      (local-set-key [backspace] 'c-electric-delete)
-                      ;; auch in C die neuen C++-Kommentare verwenden
-                      (if (fboundp 'c-enable-//-in-c-mode)
-                          (c-enable-//-in-c-mode))
-                      (setq comment-start "// "
-                            comment-end ""
-                            comment-multi-line nil
-                            font-lock-comment-start-regexp nil
-                            c-double-slash-is-comments-p t)
-                      ;; Syntax etwas anpassen
-                      (modify-syntax-entry ?_ "w")
-                      (modify-syntax-for-umlaut)
-                      ;; Mein Codierstil ist ein abgeänderter 'Stroustrup'
-                      (c-set-style  "Stroustrup")
-                      (c-set-offset 'case-label '+)
-                      (c-set-offset 'statement-case-open '+)
-                      (c-set-offset 'arglist-close 0)
-                      (setq-default tab-width                4
-                                    indent-tabs-mode         nil
-                                    c-tab-always-indent      nil
-                                    c++-tab-always-indent    nil)
+;; C mode und alle Verwandten --------------------------------------------------
+;; cc-mode 5.21 kennt das "richtige" Verhalten von Delete und Backspace
+;; (aber nur wenn delete-key-deletes-forward existiert)
+(if (not (boundp 'delete-key-deletes-forward))
+    (defvar delete-key-deletes-forward))
+(setq delete-key-deletes-forward t)
 
-                      ;; alle 'Kästchen' in das 'Outline'-Menü aufnehmen
-                      (setq imenu-generic-expression
-                            (append imenu-generic-expression
-                                    '(("Outline"
-                                       "^/\\*[-]+\\+[ \t]*\n|[ \t]+\\([^ \t][- A-Za-z0-9+]*\\).*|" 
-                                       1)
-                                      ("Types"
-                                       "^[ \t]*typedef[ \t]+\\(struct[ \t]+[_A-Za-z0-9]+\\)"
-                                       1)
-                                      )))
-                      (imenu-add-to-menubar "Index")
-                      )))
+(defun pesche-c-mode-common-hook()
+  ;; das 'elektrische' automatische Einrücken bei Kommentaren ist lästig...
+  (local-unset-key (kbd "*"))
+  (local-unset-key (kbd "/"))
+  ;; auch in C die neuen C++-Kommentare verwenden
+  (if (fboundp 'c-enable-//-in-c-mode)
+      (c-enable-//-in-c-mode))
+  (setq comment-start "// "
+        comment-end ""
+        comment-multi-line nil
+        font-lock-comment-start-regexp nil
+        c-double-slash-is-comments-p t)
+  ;; Syntax etwas anpassen, damit (zB) Markieren mit Doppelklick nicht
+  ;; bei '_' oder Umlauten Halt macht
+  (modify-syntax-entry ?_ "w")
+  (modify-syntax-for-umlaut)
+  ;; Mein Codierstil ist ein abgeänderter 'Stroustrup'
+  (c-set-style  "Stroustrup")
+  (c-set-offset 'case-label '+)
+  (c-set-offset 'statement-case-open '+)
+  (c-set-offset 'arglist-close 0)
+  (setq-default tab-width                4
+                indent-tabs-mode         nil
+                c-tab-always-indent      nil
+                c++-tab-always-indent    nil)
+
+  ;; alle 'Kästchen' in das 'Outline'-Menü aufnehmen
+  (setq imenu-generic-expression
+        (append imenu-generic-expression
+                '(("Outline"
+                   "^/\\*[-]+\\+[ \t]*\n|[ \t]+\\([^ \t][- A-Za-zÄÖÜäöü0-9+]*\\).*|"
+                   1)
+                  ("Types"
+                   "^[ \t]*typedef[ \t]+\\(struct[ \t]+[_A-Za-z0-9]+\\)"
+                   1)
+                  )))
+  (imenu-add-to-menubar "Index")
+  )
+(add-hook 'c-mode-common-hook 'pesche-c-mode-common-hook)
 
 
-;; makefile mode
-(setq auto-mode-alist (append '(("[Mm]akefile$" . makefile-mode)
-                                ("\\.mk$" . makefile-mode)
-                                ("\\.mak$" . makefile-mode)
-                                ) auto-mode-alist))
-(add-hook 'makefile-mode-hook
-          (function (lambda ()
-                      (setq-default tab-width        8
-                                    indent-tabs-mode t)
+;; makefile mode ---------------------------------------------------------------
+;; Files auf .mak sollen auch Makefiles sein (ist offenbar nicht üblich)
+(setq auto-mode-alist (append '(("\\.mak\\'" . makefile-mode)) auto-mode-alist))
 
-                      ; korrigiere regexp für Zuweisungen (Fehler tritt nur
-                      ; bei imenu auf, font-lock ist okay)
-                      (setq makefile-macroassign-regex
-                            "^\\([^ \n\t#][^:#= \t\n]*\\)[ \t]*[*:+]?:?=")
-                      ;               --^--  dieses '#' fehlt in make-mode.el
+;; Makefiles im msb-Buffermenü als Makefiles einordnen (bei cperl abgeschaut)
+(defvar msb-menu-cond)
+;(defvar makefile-msb-fixed)
+(defun makefile-msb-fix()
+  ;; Adds makefiles to msb menu, supposes that msb is already loaded
+;  (setq makefile-msb-fixed t)
+  (let* ((l (length msb-menu-cond))
+         (last (nth (1- l) msb-menu-cond))
+         (precdr (nthcdr (- l 2) msb-menu-cond)) ; cdr of this is last
+         (handle (1- (nth 1 last))))
+    (setcdr precdr (list
+                    (list
+                     '(eq major-mode 'makefile-mode)
+                     handle
+                     "Makefiles (%d)")
+                    last))))
 
-                      (imenu-add-to-menubar "Index")
-                      )))
+(defun pesche-makefile-mode-hook()
+  (setq-default tab-width        8
+                indent-tabs-mode t)
 
-;; assembler mode
+  ; korrigiere regexp für Zuweisungen (Fehler tritt nur
+  ; bei imenu auf, font-lock ist okay)
+  (setq makefile-macroassign-regex
+        "^\\([^ \n\t#][^:#= \t\n]*\\)[ \t]*[*:+]?:?=")
+  ;               --^--  dieses '#' fehlt in make-mode.el
+
+  (imenu-add-to-menubar "Index")
+;   (and (boundp 'msb-menu-cond)
+;        (not makefile-msb-fixed)
+;        (makefile-msb-fix))
+  (makefile-msb-fix)
+  )
+
+(add-hook 'makefile-mode-hook 'pesche-makefile-mode-hook)
+
+
+;; assembler mode --------------------------------------------------------------
 (add-hook 'asm-mode-hook
           (function (lambda ()
                       (local-unset-key (kbd "<tab>"))
@@ -399,90 +423,56 @@ saving keyboard macros (see insert-kbd-macro)."
 ;                      (imenu-add-to-menubar "Index")
                       )))
 
-;; perl mode
+;; perl mode -------------------------------------------------------------------
 (autoload 'cperl-mode "cperl-mode" "alternate mode for editing Perl programs" t)
-(setq cperl-hairy t)
+;; cperl-mode statt perl-mode verwenden
 (setq auto-mode-alist
-      (append '(("\\.[pP][Llm]$" . cperl-mode))  auto-mode-alist ))
+      (append '(("\\.[pP][Llm]$" . cperl-mode)) auto-mode-alist ))
 (setq interpreter-mode-alist (append interpreter-mode-alist
          '(("miniperl" . cperl-mode))))
-(add-hook 'cperl-mode-hook
-          (function (lambda ()
-                      (imenu-add-to-menubar "Index")
-                      )))
+(setq cperl-hairy t)
 
-; (add-hook 'perl-mode-hook
-;           (function (lambda ()
-; ;                      (setq-default tab-width        8
-; ;                                    indent-tabs-mode t)
-;                       (imenu-add-to-menubar "Index")
-;                       )))
+(defun pesche-cperl-mode-hook()
+  (imenu-add-to-menubar "Index")
+  )
+
+(add-hook 'cperl-mode-hook 'pesche-cperl-mode-hook)
 
 
-;; TeX and related modes
-;(cond
-; ;; check if we can use AUC TeX:
-; ;; change the name to your name if you have installed AUC TeX
-; ((and (or (eq pesche-emacs-version 'emacs-x)
-;           (eq pesche-emacs-version 'lucid))
-;       (not (eq (string-match "psteiner" (user-login-name)) nil))
-;       )
-;  ;; this is to fix a bug in auctex occuring when using XEmacs 19.13
-;  (defadvice set-text-properties (around ignore-strings activate)
-;    "Ignore strings."
-;    (or (stringp (ad-get-arg 3))
-;        ad-do-it))
-;  (require 'tex-site)
-;  (setq TeX-parse-self t)
-;  (setq TeX-auto-save t)
-;  (setq-default TeX-master nil)
-;  ;; xfig drawings
-;  (setq auto-mode-alist (append '(("\\.pstex_t$" . LaTeX-mode)
-;                                  ) auto-mode-alist))
-;  )
-;
-; ;; else we have to use ordinary modes...
-; (t
-;  (setq auto-mode-alist (append '(("\\.tex$" . TeX-mode)
-;                                  ("\\.txi$" . Texinfo-mode)
-;                                  ("\\.texi$" . Texinfo-mode)
-;                                  ("\\.bib$" . bibtex-mode)
-;                                  ) auto-mode-alist))
-;  (add-hook 'latex-mode-hook
-;            (function (lambda ()
-;;                        (local-set-key "\"" 'self-insert-command)
-;                        (auto-fill-mode))))
-;  (setq tex-default-mode 'latex-mode)
-; )
-;)
-;
-
-;;; hooks
-;(add-hook 'TeX-mode-hook
-;          (function (lambda ()
-;                      (local-set-key [delete] 'delete-char)
-;                      (local-set-key [backspace] 'backward-delete-char-untabify)
-;                      )))
-;(add-hook 'bibtex-mode-hook
-;          (function (lambda ()
-;                      (local-set-key "\"" 'self-insert-command))))
-
-
-;;; html mode
+;; html mode -------------------------------------------------------------------
 (autoload 'html-helper-mode "html-helper-mode" "HTML major mode." t)
-(setq auto-mode-alist (append '(("\\.html$" . html-helper-mode)
-                                ("\\.htm$" . html-helper-mode)
-                                ) auto-mode-alist))
+;; html-helper-mode statt html-mode verwenden
+(setq auto-mode-alist
+      (append '(("\\.s?html?\\'" . html-helper-mode)) auto-mode-alist))
 (setq html-helper-use-expert-menu t)
 
+;; HTML-Files im msb-Buffermenü als solche einordnen (bei cperl abgeschaut)
+(defvar msb-menu-cond)
+(defun html-msb-fix()
+  (let* ((l (length msb-menu-cond))
+         (last (nth (1- l) msb-menu-cond))
+         (precdr (nthcdr (- l 2) msb-menu-cond)) ; cdr of this is last
+         (handle (1- (nth 1 last))))
+    (setcdr precdr (list
+                    (list
+                     '(eq major-mode 'html-helper-mode)
+                     handle
+                     "Web Files (%d)")
+                    last))))
 
-;;; pplog mode
+(defun pesche-html-helper-mode-hook()
+  (html-msb-fix)
+  )
+
+(add-hook 'html-helper-mode-hook 'pesche-html-helper-mode-hook)
+
+
+;; pplog mode ------------------------------------------------------------------
 (require 'pplog-mode)
 
 
-;; packages configuration ------------------------------------------------------
-
-;; dynamische Abkürzungen (dabbrev): immer case-sensitiv
+;; dynamische Abkürzungen ------------------------------------------------------
+;; immer case-sensitiv !
 (setq dabbrev-case-fold-search nil)
 (setq dabbrev-case-replace nil)
 
@@ -563,8 +553,8 @@ saving keyboard macros (see insert-kbd-macro)."
 
 ;; Gnus-Reader -----------------------------------------------------------------
 ;; weitere Konfiguration siehe .gnus
-;;(autoload 'gnus-unplugged "gnus-agent" "Start Gnus unplugged." t)
-
+(autoload 'gnus-unplugged "gnus-agent" "Start Gnus unplugged." t)
+(setq gnus-directory "~/gnus/")
 
 ;; gnuserv
 (require 'gnuserv)
@@ -592,7 +582,16 @@ saving keyboard macros (see insert-kbd-macro)."
                                                c++-tab-always-indent)
                                              desktop-locals-to-save))
 (desktop-load-default)
+
+;; Bevor der gespeicherte Desktop geladen werden darf, ändern wir
+;; noch einen während der Übersetzung von Emacs hart codierten Pfad.
+;; Falls nämlich ein Info-Buffer existierte, versucht desktop ein
+;; (require 'info), welches dann zu einem Zugriff auf source-directory
+;; führt. Da dieses bei 20.3.1 auf d:\\irgendwas zeigt, kommt es zum
+;; Zugriff auf das möglicherweise leere MO-Laufwerk.
+(setq source-directory "c:\\emacs\\")   ;; Inhalt unwichtig, solange nicht D:
 (desktop-read)
+
 ;; verschiedene Histories verkürzen, damit mit 'desktop' nicht zu viel
 ;; gespeichert wird
 (add-hook 'kill-emacs-hook

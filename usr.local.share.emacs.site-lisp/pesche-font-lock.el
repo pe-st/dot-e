@@ -1,27 +1,6 @@
+;;----------------------------------------------------------- -*- Emacs-Lisp -*-
 ;; Improvements to Electric Font Lock Mode
-
 ;; Author: Pesche <unistein@isbe.ch>
-;; Maintainer: Author
-;; Keywords: languages, faces
-
-;; This file is not a part of GNU Emacs, but is made available under
-;; the same conditions.
-
-;; GNU Emacs is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation; either version 2, or (at your option)
-;; any later version.
-
-;; GNU Emacs is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with GNU Emacs; see the file COPYING.  If not, write to
-;; the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
-
-;;; Commentary:
 
 ;;; This package provides some improvements to `font-lock-mode':
 
@@ -38,9 +17,28 @@
 
 (require 'font-lock)
 
+;; Definition tab und space face ---------------------------------------
+(if (memq (framep (selected-frame)) '(x pc win32))
+    (progn
+      (make-face 'pesche-tab-face)
+      (make-face 'pesche-space-face)
+      (set-face-background 'pesche-tab-face   "Moccasin")
+;      (set-face-background 'pesche-tab-face   "CornflowerBlue")
+      (set-face-background 'pesche-space-face "Gold")
+      ))
+
+;(if (fboundp 'facemenu-unlisted-faces)
+;    (progn
+;      (add-to-list 'facemenu-unlisted-faces 'pesche-tab-face)
+;      (add-to-list 'facemenu-unlisted-faces 'pesche-space-face)))
+(defvar pesche-tab-face 'pesche-tab-face
+  "Face to use for highlighting tab characters in Font-Lock mode.")
+(defvar pesche-space-face 'pesche-space-face
+  "Face to use for highlighting trailing spaces in Font-Lock mode.")
+
+;; C/C++ font lock -----------------------------------------------------
 ;; Kopie aus font-lock.el (Emacs 19.34.6), 
 ;; aber Präprozessor-Kommandi dürfen eingerückt sein
-
 (let ((c-keywords
 ;      ("break" "continue" "do" "else" "for" "if" "return" "switch" "while")
        "break\\|continue\\|do\\|else\\|for\\|if\\|return\\|switch\\|while")
@@ -72,6 +70,8 @@
 	       "t\\(emplate\\|ypedef\\)\\|un\\(ion\\|signed\\)\\|"
 	       "v\\(irtual\\|o\\(id\\|latile\\)\\)"))		; 11 ()s deep.
       )
+
+ ;; c font lock keywords 1 ---------------------------------------------
  (setq c-font-lock-keywords-1
   (list
    ;;
@@ -96,6 +96,7 @@
      (1 font-lock-reference-face) (2 font-lock-variable-name-face nil t))
    ))
 
+ ;; c font lock keywords 2 ---------------------------------------------
  (setq c-font-lock-keywords-2
   (append c-font-lock-keywords-1
    (list
@@ -114,6 +115,7 @@
     '("^[ \t]*\\(\\sw+\\)[ \t]*:" 1 font-lock-reference-face)
     )))
 
+ ;; c font lock keywords 3 ---------------------------------------------
  (setq c-font-lock-keywords-3
   (append c-font-lock-keywords-2
    ;;
@@ -151,8 +153,15 @@
        (1 (if (match-beginning 4)
 	      font-lock-function-name-face
 	    font-lock-variable-name-face))))
+   ;;
+   ;; Highlight tabs
+   '("[\t]+" . pesche-tab-face)
+   ;;
+   ;; Highlight trailing whitespace
+   '("[ \t]+$" . pesche-space-face)
     )))
 
+ ;; c++ font lock keywords 1 -------------------------------------------
  (setq c++-font-lock-keywords-1
   (append
    ;;
@@ -168,6 +177,7 @@
       (3 font-lock-function-name-face nil t))
     )))
 
+ ;; c++ font lock keywords 2 -------------------------------------------
  (setq c++-font-lock-keywords-2
   (append c++-font-lock-keywords-1
    (list
@@ -188,6 +198,7 @@
     (cons (concat "\\<\\(" c++-keywords "\\)\\>") 'font-lock-keyword-face)
     )))
 
+ ;; c++ font lock keywords 3 -------------------------------------------
  (setq c++-font-lock-keywords-3
   (append c++-font-lock-keywords-2
    ;;
@@ -234,7 +245,7 @@
  )
 
 
-
+;; Korrekturen für make mode font lock ---------------------------------
 ; font-lock-Definitionen von make-mode.el korrigieren
 (load "make-mode")
 

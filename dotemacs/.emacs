@@ -327,7 +327,7 @@ saving keyboard macros (see insert-kbd-macro)."
                       ;; in das 'Outline'-Menü eintragen
                       (setq imenu-generic-expression 
                             (append imenu-generic-expression
-                                    '(("Outline" ";+[ \\t]+\\([ A-Za-z0-9+]+\\)---*[ \\t]*$" 1))))
+                                    '(("Outline" ";+[ \\t]+\\([ A-Za-z0-9äöüÄÖÜ/+]+\\)---*[ \\t]*$" 1))))
                       (imenu-add-to-menubar "Index")
                       )))
 
@@ -618,9 +618,19 @@ saving keyboard macros (see insert-kbd-macro)."
 ;      )
 ;(require 'crypt)
 
-
+;; desktop ---------------------------------------------------------------------
 ;; die letzte gespeicherte Session (= Desktop) laden
 (load "desktop")
+; fur NT den Default-Namen ändern; für andere Systeme können wir seinlassen
+(if (eq system-type 'windows-nt)
+    (setq desktop-basefilename ".emacs.desktop"))
+(setq desktop-missing-file-warning nil)
+; die Tabulator-Einstellungen auch mit abspeichern
+(setq-default desktop-locals-to-save (append '(tab-width
+                                               indent-tabs-mode
+                                               c-tab-always-indent
+                                               c++-tab-always-indent)
+                                             desktop-locals-to-save))
 (desktop-load-default)
 (desktop-read)
 ;; verschiedene Histories verkürzen, damit mit 'desktop' nicht zu viel 

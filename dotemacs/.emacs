@@ -4,8 +4,8 @@
 ;;      Author: Peter Steiner <unistein@isbe.ch>
 ;;     Created: Wed Jul 6 19:52:18 1994
 ;;     $Source: g:/archiv/cvsroot/home/.emacs,v $
-;;   $Revision: 1.13 $
-;;       $Date: 1998/10/10 21:53:13 $
+;;   $Revision: 1.14 $
+;;       $Date: 1999/02/13 00:09:50 $
 ;;     $Author: pesche $
 
 
@@ -112,6 +112,8 @@ This function is the opposite of `bury-buffer'."
         (setq load-path (append '("~/emacs/emacs19") load-path))))
 (if (file-accessible-directory-p "~/emacs")
     (setq load-path (append '("~/emacs") load-path)))
+(if (file-accessible-directory-p "~/site-lisp")
+    (setq load-path (append '("~/site-lisp") load-path)))
 
 (setq-default fill-column 77)           ;; column for line breaking in auto-fill-mode
 (setq make-backup-files t)
@@ -248,6 +250,8 @@ saving keyboard macros (see insert-kbd-macro)."
 (setq buffers-menu-max-size 30)
 
 (require 'msb)
+(setq msb-max-menu-items 30)
+(setq msb-display-most-recently-used 30)
 
 ; Anzeige des Funktionsnamens in der Modeline
 (setq which-func-maxout         0         ;; enabled, regardless buffer size
@@ -550,10 +554,14 @@ saving keyboard macros (see insert-kbd-macro)."
 (setq gnus-directory "~/gnus/")
 
 
-;; gnuserv
-(require 'gnuserv)
-(setq gnuserv-frame (selected-frame)) ;; immer das gleiche Fenster verwenden
-(gnuserv-start)
+;; gnuserv (nur mit NT)
+(if (or (eq window-system 'win32)
+        (eq window-system 'w32))
+    (progn
+      (require 'gnuserv)
+      (setq gnuserv-frame (selected-frame)) ;; immer das gleiche Fenster verwenden
+      (gnuserv-start)
+      ))
 
 ;; printing --------------------------------------------------------------------
 (require 'pesche-print)

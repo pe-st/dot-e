@@ -1,11 +1,11 @@
 ;; Pesche' Modes
 ;;
 ;;     $Source: g:/archiv/cvsroot/site-lisp/pesche-modes.el,v $
-;;   $Revision: 1.3 $
-;;       $Date: 1999/08/11 13:45:30 $
+;;   $Revision: 1.4 $
+;;       $Date: 1999/08/13 21:00:06 $
 ;;     $Author: pesche $
 
-;; lisp modes
+;; lisp modes ------------------------------------------------------------------
 (defun pesche-emacs-lisp-mode-hook()
   (setq tab-width        8
         indent-tabs-mode nil)
@@ -145,37 +145,56 @@
 (add-hook 'asm-mode-hook 'pesche-asm-mode-hook)
 
 ;; perl mode -------------------------------------------------------------------
-(autoload 'cperl-mode "cperl-mode" "alternate mode for editing Perl programs" t)
 ;; cperl-mode statt perl-mode verwenden
+(autoload 'cperl-mode "cperl-mode" "alternate mode for editing Perl programs" t)
 (setq auto-mode-alist
       (append '(("\\.[pP][Llm]\\'" . cperl-mode)) auto-mode-alist ))
 (setq interpreter-mode-alist (append interpreter-mode-alist
          '(("miniperl" . cperl-mode))))
 
-;; hairy ist etwas allzu haarig...
-;(setq cperl-hairy t)
-
-
 (defun pesche-cperl-mode-hook()
   ;; einrücken: 4 Zeichen, 'else' darf ohne '{' auf eigener Zeile stehen
   (cperl-set-style "C++")
+
+  ;; den Tabulator dressieren
+  (setq tab-width                4
+        indent-tabs-mode         nil
+        cperl-tab-always-indent  nil)
+
   (imenu-add-to-menubar "Index")
   )
 
 (add-hook 'cperl-mode-hook 'pesche-cperl-mode-hook)
 
 
+;; WoMan mode ------------------------------------------------------------------
+;; mode zum Lesen von 'man' Dokumentation ohne externes Programm
+(autoload 'woman "woman"
+  "Decode and browse a UN*X man page." t)
+(autoload 'woman-find-file "woman"
+  "Find, decode and browse a specific UN*X man-page file." t)
+;; den Pfad zu den Man-Pages aus GCC_EXEC_PREFIX basteln
+(let ((path (getenv "GCC_EXEC_PREFIX")))
+  (if (stringp path)
+      (progn
+        ;; die Backslashes durch Slashes ersetzen
+        (while (setq i (string-match "[\\]" path))
+          (aset path i ?/))
+        ;; den hinteren Teil des Pfades durch 'man' ersetzen
+        (string-match "H-i386-cygwin32/lib/gcc-lib/" path)
+        (setq woman-manpath (list (replace-match "man" t t path)))
+        )))
+
+;; todo-mode -------------------------------------------------------------------
+(autoload 'todo-mode "todo-mode"
+  "Major mode for editing TODO lists." t)
+(autoload 'todo-show "todo-mode"
+  "Show TODO items." t)
+(autoload 'todo-insert-item "todo-mode"
+  "Add TODO item." t)
+
+
 ;; html/sgml/xml allgemeines ---------------------------------------------------
-
-
-;; html-helper-mode mode -------------------------------------------------------
-(autoload 'html-helper-mode "html-helper-mode" "HTML major mode." t)
-
-; ;; html-helper-mode statt html-mode verwenden
-; (setq auto-mode-alist
-;       (append '(("\\.s?html?\\'" . sgml-html-mode)) auto-mode-alist))
-; ;;      (append '(("\\.s?html?\\'" . html-helper-mode)) auto-mode-alist))
-(setq html-helper-use-expert-menu t)
 
 ;; HTML-Files im msb-Buffermenü als solche einordnen (bei cperl abgeschaut)
 (defvar msb-menu-cond)
@@ -191,6 +210,12 @@
                      "Web Files (%d)")
                     last))))
 
+
+;; html-helper-mode mode -------------------------------------------------------
+(autoload 'html-helper-mode "html-helper-mode" "HTML major mode." t)
+
+(setq html-helper-use-expert-menu t)
+
 (defun pesche-html-helper-mode-hook()
   (html-msb-fix)
   )
@@ -201,23 +226,39 @@
 ;; sgml mode -------------------------------------------------------------------
 (autoload 'sgml-mode "psgml" "Major mode to edit SGML files." t )
 
-;; in sgml documents, parse dtd immediately to allow immediate
-;; syntax coloring
-(setq sgml-auto-activate-dtd t)
-
-;; here we set the syntax color information for psgml
-(setq-default sgml-set-face t)
-
-(setq-default sgml-indent-data t)
-(setq sgml-always-quote-attributes       t
-      sgml-auto-insert-required-elements t
+(setq sgml-auto-insert-required-elements t
       sgml-auto-activate-dtd             t
-      sgml-indent-data                   t
-      sgml-indent-step                   2
-      sgml-minimize-attributes           nil
-      sgml-omittag                       nil
-      sgml-shorttag                      nil
       )
+
+;; font-locking konfigurieren
+(setq sgml-set-face t
+      sgml-markup-faces
+      '((comment   . font-lock-comment-face)
+        (doctype   . font-lock-reference-face)
+        (start-tag . font-lock-function-name-face)
+        (end-tag   . font-lock-function-name-face)
+        (entity    . font-lock-string-face)
+        (ignored   . font-lock-comment-face)
+        (ms-end    . font-lock-keyword-face)
+        (ms-start  . font-lock-keyword-face)
+        (pi        . font-lock-reference-face)
+        (sgml      . font-lock-reference-face)
+        (short-ref . font-lock-reference-face)
+        ))
+
+; Buffer-lokale Variabeln in einer Hook-Funktion setzen
+(defun pesche-sgml-mode-hook()
+  (setq sgml-always-quote-attributes       t
+        sgml-indent-data                   t
+        sgml-indent-step                   2
+        sgml-minimize-attributes           nil
+        sgml-omittag                       nil
+        sgml-shorttag                      nil
+        )
+  )
+
+(add-hook 'sgml-mode-hook 'pesche-sgml-mode-hook)
+
 
 ;; PSGML menus for creating new documents
 (setq sgml-custom-dtd
@@ -246,8 +287,6 @@
       (list
        (expand-file-name (concat (getenv "SGML") "/dtd/html/ecatalog"))
        (expand-file-name (concat (getenv "SGML") "/dtd/docbook-3.1/ecatalog"))
-;       (expand-file-name "x:/l/sgml/dtd/html/ecatalog")
-;       (expand-file-name "x:/l/sgml/dtd/docbook-3.1/ecatalog")
        ))
 
 ;; psgml-dsssl -----------------------------------------------------------------
@@ -291,13 +330,8 @@
   (make-local-variable 'sgml-default-doctype-name)
   (setq sgml-default-doctype-name    "html"
         sgml-declaration             (concat (getenv "SGML") "/dtd/html/html.dcl")
-;        sgml-declaration             "x:/l/sgml/dtd/html/html.dcl"
-        sgml-always-quote-attributes t
-        sgml-indent-step             2
-        sgml-indent-data             t
-        sgml-minimize-attributes     nil
-        sgml-omittag                 t
-        sgml-shorttag                t
+        sgml-omittag                 t  ; normales SGML hat hier nil
+        sgml-shorttag                t  ; normales SGML hat hier nil
         )
   )
 
@@ -306,7 +340,6 @@
       (append '(("\\.xml\\'" . xml-mode)) auto-mode-alist))
 (autoload 'xml-mode "psgml" nil t)
 (setq sgml-xml-declaration (concat (getenv "SGML") "/dtd/html/xml.dcl"))
-;(setq sgml-xml-declaration "X:/L/sgml/dtd/html/xml.dcl")
 
 
 ;; dtd-mode --------------------------------------------------------------------

@@ -4,8 +4,8 @@
 ;;      Author: Peter Steiner <unistein@isbe.ch>
 ;;     Created: Wed Jul 6 19:52:18 1994
 ;;     $Source: g:/archiv/cvsroot/home/.emacs,v $
-;;   $Revision: 1.23 $
-;;       $Date: 1999/08/11 13:47:02 $
+;;   $Revision: 1.24 $
+;;       $Date: 1999/08/13 20:58:50 $
 ;;     $Author: pesche $
 
 
@@ -161,9 +161,25 @@ saving keyboard macros (see insert-kbd-macro)."
       (let ((f 'read-kbd-macro))
         (funcall f keys))))
 
+; Seit Emacs 20.4 können die drei zusätzlichen Windows-Tasten als Modifier
+; verwendet werden. Ich verwende nur die linke Fenster-Taste (als Hyper)
+(if (and (>= emacs-major-version 20)
+         (>= emacs-minor-version 4)
+         (eq window-system 'w32))
+    (progn
+      (setq w32-lwindow-modifier 'hyper)
+;       (setq w32-rwindow-modifier 'meta)
+;       (setq w32-apps-modifier 'super)
+      (setq w32-pass-lwindow-to-system nil)
+;       (setq w32-pass-rwindow-to-system nil)
+      ))
 
 (global-set-key (kbd "C-g") 'goto-line)
 (global-set-key (kbd "C-z") 'undo)
+(global-set-key (kbd "H-z") 'undo)
+(global-set-key (kbd "H-x") 'kill-region)
+(global-set-key (kbd "H-c") 'copy-region-as-kill-nomark)
+(global-set-key (kbd "H-v") 'yank)
 (global-set-key (kbd "C-v") 'yank)
 (global-set-key (kbd "C-x C-<") 'uncomment-region)      ;; self-written
 (global-set-key (kbd "C-x C-\\") 'uncomment-region)     ;; zB Dos-Box: C-< == C-\
@@ -191,11 +207,13 @@ saving keyboard macros (see insert-kbd-macro)."
 (require 'pc-bufsw)
 (global-set-key (kbd "C-<tab>") 'pc-bufsw::previous)
 (global-set-key (kbd "S-C-<tab>") 'pc-bufsw::lru)
-; pc-bufsw scheint rekursiv zu funktionieren, denn mit dem default-Wert 300
-; für folgende Variable ist ab ca. 40 Buffer Schluss mit Ctrl-Tab :-(
-; mit 1000 ist dann bei etwa 80 Buffer finito, aber aus einem andern Grund
-(setq max-lisp-eval-depth 1000)
+; ; pc-bufsw 0.9 funktionierte noch rekursiv, denn mit dem default-Wert 300
+; ; für folgende Variable ist ab ca. 40 Buffer Schluss mit Ctrl-Tab :-(
+; ; mit 1000 ist dann bei etwa 80 Buffer finito, aber aus einem andern Grund
+; (setq max-lisp-eval-depth 1000)
 
+; Einfügen von beliebigen Zeichen mit C-q im Dezimalsystem (statt oktal)
+(setq read-quoted-char-radix 10)
 
 ; mit Maus erzeugtes imenu in der Konsole liess emacs < 20 abstürzen.
 ; Aber auch in Emacs 20.3 funktionieren noch keine Menüs mit der Maus...
@@ -242,34 +260,6 @@ saving keyboard macros (see insert-kbd-macro)."
 ;          (append Info-directory-list '("~/info/" "/opt/local/GNU/info/")))
 ;  )
 
-;; WoMan stuff for reading man pages in emacs
-(autoload 'woman "woman"
-  "Decode and browse a UN*X man page." t)
-(autoload 'woman-find-file "woman"
-  "Find, decode and browse a specific UN*X man-page file." t)
-;; den Pfad zu den Man-Pages aus GCC_EXEC_PREFIX basteln
-(let ((path (getenv "GCC_EXEC_PREFIX")))
-  (if (stringp path)
-      (progn
-        ;; die Backslashes durch Slashes ersetzen
-        (while (setq i (string-match "[\\]" path))
-          (aset path i ?/))
-        ;; den hinteren Teil des Pfades durch 'man' ersetzen
-        (string-match "H-i386-cygwin32/lib/gcc-lib/" path)
-        (setq woman-manpath (list (replace-match "man" t t path)))
-        )))
-
-;(setq man-path '("x:/gnuwin32/b18/man"))
-;(setq woman-path '("x:\gnuwin32\b18\man" "e:\usr\man"))
-
-; todo-mode
-(autoload 'todo-mode "todo-mode"
-  "Major mode for editing TODO lists." t)
-(autoload 'todo-show "todo-mode"
-  "Show TODO items." t)
-(autoload 'todo-insert-item "todo-mode"
-  "Add TODO item." t)
-
 ; ; Der Mauszeiger soll vor dem herannahenden Cursor flüchten
 ; (mouse-avoidance-mode 'exile)
 
@@ -279,8 +269,8 @@ saving keyboard macros (see insert-kbd-macro)."
 ;; Welcher mode soll für HTML verwendet werden? in pesche-modes werden
 ;; sowohl html-helper-mode wie sgml-html-mode unterstützt.
 (setq auto-mode-alist
-      (append '(("\\.s?html?\\'" . sgml-html-mode))
-;;      (append '(("\\.s?html?\\'" . html-helper-mode))
+;;      (append '(("\\.s?html?\\'" . sgml-html-mode))
+      (append '(("\\.s?html?\\'" . html-helper-mode))
               auto-mode-alist))
 
 

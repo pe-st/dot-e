@@ -1,60 +1,92 @@
 ;; Pesche's Druckerei
 ;;
-;;     $Source: g:/archiv/cvsroot/site-lisp/pesche-print.el,v $
-;;   $Revision: 1.5 $
-;;       $Date: 2001/09/04 21:59:38 $
-;;     $Author: donnerpesche $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-print.el#6 $
+;;     $Change: 19564 $
+;;   $DateTime: 2004/08/30 15:24:47 $
+;;     $Author: peter.steiner $
+;;    $Created: 1997/12/19 $
+;;  $Copyright: Peter Steiner <pesche@schlau.ch>
 
 ;; Wir benötigen als Basis das Postscript-Modul von Emacs
 (require 'ps-print)
 
 ;; Konfiguration ---------------------------------------------------------------
 (setq ps-paper-type 'a4)
+(setq ps-landscape-mode nil)
 (setq ps-print-header-frame nil)
 
-; die Schrift etwas verstellen
+; Default-Schriftgrösse
 (setq ps-font-size 8)
-;(setq ps-font-size 7)
 
-; Zeichenbreite zur Berechnung des Zeilenumbruchs meine Schrift anpassen
+; Zeichenbreite zur Berechnung des Zeilenumbruchs an Default-Schrift anpassen
 ; Originalwerte für Courier 10: 5.6 6
 ; Werte für Courier 8: 4.48 5
 ; Werte für Courier 7: 3.92 4
 (setq ps-avg-char-width (if (fboundp 'float) 4.48 5))
 (setq ps-space-width (if (fboundp 'float) 4.48 5))
-;(setq ps-avg-char-width (if (fboundp 'float) 3.92 4))
-;(setq ps-space-width (if (fboundp 'float) 3.92 4))
 
-; Zeilenhöhe zur Berechnung des Seitenumbruchs meine Schrift anpassen
+; Zeilenhöhe zur Berechnung des Seitenumbruchs an Default-Schrift anpassen
 ; Originalwerte für Courier 10: 11.29 11
 ; Werte für Courier 8: 9.03 9
 ; Werte für Courier 7: 7.90 8
 (setq ps-line-height (if (fboundp 'float) 9.03 9))
-;(setq ps-line-height (if (fboundp 'float) 7.90 8))
 
-; einiges ist zuhause anders als im Büro
-(if (eq (string-match "DONNERVOGEL" (system-name)) 0)
-    (progn  ; Zuhause
-      (defvar ghost-dir     "F:\\Progra~1\\gs\\gs7.00")
-      (defvar ghost-printer "-sDEVICE=djet500 -r300")
-      (defvar ghost-fonts   "F:\\Progra~1\\gs\\fonts")
-      (defvar ghost-view    "F:\\Progra~1\\gs\\gsview\\gsview32.exe"))
-    (progn  ; im Büro
-      (defvar ghost-dir     "L:\\tools\\ghost\\gs7.00")
-      (defvar ghost-printer "-sDEVICE=ljet4 -r600")
-      (defvar ghost-fonts   "L:\\tools\\ghost\\psfonts")
-      (defvar ghost-view    "L:\\tools\\ghost\\gsview\\gsview32.exe"))
-    )
+(cond
+ ((or (eq window-system 'win32)
+      (eq window-system 'w32))
+  (progn
+    (cond
+     ((eq (string-match "DONNERVOGEL" (system-name)) 0)
+      (progn                          ; Zuhause
+          (defvar ghost-dir     "F:\\Progra~1\\gs\\gs7.00")
+          (defvar ghost-printer "-sDEVICE=djet500 -r300")
+          (defvar ghost-view    "F:\\Progra~1\\gs\\gsview\\gsview32.exe")))
+     ((eq (string-match "INUVIK" (system-name)) 0)
+      (progn                            ; im Büro
+        (defvar ghost-dir     "L:\\tools\\ghost\\gs7.00")
+        (defvar ghost-printer "-sDEVICE=ljet4 -r600")
+        (defvar ghost-view    "L:\\tools\\ghost\\gsview\\gsview32.exe")))
+     ((eq (string-match "PIAZZABOOK"  (system-name)) 0)
+      (progn                            ; das Notebook
+        (defvar ghost-dir     "C:\\L\\gs\\gs8.14")
+        (defvar ghost-printer "-sDEVICE=ljet4 -r600")
+        (defvar ghost-view    "C:\\L\\gs\\gsview\\gsview32.exe")))
+     (t
+      (progn                            ; Default-Verzeichnisse
+        (defvar ghost-dir     "C:\\gs\\gs8.14")
+        (defvar ghost-printer "-sDEVICE=ljet4 -r600")
+        (defvar ghost-view    "C:\\Progra~1\\ghostgum\\gsview\\gsview32.exe")))
+     )
+
+    (setq ps-psnup-command "psnup") ; Name of n-up program (taking ps as input)
+    (setq ps-psnup-switches '(" -l -2 -pa4 ")) ; options for program above
+    (setq ps-pdf-command (concat "start /min " ghost-dir "\\lib\\ps2pdf.bat"))
+    (setq ps-pdf-switches '(" -sPAPERSIZE=a4 -dPDFSETTINGS=/printer "))
+    (setq ps-lpr-command (concat "start /min " ghost-dir "\\bin\\gswin32"))
+    (setq ps-lpr-switches `(,(concat "-q -sPAPERSIZE=a4 "
+                                     ghost-printer " -dNOPAUSE")))
+    (setq ps-preview-command ghost-view)
+    (setq ps-lpr-buffer (concat (getenv "TEMP") "\\psspool.ps"))
+    (setq ps-psnup-buffer (concat (getenv "TEMP") "\\psnup.ps"))
+    (setq ps-pdf-buffer (concat (getenv "TEMP") "\\ps.pdf"))))
+ (t (progn ;; die Unix-Variante
+      (defvar ghost-printer "-sDEVICE=pdfwrite -r600")
+      (defvar ghost-view    "open -a Preview")
+
+      (setq ps-psnup-command "/sw/bin/psnup") ; Name of n-up program (taking ps as input)
+      (setq ps-psnup-switches '(" -l -2 -pa4 ")) ; options for program above
+      (setq ps-pdf-command ". /sw/bin/init.sh; ps2pdf")
+      (setq ps-pdf-switches '(" -sPAPERSIZE=a4 -dPDFSETTINGS=/printer "))
+      (setq ps-lpr-command "/sw/bin/gs")
+      (setq ps-lpr-switches `(,(concat "-q -sPAPERSIZE=a4 "
+                                       ghost-printer " -dNOPAUSE")))
+      (setq ps-preview-command ghost-view)
+      (setq ps-lpr-buffer "~/tmp/psspool.ps")
+      (setq ps-psnup-buffer "~/tmp/psnup.ps")
+      (setq ps-pdf-buffer "~/tmp/ps.pdf")
+      )))
 
 
-(setq ps-psnup-command "psnup") ; Name of n-up program (taking ps as input)
-(setq ps-psnup-switches '(" -l -2 -pa4 ")) ; options for program above
-(setq ps-lpr-command (concat "start /min " ghost-dir "\\bin\\gswin32"))
-(setq ps-lpr-switches `(,(concat "-q -sPAPERSIZE=a4 "
-                                ghost-printer " -dNOPAUSE")))
-(setq ps-preview-command ghost-view)
-(setq ps-lpr-buffer (concat (getenv "TEMP") "\\psspool.ps"))
-(setq ps-psnup-buffer (concat (getenv "TEMP") "\\psnup.ps"))
 (setq ps-print-color-p nil)
 (setq ps-bold-faces '(font-lock-keyword-face info-xref info-node woman-bold-face))
 (setq ps-italic-faces '(font-lock-comment-face info-node woman-italic-face))
@@ -65,7 +97,7 @@
 (setq ps-line-number t)
 (setq ps-line-number-step 5)
 (setq ps-line-number-start 5)
-(setq ps-zebra-stripes t)
+(setq ps-zebra-stripes nil)
 (setq ps-zebra-stripe-height 1)
 (setq ps-zebra-color 0.92)
 
@@ -77,6 +109,29 @@
   (concat (time-stamp-dd-mon-yy) " " (time-stamp-hh:mm:ss))
   )
 
+;; font size -------------------------------------------------------------------
+(defun pesche-print-fontsize-7 ()
+  (interactive)
+  (setq ps-font-size 7)
+  (setq ps-avg-char-width (if (fboundp 'float) 3.92 4))
+  (setq ps-space-width (if (fboundp 'float) 3.92 4))
+  (setq ps-line-height (if (fboundp 'float) 7.90 8))
+  )
+(defun pesche-print-fontsize-8 ()
+  (interactive)
+  (setq ps-font-size 8)
+  (setq ps-avg-char-width (if (fboundp 'float) 4.48 5))
+  (setq ps-space-width (if (fboundp 'float) 4.48 5))
+  (setq ps-line-height (if (fboundp 'float) 9.03 9))
+  )
+(defun pesche-print-fontsize-10 ()
+  (interactive)
+  (setq ps-font-size 10)
+  (setq ps-avg-char-width (if (fboundp 'float) 5.6 6))
+  (setq ps-space-width (if (fboundp 'float) 5.6 6))
+  (setq ps-line-height (if (fboundp 'float) 11.29 11))
+  )
+
 ;; 1up region ------------------------------------------------------------------
 (defun pesche-printfile-region-with-faces (from to &optional buffer-p)
   (interactive (list (point) (mark) nil))
@@ -84,6 +139,15 @@
   (setq ps-right-header
         (list "/pagenumberstring load" 'pesche-time-stamp))
   (ps-print-with-faces from to ps-lpr-buffer (not buffer-p))
+  )
+
+(defun pesche-printpdf-region-with-faces (from to &optional buffer-p)
+  (interactive (list (point) (mark) nil))
+  (pesche-printfile-region-with-faces from to buffer-p)
+  (shell-command
+   (apply 'concat (append (list ps-pdf-command " ")
+                          ps-pdf-switches
+                          (list " " ps-lpr-buffer " " ps-pdf-buffer))))
   )
 
 (defun pesche-print-region-with-faces (from to &optional buffer-p)
@@ -97,15 +161,20 @@
 
 (defun pesche-preview-region-with-faces (from to &optional buffer-p)
   (interactive (list (point) (mark) nil))
-  (pesche-printfile-region-with-faces from to buffer-p)
-  (start-process-shell-command "gsview" "*Messages*"
-                               ps-preview-command ps-lpr-buffer)
+  (pesche-printpdf-region-with-faces from to buffer-p)
+  (start-process-shell-command "preview" "*Messages*"
+                               ps-preview-command ps-pdf-buffer)
   )
 
 ;; 1up buffer ------------------------------------------------------------------
 (defun pesche-printfile-buffer-with-faces ()
   (interactive)
   (pesche-printfile-region-with-faces (point-min) (point-max) t)
+  )
+
+(defun pesche-printpdf-buffer-with-faces ()
+  (interactive)
+  (pesche-printpdf-region-with-faces (point-min) (point-max) t)
   )
 
 (defun pesche-print-buffer-with-faces ()
@@ -128,6 +197,15 @@
                           (list " " ps-lpr-buffer " " ps-psnup-buffer))))
   )
 
+(defun pesche-printpdf-2up-region-with-faces (from to &optional buffer-p)
+  (interactive (list (point) (mark) nil))
+  (pesche-printfile-2up-region-with-faces from to buffer-p)
+  (shell-command
+   (apply 'concat (append (list ps-pdf-command " ")
+                          ps-pdf-switches
+                          (list " " ps-psnup-buffer " " ps-pdf-buffer))))
+  )
+
 (defun pesche-print-2up-region-with-faces (from to &optional buffer-p)
   (interactive (list (point) (mark) nil))
   (pesche-printfile-2up-region-with-faces from to buffer-p)
@@ -139,15 +217,20 @@
 
 (defun pesche-preview-2up-region-with-faces (from to &optional buffer-p)
   (interactive (list (point) (mark) nil))
-  (pesche-printfile-2up-region-with-faces from to buffer-p)
-  (start-process-shell-command "gsview" "*Messages*"
-                               ps-preview-command ps-psnup-buffer)
+  (pesche-printpdf-2up-region-with-faces from to buffer-p)
+  (start-process-shell-command "preview" "*Messages*"
+                               ps-preview-command ps-pdf-buffer)
   )
 
 ;; 2up buffer ------------------------------------------------------------------
 (defun pesche-printfile-2up-buffer-with-faces ()
   (interactive)
   (pesche-printfile-2up-region-with-faces (point-min) (point-max) t)
+  )
+
+(defun pesche-printpdf-2up-buffer-with-faces ()
+  (interactive)
+  (pesche-printpdf-2up-region-with-faces (point-min) (point-max) t)
   )
 
 (defun pesche-print-2up-buffer-with-faces ()
@@ -191,11 +274,32 @@
 (define-key-after menu-bar-files-menu [preview]
   '("Preview" . menu-bar-preview-menu)
   'kill-buffer)
+(define-key-after menu-bar-files-menu [printpdf]
+  '("Print to PDF" . menu-bar-printpdf-menu)
+  'kill-buffer)
 (define-key-after menu-bar-files-menu [printfile]
   '("Print to File" . menu-bar-printfile-menu)
   'kill-buffer)
 (define-key-after menu-bar-files-menu [print]
   '("Print" . menu-bar-print-menu)
+  'kill-buffer)
+
+; Separator im File-Menu
+(define-key-after menu-bar-files-menu [separator-print-options]
+  '("--")
+  'kill-buffer)
+
+; Submenu für Schriftgrösse
+(define-key-after menu-bar-files-menu [printfont]
+  '("Print Font Size" . menu-bar-printfont-menu)
+  'kill-buffer)
+
+; toggle für die Papier-Ausrichtung
+(define-key-after menu-bar-files-menu [toggle-print-orientation-mode]
+  (menu-bar-make-toggle toggle-print-orientation-mode ps-landscape-mode
+                        "Paper Orientation Landscape"
+                        "Landscape mode %s"
+                        "Print Orientation Landscape")
   'kill-buffer)
 
 ; toggle für die Zebrastreifen beim Drucken
@@ -214,10 +318,42 @@
                         "Print line numbers")
   'kill-buffer)
 
+; toggle für den Seitenkopf
+(define-key-after menu-bar-files-menu [toggle-print-header]
+  (menu-bar-make-toggle toggle-print-header ps-print-header
+                        "Print Page Header"
+                        "Page Header mode %s"
+                        "Print Page Header")
+  'kill-buffer)
+
 ; abschliessender Separator im File-Menu
 (define-key-after menu-bar-files-menu [separator-print]
   '("--")
   'kill-buffer)
+
+
+; das Schriftgrösse-Menu
+(defvar menu-bar-printfont-menu (make-sparse-keymap "Print Font Size"))
+(define-key global-map [menu-bar files printfont]
+  (cons "Print Font Size" menu-bar-printfont-menu))
+(define-key menu-bar-printfont-menu [printfont-10]
+  '(menu-item "10 pt"
+              pesche-print-fontsize-10
+              :help "Print Font Size 10 pt"
+              :visible (display-graphic-p)
+              :button (:radio . (eq ps-font-size 10))))
+(define-key menu-bar-printfont-menu [printfont-8]
+  '(menu-item "8 pt"
+              pesche-print-fontsize-8
+              :help "Print Font Size 8 pt"
+              :visible (display-graphic-p)
+              :button (:radio . (eq ps-font-size 8))))
+(define-key menu-bar-printfont-menu [printfont-7]
+  '(menu-item "7 pt"
+              pesche-print-fontsize-7
+              :help "Print Font Size 7 pt"
+              :visible (display-graphic-p)
+              :button (:radio . (eq ps-font-size 7))))
 
 ; das Print-Submenu
 (defvar menu-bar-print-menu (make-sparse-keymap "Print"))
@@ -237,6 +373,15 @@
 (define-key menu-bar-printfile-menu [printfile-region]     '("Region"     . pesche-printfile-region-with-faces))
 (define-key menu-bar-printfile-menu [printfile-buffer]     '("Buffer"     . pesche-printfile-buffer-with-faces))
 
+; das PDF-Submenu
+(defvar menu-bar-printpdf-menu (make-sparse-keymap "Print to PDF"))
+(define-key global-map [menu-bar files printpdf]
+  (cons "Print to PDF" menu-bar-printpdf-menu))
+(define-key menu-bar-printpdf-menu [printpdf-region-2up] '("2up Region" . pesche-printpdf-2up-region-with-faces))
+(define-key menu-bar-printpdf-menu [printpdf-buffer-2up] '("2up Buffer" . pesche-printpdf-2up-buffer-with-faces))
+(define-key menu-bar-printpdf-menu [printpdf-region]     '("Region"     . pesche-printpdf-region-with-faces))
+(define-key menu-bar-printpdf-menu [printpdf-buffer]     '("Buffer"     . pesche-printpdf-buffer-with-faces))
+
 ; das Preview-Submenu
 (defvar menu-bar-preview-menu (make-sparse-keymap "Preview"))
 (define-key global-map [menu-bar files preview]
@@ -250,9 +395,11 @@
 ; verfügbar sein (sonst sind sie 'greyed out')
 (put 'pesche-print-region-with-faces         'menu-enable 'mark-active)
 (put 'pesche-printfile-region-with-faces     'menu-enable 'mark-active)
+(put 'pesche-printpdf-region-with-faces      'menu-enable 'mark-active)
 (put 'pesche-preview-region-with-faces       'menu-enable 'mark-active)
 (put 'pesche-print-2up-region-with-faces     'menu-enable 'mark-active)
 (put 'pesche-printfile-2up-region-with-faces 'menu-enable 'mark-active)
+(put 'pesche-printpdf-2up-region-with-faces  'menu-enable 'mark-active)
 (put 'pesche-preview-2up-region-with-faces   'menu-enable 'mark-active)
 
 

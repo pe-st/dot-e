@@ -1,5 +1,4 @@
-;;; lingo-mode.el --- major mode for editing Lingo (Macromedia Director
-;;; script language) in Emacs
+;;; lingo-mode.el --- major mode for Macromedia Director Lingo
 ;;
 ;; Copyright (C) 2002 Peter Steiner
 ;;
@@ -18,22 +17,37 @@
 (defconst lingo-version "0.1"
   "`lingo-mode' version number.")
 
+(defvar lingo-indent-offset 2
+  "Default indentation per nesting level.")
 
-(defconst lingo-indent-offset 2
-  "basic indentaion steps")
 
-
-(defconst lingo-handler-regexp "^[ \t]*on[ \t]+\\([a-zA-Z_]+[a-zA-Z0-9_]*\\)"
+(defconst lingo-handler-regexp "^[ \t]*[Oo]n[ \t]+\\([a-zA-Z_]+[a-zA-Z0-9_]*\\)"
   "Regular expression to match the name of a handler.")
 
-;; all lines starting with "end" except "end if", "end case" and "end repeat"
-(defconst lingo-handler-end-regexp
-  (concat "^[ \t]*end[ \t]*\\("
-          "[abd-hj-qs-z].*"
-          ;; some lines missing here...
-          "\\)?$"))
+
+(defconst lingo-handler-end-regexp"^[ \t]*[Ee]nd\\([ \t]+.*\\)?$")
+
+;; ;; all lines starting with "end" except "end if", "end case" and "end repeat"
+;; (defconst lingo-handler-end-regexp
+;;   (concat "^[ \t]*end[ \t]*\\("
+;;           "[abd-hj-qs-z].*"
+;;           ;; some lines missing here...
+;;           "\\)?$"))
+
+(defconst lingo-if-regexp "^[ \t]*[Ii]f[ \t]+.*")
+(defconst lingo-ifthen-regexp "^[ \t]*[Ii]f.+\\<[Tt]hen\\>\\s-\\S-+")
+(defconst lingo-else-regexp "^[ \t]*[Ee]lse\\([Ii]f\\)?")
+(defconst lingo-endif-regexp "^[ \t]*[Ee]nd[ \t]*[Ii]f")
+
+(defconst lingo-case-regexp "^[ \t]*[Cc]ase[ \t]+.*")
+(defconst lingo-case-end-regexp "^[ \t]*[Ee]nd[ \t]*[Cc]ase")
+
+(defconst lingo-repeat-regexp "^[ \t]*[Rr]epeat[ \t]+.*")
+(defconst lingo-repeat-end-regexp "^[ \t]*[Ee]nd[ \t]*[Rr]epeat")
 
 (defconst lingo-blank-regexp "^[ \t]*$")
+(defconst lingo-comment-regexp "^[ \t]*\\s<.*$")
+(defconst lingo-continuation-regexp "^.*[\\¬][ \t]*$")
 
 
 
@@ -157,9 +171,9 @@
 ;;   (modify-syntax-entry ?\= "."  lingo-mode-syntax-table)
 ;;   (modify-syntax-entry ?\> "."  lingo-mode-syntax-table)
 ;;   (modify-syntax-entry ?\| "."  lingo-mode-syntax-table)
-  ;; GNU conventions say underscore should be symbol class, but
-  ;; there's a natural conflict between what major mode authors want
-  ;; and what users expect from `forward-word' and `backward-word'.
+  ;; GNU conventions say underscore should be symbol class, but most
+  ;; users don't know them and expect `forward-word' and `backward-word'
+  ;; to treat underscores the same as letters.
   (modify-syntax-entry ?\_ "w"  lingo-mode-syntax-table)
 ;;   ;; Both single quote and double quote are string delimiters
 ;;   (modify-syntax-entry ?\' "\"" lingo-mode-syntax-table)
@@ -194,9 +208,7 @@ lingo-indent-offset\t\tindentation increment"
   (make-local-variable 'comment-start-skip)
   (make-local-variable 'comment-column)
 ;;   (make-local-variable 'comment-indent-function)
-;;   (make-local-variable 'indent-region-function)
-;;   (make-local-variable 'indent-line-function)
-;;   (make-local-variable 'add-log-current-defun-function)
+  (make-local-variable 'indent-line-function)
   ;;
   (set-syntax-table lingo-mode-syntax-table)
   (setq major-mode              'lingo-mode
@@ -211,49 +223,15 @@ lingo-indent-offset\t\tindentation increment"
         comment-start-skip      "-- *"
         comment-column          40
 ;;      comment-indent-function 'lingo-comment-indent-function
-        indent-region-function  'lingo-indent-region
         indent-line-function    'lingo-indent-line
-;;      ;; tell add-log.el how to find the current function/method/variable
-;;      add-log-current-defun-function 'lingo-current-defun
         )
   (setq imenu-generic-expression
         (list (list nil lingo-handler-regexp 1)))
   (use-local-map lingo-mode-map)
-;;   ;; add the menu
-;;   (if py-menu
-;;       (easy-menu-add py-menu))
-;;   ;; Emacs 19 requires this
-;;   (if (boundp 'comment-multi-line)
-;;       (setq comment-multi-line nil))
-;;   ;; Install Imenu if available
-;;   (when (py-safe (require 'imenu))
-;;     (setq imenu-create-index-function #'py-imenu-create-index-function)
-;;     (setq imenu-generic-expression py-imenu-generic-expression)
-;;     (if (fboundp 'imenu-add-to-menubar)
-;;      (imenu-add-to-menubar (format "%s-%s" "IM" mode-name)))
-;;     )
 
   ;; Run the mode hook.
   (run-hooks 'lingo-mode-hook)
   )
-
-
-(defun lingo-indent-region (start end)
-  "Perform lingo-indent-line on each line in region."
-  (interactive "r")
-  (save-excursion
-    (goto-char start)
-    (beginning-of-line)
-    (while (and (not (eobp))
-                (< (point) end))
-      (if (not (looking-at lingo-blank-regexp))
-          (lingo-indent-line))
-      (forward-line 1)))
-
-  (cond ((fboundp 'zmacs-deactivate-region)
-         (zmacs-deactivate-region))
-        ((fboundp 'deactivate-mark)
-         (deactivate-mark))))
 
 
 (defun lingo-indent-line ()
@@ -287,124 +265,140 @@ lingo-indent-offset\t\tindentation increment"
            (back-to-indentation)))))
 
 
+(defun lingo-previous-line-of-code ()
+  (if (not (bobp))
+      (forward-line -1))        ; previous-line depends on goal column
+  (while (and (not (bobp))
+              (or (looking-at lingo-blank-regexp)
+                  (looking-at lingo-comment-regexp)))
+    (forward-line -1)))
+
+
+(defun lingo-find-original-statement ()
+  "If the current line is a continuation, move back to the original stmt."
+  (let ((here (point)))
+    (lingo-previous-line-of-code)
+    (while (and (not (bobp))
+                (looking-at lingo-continuation-regexp))
+      (setq here (point))
+      (lingo-previous-line-of-code))
+    (goto-char here)))
+
+(defun lingo-find-matching-stmt (open-regexp close-regexp)
+  ;; Searching backwards
+  (let ((level 0))
+    (while (and (>= level 0) (not (bobp)))
+      (lingo-previous-line-of-code)
+      (lingo-find-original-statement)
+      (cond ((looking-at close-regexp)
+             (setq level (+ level 1)))
+            ((looking-at open-regexp)
+             (setq level (- level 1)))))))
+
+(defun lingo-find-matching-if ()
+  (lingo-find-matching-stmt lingo-if-regexp
+                            lingo-endif-regexp))
+
+(defun lingo-find-matching-case ()
+  (lingo-find-matching-stmt lingo-case-regexp
+                            lingo-case-end-regexp))
+
+(defun lingo-find-matching-repeat ()
+  (lingo-find-matching-stmt lingo-repeat-regexp
+                            lingo-repeat-end-regexp))
+
+
+;;; If this fails it must return the indent of the line preceding the
+;;; end not the first line because end without matching begin is a
+;;; normal simple statement
+(defun lingo-find-matching-begin ()
+  (let ((original-point (point)))
+    (lingo-find-matching-stmt lingo-begin-regexp
+                                     lingo-end-begin-regexp)
+    (if (bobp) ;failed to find a matching begin so assume that it is
+               ;an end statement instead and use the indent of the
+               ;preceding line.
+        (progn (goto-char original-point)
+               (lingo-previous-line-of-code)))))
+
+
 ;; borrowed from visual-basic-mode
 (defun lingo-calculate-indent ()
   "calculate the indentation for the current line."
   (let ((original-point (point)))
     (save-excursion
       (beginning-of-line)
-      ;; first version: detect beginning and end of handlers, all other
-      ;; lines get constant indentation
       (cond
+       ;; end of control flow statements
+       ((or (looking-at lingo-else-regexp)
+            (looking-at lingo-endif-regexp))
+        (lingo-find-matching-if)
+        (current-indentation))
+
+       ((looking-at lingo-case-end-regexp)
+        (lingo-find-matching-case)
+        (current-indentation))
+
+       ((looking-at lingo-repeat-end-regexp)
+        (lingo-find-matching-repeat)
+        (current-indentation))
+
+       ;; handlers start and end on first column
+       ;; (this must be after the other "end" statements, because
+       ;; lingo-handler-end-regexp matches other ends too
        ((or (looking-at lingo-handler-regexp)
             (looking-at lingo-handler-end-regexp))
         0)
 
-       ;; all other cases
-       (t lingo-indent-offset)
-       ))))
+       ;; all other cases depend on the previous line
+       (t
+        (lingo-previous-line-of-code)
 
-;;        ;; The outdenting stmts, which simply match their original.
-;;          ((or (looking-at visual-basic-else-regexp)
-;;               (looking-at visual-basic-endif-regexp))
-;;           (visual-basic-find-matching-if)
-;;           (current-indentation))
+        (cond
+          ((looking-at lingo-continuation-regexp)
+           (lingo-find-original-statement)
 
-;;          ;; All the other matching pairs act alike.
-;;          ((looking-at visual-basic-next-regexp) ; for/next
-;;           (visual-basic-find-matching-for)
-;;           (current-indentation))
+           ;; Indent continuation line under matching open paren,
+           ;; or else one word in.
+           (let* ((orig-stmt (point))
+                  (matching-open-paren
+                   (condition-case ()
+                       (save-excursion
+                         (goto-char original-point)
+                         (beginning-of-line)
+                         (backward-up-list 1)
+                         ;; Only if point is now w/in cont. block.
+                         (if (<= orig-stmt (point))
+                             (current-column)))
+                     (error nil))))
+             (cond (matching-open-paren
+                    (1+ matching-open-paren))
+                   (t
+                    ;; Else, after first word on original line.
+                    (back-to-indentation)
+                    (forward-word 1)
+                    (while (looking-at "[ \t]")
+                      (forward-char 1))
+                    (current-column)))))
+          (t
+           (lingo-find-original-statement)
+           (let ((indent (current-indentation)))
+             ;; All the various +indent regexps.
+             (cond ((looking-at lingo-handler-regexp)
+                    (+ indent lingo-indent-offset))
 
-;;          ((looking-at visual-basic-loop-regexp) ; do/loop
-;;           (visual-basic-find-matching-do)
-;;           (current-indentation))
+                   ((and (or (looking-at lingo-if-regexp)
+                             (looking-at lingo-else-regexp))
+                         (not (looking-at lingo-ifthen-regexp)))
+                    (+ indent lingo-indent-offset))
 
-;;          ((looking-at visual-basic-wend-regexp) ; while/wend
-;;           (visual-basic-find-matching-while)
-;;           (current-indentation))
+                   ((or (looking-at lingo-repeat-regexp)
+                        (looking-at lingo-case-regexp))
+                    (+ indent lingo-indent-offset))
 
-;;          ((looking-at visual-basic-end-with-regexp) ; with/end with
-;;           (visual-basic-find-matching-with)
-;;           (current-indentation))
-           
-;;          ((looking-at visual-basic-select-end-regexp) ; select case/end select
-;;           (visual-basic-find-matching-select)
-;;           (current-indentation))
-
-;;          ;; A case of a select is somewhat special.
-;;          ((looking-at visual-basic-case-regexp)
-;;           (visual-basic-find-matching-select)
-;;           (+ (current-indentation) visual-basic-mode-indent))
-
-;;             ;; Added KJW: Make sure that this comes after the cases
-;;             ;; for if..endif, end select because end-regexp will also
-;;             ;; match "end select" etc.
-;;          ((looking-at visual-basic-end-begin-regexp) ; begin/end 
-;;           (visual-basic-find-matching-begin)
-;;           (current-indentation))
-
-;;          (t
-;;           ;; Other cases which depend on the previous line.
-;;           (visual-basic-previous-line-of-code)
-
-;;           ;; Skip over label lines, which always have 0 indent.
-;;           (while (looking-at visual-basic-label-regexp)
-;;             (visual-basic-previous-line-of-code))
-
-;;           (cond 
-;;            ((looking-at visual-basic-continuation-regexp)
-;;             (visual-basic-find-original-statement)
-;;             ;; Indent continuation line under matching open paren,
-;;             ;; or else one word in.
-;;             (let* ((orig-stmt (point))
-;;                    (matching-open-paren
-;;                     (condition-case ()
-;;                         (save-excursion
-;;                           (goto-char original-point)
-;;                           (beginning-of-line)
-;;                           (backward-up-list 1)
-;;                           ;; Only if point is now w/in cont. block.
-;;                           (if (<= orig-stmt (point))
-;;                               (current-column)))
-;;                       (error nil))))
-;;               (cond (matching-open-paren
-;;                      (1+ matching-open-paren))
-;;                     (t
-;;                      ;; Else, after first word on original line.
-;;                      (back-to-indentation)
-;;                      (forward-word 1)
-;;                      (while (looking-at "[ \t]")
-;;                        (forward-char 1))
-;;                      (current-column)))))
-;;            (t
-;;             (visual-basic-find-original-statement)
-
-;;             (let ((indent (current-indentation)))
-;;               ;; All the various +indent regexps.
-;;               (cond ((looking-at visual-basic-defun-start-regexp)
-;;                      (+ indent visual-basic-mode-indent))
-
-;;                     ((and (or (looking-at visual-basic-if-regexp)
-;;                               (looking-at visual-basic-else-regexp))
-;;                           (not (and visual-basic-allow-single-line-if
-;;                                     (looking-at visual-basic-ifthen-regexp))))
-;;                      (+ indent visual-basic-mode-indent))
-
-;;                     ((or (looking-at visual-basic-select-regexp)
-;;                          (looking-at visual-basic-case-regexp))
-;;                      (+ indent visual-basic-mode-indent))
-                        
-;;                     ((or (looking-at visual-basic-do-regexp)
-;;                          (looking-at visual-basic-for-regexp)
-;;                          (looking-at visual-basic-while-regexp)
-;;                          (looking-at visual-basic-with-regexp)
-;;                          (looking-at visual-basic-begin-regexp))
-;;                      (+ indent visual-basic-mode-indent))
-
-;;                     (t
-;;                      ;; By default, just copy indent from prev line.
-;;                      indent))))))))))
-
+                   (t
+                    ;; By default, just copy indent from prev line.
+                    indent))))))))))
 
 
 (defun lingo-version ()

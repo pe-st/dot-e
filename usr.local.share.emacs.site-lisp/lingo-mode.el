@@ -13,6 +13,14 @@
 ;; (autoload 'lingo-mode "lingo-mode" "Major mode for editing Lingo files." t)
 ;; (setq auto-mode-alist (append '(("\\.[Ll][Ss]\\'" . lingo-mode)) auto-mode-alist))
 
+;;; todo
+;; Font-Locking-Spezialfälle, auch noch irgendwie behandeln:
+;; after before
+
+;; Indenting:
+;; - case-Konstrukt
+;; - Kommentare
+
 
 (defconst lingo-version "0.1"
   "`lingo-mode' version number.")
@@ -58,53 +66,125 @@
                       "else" "end"
                       "endRecording" "exit" "field" "global" "if" "item"
                       "in" "intersects" "line" "list" "loop" "member"
-                      "menu" "next" "of" "on" "otherwise" "property"
+                      "menu" "next" "of" "on" "otherwise" "previous" "property"
                       "repeat" "return" "sprite" "the" "then" "to"
                       "version" "while" "window" "with" "within")
                     "\\|"))
+        (lingo-operator-list
+         (mapconcat 'identity
+                    '("and" "contains")
+                    "\\|"))
         (lingo-command-list
          (mapconcat 'identity
-                    '("abort" "add" "cancelIdleLoad"
-                      "go")
-                    "\\|"))
-        (lingo-property-list
-         (mapconcat 'identity
-                    '("actionsEnabled" "castLibNum"
-                      "locH" "locV")
-                    "\\|"))
-        (lingo-movie-property-list
-         (mapconcat 'identity
-                    '("activeWindow" "actorList")
-                    "\\|"))
-        (lingo-system-property-list
-         (mapconcat 'identity
-                    '("activeCastLib")
-                    "\\|"))
-        (lingo-event-list
-         (mapconcat 'identity
-                    '("activateApplication" "activateWindow" "startMovie")
+                    '("abort" "add" "addAt" "addProp" "addVertex" "alert"
+                      "append" "appMinimize" "beep" "call" "callAncestor"
+                      "cancelIdleLoad" "clearCache" "clearError" "clearFrame"
+                      "clearGlobals" "close" "closeXlib" "copyToClipBoard"
+                      "delay" "delete" "deleteAll" "deleteAt" "deleteFrame"
+                      "deleteOne" "deleteProp" "deleteVertex" "do"
+                      "downloadNetThing" "duplicateFrame" "duplicate"
+                      "enableHotSpot" "erase" "externalEvent" "findPos"
+                      "findPosNear" "finishIdleLoad" "flushInputEvents"
+                      "getaProp" "getAt" "go" "gotoFrame" "gotoNetMovie"
+                      "gotoNetPage")
                     "\\|"))
         (lingo-function-list
          (mapconcat 'identity
-                    '("abs")
+                    '("abs" "atan" "bitAnd" "bitNot" "bitOr" "bitXor"
+                      "breakLoop" "cacheDocVerify" "cacheSize" "charPosToLoc"
+                      "chars" "charToNum" "clickLoc" "clickOn" "commandDown"
+                      "constrainH" "constrainV" "controlDown" "copyPixels"
+                      "cos" "count" "createMask" "createMatte" "date"
+                      "doubleClick" "draw" "endFrame" "exp" "externalParamCount"
+                      "externalParamName" "externalParamValue" "extractAlpha"
+                      "fadeIn" "fadeOut" "fadeTo" "fill" "findEmpty" "findLabel"
+                      "flashToStage" "float" "floatP" "frameReady" "framesToHMS"
+                      "freeBlock" "freeBytes" "getError" "getErrorString"
+                      "getFlashProperty" "getFrameLabel" "getHotSpotRect"
+                      "getLast" "getLatestNetID" "getNetText"
+                      "getNthFileNameInFolder" "getOne" "getPixel" "getPlaylist"
+                      "getPos" "getPref" "getProp" "getPropAt" "getStreamStatus"
+                      "getVariable")
                     "\\|"))
-        (lingo-constant-list (mapconcat 'identity '("false" "true") "\\|"))
+        (lingo-property-list
+         (mapconcat 'identity
+                    '("actionsEnabled" "alignment" "alphaThreshold" "antiAlias"
+                      "antiAliasThreshold" "autoMask" "autoTab" "backColor"
+                      "backgroundColor" "bitmapSizes" "bitRate" "bitsPerSample"
+                      "blend" "blendLevel" "border" "bottom" "bottomSpacing"
+                      "boxDropShadow" "boxType" "broadcastProps" "bufferSize"
+                      "buttonsEnabled" "buttonType" "bytesStreamed"
+                      "castLibNum" "castMemberList" "center" "centerRegPoint"
+                      "changeArea" "channelCount" "characterSet" "charSpacing"
+                      "checkMark" "chunkSize" "clickMode" "closed" "color"
+                      "comments" "constraint" "controller" "copyrightInfo"
+                      "creationDate" "crop" "cuePointNames" "cuePointTimes"
+                      "currentTime" "cursor" "cursorSize" "curve" "defaultRect"
+                      "defaultRectMode" "depth" "digitalVideoType"
+                      "directToStage" "dither" "drawRect" "dropShadow"
+                      "duration" "editable" "elapsedTime" "enabled" "endColor"
+                      "endTime" "eventPassMode" "fieldOfView" "fileName"
+                      "fillColor" "fillCycles" "fillDirection" "filled"
+                      "fillMode" "fillOffset" "fillScale" "firstIndent"
+                      "fixedLineSpace" "fixedRate" "flashRect" "flipH" "flipV"
+                      "font" "fontSize" "fontStyle" "foreColor" "forget" "frame"
+                      "frameCount" "frameLabel" "framePalette" "frameRate"
+                      "frameScript" "frameSound1" "frameSound2" "frameTempo"
+                      "frameTransition" "gradientType"
+
+                      "locH" "locV")
+                    "\\|"))
+        (lingo-object-property-list
+         (mapconcat 'identity
+                    '("ancestor")
+                    "\\|"))
+        (lingo-movie-property-list
+         (mapconcat 'identity
+                    '("activeWindow" "actorList" "allowCustomCaching"
+                      "allowGraphicMenu" "allowSaveLocal"
+                      "allowTransportControl" "allowVolumeControl"
+                      "allowZooming" "beepOn" "buttonStyle" "centerStage"
+                      "checkBoxAccess" "checkBoxType" "currentSpriteNum"
+                      "editShortCutsEnabled" "exitLock" "fixStageSize"
+                      "floatPrecision")
+                    "\\|"))
+        (lingo-system-property-list
+         (mapconcat 'identity
+                    '("activeCastLib" "alertHook" "applicationPath" "bgColor"
+                      "browserName" "colorDepth" "cpuHogTicks" "desktopRectList"
+                      "digitalVideoTimeScale" "emulateMultiButtonMouse"
+                      "environment" "frontWindow" "globals")
+                    "\\|"))
+        (lingo-event-list
+         (mapconcat 'identity
+                    '("activateApplication" "activateWindow" "beginSprite"
+                      "closeWindow" "cuePassed" "deactivateApplication"
+                      "deactivateWindow" "endSprite" "enterFrame" "evalScript"
+                      "exitFrame" "getBehaviorDescription" "getBehaviorTooltip"
+                      "getPropertyDescriptionList"
+                      "startMovie")
+                    "\\|"))
+        (lingo-constant-list
+         (mapconcat 'identity
+                    '("backspace" "empty" "enter" "false" "true")
+                    "\\|"))
         )
     (list
      ;; keywords
      (cons (concat "\\b\\("
-                   lingo-keyword-list lingo-constant-list
+                   lingo-keyword-list lingo-operator-list
                    "\\)\\b[ \n\t(]") 1)
      ;; commands
      `(,(concat "\\b\\("
                lingo-command-list
-               "\\)\\b[ \n\t(]") 1 font-lock-type-face)
+               "\\)\\b[ \n\t(]") 1 font-lock-variable-name-face)
      ;; properties
      `(,(concat "\\b\\("
                lingo-property-list "\\|"
+               lingo-object-property-list "\\|"
                lingo-movie-property-list "\\|"
                lingo-system-property-list
-               "\\)\\b[ \n\t(]") 1 font-lock-builtin-face)
+               "\\)\\b[ \n\t(]") 1 font-lock-variable-name-face)
      ;; events
      `(,(concat "\\b\\("
                lingo-event-list

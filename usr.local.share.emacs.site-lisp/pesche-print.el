@@ -1,20 +1,15 @@
-;; Vorlage für dieses File auf http://www.rose-hulman.edu/~mgrtps/emacs/2-up.html
+;; Pesche's Druckerei
 ;;
-;; ##################################################
-;; A note on the gs options:
-;; -q                            quiet
-;; -sDEVICE=ljet4                the printer - works with HP LaserJet 4 Plus
-;; -r300                         resolution 300x300
-;; -dNOPAUSE                     don't wait for user intervention
-;; -IE:\\GSTOOLS\\gs4.01;E:\\GSTOOLS\\gs4.01\\fonts
-;;                               the directories needed for gs
-;; -c quit                       this is added at the end to terminate gs
+;;     $Source: g:/archiv/cvsroot/site-lisp/pesche-print.el,v $
+;;   $Revision: 1.3 $
+;;       $Date: 1999/02/13 00:05:50 $
+;;     $Author: pesche $
 
+;; Wir benötigen als Basis das Postscript-Modul von Emacs
 (require 'ps-print)
 
 ;; Konfiguration ---------------------------------------------------------------
 (setq ps-paper-type 'a4)
-;(setq ps-paper-type 'ps-a4)
 (setq ps-print-header-frame nil)
 
 ; die Schrift etwas verstellen
@@ -27,13 +22,28 @@
 ; Originalwerte für Courier 10: 11.29 11
 (setq ps-line-height (if (fboundp 'float) 9.03 9))
 
+; einiges ist zuhause anders als im Büro
+(if (eq (string-match "PIAZZA" (system-name)) 0)
+    (progn  ; Zuhause
+      (defvar ghost-dir     "C:\\Progra~1\\gstools\\gs5.03")
+      (defvar ghost-printer "-sDEVICE=djet500 -r300")
+      (defvar ghost-fonts   "C:\\psfonts")
+      (defvar ghost-view    "C:\\Progra~1\\gstools\\gsview\\gsview32.exe"))
+    (progn  ; im Büro
+      (defvar ghost-dir     "L:\\tools\\ghost\\gs5.03")
+      (defvar ghost-printer "-sDEVICE=ljet4 -r600")
+      (defvar ghost-fonts   "I:\\win\\psfonts")
+      (defvar ghost-view    "L:\\tools\\ghost\\gsview\\gsview32.exe"))
+    )
+
 
 (setq ps-psnup-command "psnup") ; Name of n-up program (taking ps as input)
 (setq ps-psnup-switches '(" -l -2 -pa4 ")) ; options for program above
-;(setq ps-lpr-command "C:\\Progra~1\\gstools\\gs5.03\\gswin32")
-(setq ps-lpr-command "start /min C:\\Progra~1\\gstools\\gs5.03\\gswin32")
-(setq ps-lpr-switches '("-q -sPAPERSIZE=a4 -sDEVICE=djet500 -r300 -dNOPAUSE -IC:\\Progra~1\\gstools\\gs5.03;C:\\Progra~1\\gstools\\gs5.03\\fonts;c:\\psfonts"))
-(setq ps-preview-command  "c:\\Progra~1\\gstools\\gsview\\gsview32.exe")
+(setq ps-lpr-command (concat "start /min " ghost-dir "\\gswin32"))
+(setq ps-lpr-switches `(,(concat "-q -sPAPERSIZE=a4 "
+                                ghost-printer " -dNOPAUSE -I"
+                                ghost-dir ";" ghost-dir "\\fonts;" ghost-fonts)))
+(setq ps-preview-command ghost-view)
 (setq ps-lpr-buffer (concat (getenv "TEMP") "\\psspool.ps"))
 (setq ps-psnup-buffer (concat (getenv "TEMP") "\\psnup.ps"))
 (setq ps-print-color-p nil)
@@ -48,26 +58,26 @@
   )
 
 ;; 1up region ------------------------------------------------------------------
-(defun pesche-printfile-region-with-faces (from to)
-  (interactive (list (point) (mark)))
+(defun pesche-printfile-region-with-faces (from to &optional buffer-p)
+  (interactive (list (point) (mark) nil))
   ;; Änderungen an der Kopfzeile hier vornehmen, da Variable Buffer-local
   (setq ps-right-header
         (list "/pagenumberstring load" 'pesche-time-stamp))
-  (ps-print-region-with-faces from to ps-lpr-buffer)
+  (ps-print-with-faces from to ps-lpr-buffer (not buffer-p))
   )
 
-(defun pesche-print-region-with-faces (from to)
-  (interactive (list (point) (mark)))
-  (pesche-printfile-region-with-faces from to)
+(defun pesche-print-region-with-faces (from to &optional buffer-p)
+  (interactive (list (point) (mark) nil))
+  (pesche-printfile-region-with-faces from to buffer-p)
   (shell-command
    (apply 'concat (append (list ps-lpr-command " ")
                           ps-lpr-switches
                           (list " " ps-lpr-buffer " -c quit"))))
   )
 
-(defun pesche-preview-region-with-faces (from to)
-  (interactive (list (point) (mark)))
-  (pesche-printfile-region-with-faces from to)
+(defun pesche-preview-region-with-faces (from to &optional buffer-p)
+  (interactive (list (point) (mark) nil))
+  (pesche-printfile-region-with-faces from to buffer-p)
   (start-process-shell-command "gsview" "*Messages*"
                                ps-preview-command ps-lpr-buffer)
   )
@@ -75,42 +85,41 @@
 ;; 1up buffer ------------------------------------------------------------------
 (defun pesche-printfile-buffer-with-faces ()
   (interactive)
-  (pesche-printfile-region-with-faces (point-min) (point-max))
+  (pesche-printfile-region-with-faces (point-min) (point-max) t)
   )
 
 (defun pesche-print-buffer-with-faces ()
   (interactive)
-  (pesche-print-region-with-faces (point-min) (point-max))
+  (pesche-print-region-with-faces (point-min) (point-max) t)
   )
 
 (defun pesche-preview-buffer-with-faces ()
   (interactive)
-  (pesche-preview-region-with-faces (point-min) (point-max))
+  (pesche-preview-region-with-faces (point-min) (point-max) t)
   )
 
 ;; 2up region ------------------------------------------------------------------
-(defun pesche-printfile-2up-region-with-faces (from to)
-  (interactive (list (point) (mark)))
-  ;;(ps-print-region-with-faces from to ps-lpr-buffer)
-  (pesche-printfile-region-with-faces from to)
+(defun pesche-printfile-2up-region-with-faces (from to &optional buffer-p)
+  (interactive (list (point) (mark) nil))
+  (pesche-printfile-region-with-faces from to buffer-p)
   (shell-command
    (apply 'concat (append (list ps-psnup-command " ")
                           ps-psnup-switches
                           (list " " ps-lpr-buffer " " ps-psnup-buffer))))
   )
 
-(defun pesche-print-2up-region-with-faces (from to)
-  (interactive (list (point) (mark)))
-  (pesche-printfile-2up-region-with-faces from to)
+(defun pesche-print-2up-region-with-faces (from to &optional buffer-p)
+  (interactive (list (point) (mark) nil))
+  (pesche-printfile-2up-region-with-faces from to buffer-p)
   (shell-command
    (apply 'concat (append (list ps-lpr-command " ")
                           ps-lpr-switches
                           (list " " ps-psnup-buffer " -c quit"))))
   )
 
-(defun pesche-preview-2up-region-with-faces (from to)
-  (interactive (list (point) (mark)))
-  (pesche-printfile-2up-region-with-faces from to)
+(defun pesche-preview-2up-region-with-faces (from to &optional buffer-p)
+  (interactive (list (point) (mark) nil))
+  (pesche-printfile-2up-region-with-faces from to buffer-p)
   (start-process-shell-command "gsview" "*Messages*"
                                ps-preview-command ps-psnup-buffer)
   )
@@ -118,17 +127,17 @@
 ;; 2up buffer ------------------------------------------------------------------
 (defun pesche-printfile-2up-buffer-with-faces ()
   (interactive)
-  (pesche-printfile-2up-region-with-faces (point-min) (point-max))
+  (pesche-printfile-2up-region-with-faces (point-min) (point-max) t)
   )
 
 (defun pesche-print-2up-buffer-with-faces ()
   (interactive)
-  (pesche-print-2up-region-with-faces (point-min) (point-max))
+  (pesche-print-2up-region-with-faces (point-min) (point-max) t)
   )
 
 (defun pesche-preview-2up-buffer-with-faces ()
   (interactive)
-  (pesche-preview-2up-region-with-faces (point-min) (point-max))
+  (pesche-preview-2up-region-with-faces (point-min) (point-max) t)
   )
 
 ;; Menu ------------------------------------------------------------------------
@@ -139,6 +148,10 @@
 (define-key menu-bar-tools-menu [ps-print-buffer] nil)
 (define-key menu-bar-tools-menu [ps-print-region] nil)
 (define-key menu-bar-tools-menu [separator-print] nil)
+; die Druck-Einträge von Emacs 20.3 aus dem Print-Menu entfernen (vgl. menu-bar.el)
+(define-key menu-bar-print-menu [ps-print-buffer] nil)
+(define-key menu-bar-print-menu [ps-print-region] nil)
+(define-key menu-bar-print-menu [separator-ps-print] nil)
 
 ; Submenus für Print/Print-to-file/Preview in das File-Menu einhängen
 (define-key-after menu-bar-files-menu [preview]

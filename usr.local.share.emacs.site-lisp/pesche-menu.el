@@ -1,8 +1,8 @@
 ;; Pesche' Menu
 ;;
 ;;     $Source: g:/archiv/cvsroot/site-lisp/pesche-menu.el,v $
-;;   $Revision: 1.5 $
-;;       $Date: 1998/10/27 22:36:18 $
+;;   $Revision: 1.6 $
+;;       $Date: 1999/02/13 00:43:11 $
 ;;     $Author: pesche $
 
 
@@ -50,7 +50,12 @@
   '("--"))
 
 (define-key menu-bar-pesche-menu [pesche-re-font-lock]
-  '("Font Lock aktualisieren" . font-lock-fontify-buffer))
+  '("Font Lock aktualisieren" .
+    (lambda()(interactive)
+      (if (eq major-mode 'perl-mode)
+          (cperl-find-pods-heres)
+          (font-lock-fontify-buffer)
+          ))))
 
 
 ;; Suchen Untermenü ------------------------------------------------------------

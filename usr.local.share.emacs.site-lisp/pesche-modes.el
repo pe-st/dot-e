@@ -1,8 +1,8 @@
 ;; Pesche' Modes
 ;;
 ;;     $Source: g:/archiv/cvsroot/site-lisp/pesche-modes.el,v $
-;;   $Revision: 1.5 $
-;;       $Date: 1999/12/12 23:25:42 $
+;;   $Revision: 1.6 $
+;;       $Date: 2000/03/27 23:12:48 $
 ;;     $Author: pesche $
 
 ;; lisp modes ------------------------------------------------------------------
@@ -222,6 +222,8 @@
 (autoload 'html-helper-mode "html-helper-mode" "HTML major mode." t)
 
 (setq html-helper-use-expert-menu t)
+(setq html-helper-mode-uses-visual-basic nil)
+(setq html-helper-mode-uses-bold-italic t)
 
 (defun pesche-html-helper-mode-hook()
   (html-msb-fix)

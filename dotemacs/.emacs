@@ -4,8 +4,8 @@
 ;;      Author: Peter Steiner <unistein@isbe.ch>
 ;;     Created: Wed Jul 6 19:52:18 1994
 ;;     $Source: g:/archiv/cvsroot/home/.emacs,v $
-;;   $Revision: 1.19 $
-;;       $Date: 1999/05/06 21:12:07 $
+;;   $Revision: 1.20 $
+;;       $Date: 1999/05/18 19:04:20 $
 ;;     $Author: pesche $
 
 
@@ -145,7 +145,6 @@ This function is the opposite of `bury-buffer'."
 (standard-display-european t)           ;; vollen 8-Bit Zeichensatz verwenden
 (column-number-mode 1)
 
-
 ;; fonts -----------------------------------------------------------------------
 ;; Paare von Werten (mindestens für Lucida Sans Typewriter)
 ;; 10-75 / 11-82 / 12-90 / 13-97 / 14-105 / 15-112
@@ -281,6 +280,13 @@ saving keyboard macros (see insert-kbd-macro)."
 (which-func-mode 0)
 (which-func-mode 1)
 
+; den Minibuffer konfigurieren -------------------------------------------------
+(resize-minibuffer-mode 1)      ; automatische Grössenanpassung
+; im Minibuffer sollen lange Zeilen umgebrochen werden (sonst ist ja
+; der resize-minibuffer-mode für die Katz)
+(add-hook 'minibuffer-setup-hook
+          '(lambda () (setq truncate-lines nil)))
+
 ;; mode specific configuration -------------------------------------------------
 ;;(setq default-major-mode 'text-mode)
 ;=(setq text-mode-hook 'turn-on-auto-fill)
@@ -312,6 +318,16 @@ saving keyboard macros (see insert-kbd-macro)."
 ;(setq man-path '("x:/gnuwin32/b18/man"))
 ;(setq woman-path '("x:\gnuwin32\b18\man" "e:\usr\man"))
 
+; todo-mode
+(autoload 'todo-mode "todo-mode"
+  "Major mode for editing TODO lists." t)
+(autoload 'todo-show "todo-mode"
+  "Show TODO items." t)
+(autoload 'todo-insert-item "todo-mode"
+  "Add TODO item." t)
+
+; Der Mauszeiger soll vor dem herannahenden Cursor flüchten
+(mouse-avoidance-mode 'exile)
 
 ;; lisp modes
 (defun pesche-emacs-lisp-mode-hook()

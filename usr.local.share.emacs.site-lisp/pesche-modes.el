@@ -1,8 +1,8 @@
 ;; Pesche' Modes
 ;;
 ;;     $Source: g:/archiv/cvsroot/site-lisp/pesche-modes.el,v $
-;;   $Revision: 1.6 $
-;;       $Date: 2000/03/27 23:12:48 $
+;;   $Revision: 1.7 $
+;;       $Date: 2000/10/30 21:22:51 $
 ;;     $Author: pesche $
 
 ;; lisp modes ------------------------------------------------------------------
@@ -34,7 +34,31 @@
     (defvar delete-key-deletes-forward))
 (setq delete-key-deletes-forward t)
 
+;; `indent-region' hat Probleme mit javadoc-Kommentaren. Der folgende
+;; workaround ist der JDE Funktion `jde-indent-java-region' abgeschaut.
+(defun pesche-indent-region-fix (start end)
+  "Indent each nonblank line in the region.
+This is a workaround for `indent-region' not properly indenting
+Javadoc comments."
+  (interactive "r")
+  (save-excursion
+    (goto-char start)
+    (beginning-of-line)
+    (setq end (set-marker (make-marker) end))
+    (c-indent-line)
+    (while (< (point) end)
+      (c-indent-line)
+      (forward-line 1))))
+
+;; Kommentare in einem temporären text-mode Buffer editieren
+(require 'c-comment-edit)
+
 (defun pesche-c-mode-common-hook()
+  ;; auf der englischen Tastatur liegt diese Fkt. auf C-M-\
+  (local-set-key (kbd "C-M-<") 'pesche-indent-region-fix)
+  (local-set-key (kbd "C-M-\\") 'pesche-indent-region-fix)
+  (local-set-key (kbd "C-M-e") 'c-comment-edit)
+
   ;; das 'elektrische' automatische Einrücken bei Kommentaren ist lästig...
   (local-unset-key (kbd "*"))
   (local-unset-key (kbd "/"))
@@ -70,6 +94,11 @@
 
   ;; case sensitiv suchen
   (setq case-fold-search nil)
+
+  ;; (ab cc-mode 5.26) filladapt verwenden
+  (c-setup-filladapt)
+  (filladapt-mode 1)
+  (setq fill-column 80)     ; normalerweise mehr als der text-mode default
 
   ;; alle 'Kästchen' in das 'Outline'-Menü aufnehmen
   (setq imenu-generic-expression
@@ -199,6 +228,17 @@
   "Show TODO items." t)
 (autoload 'todo-insert-item "todo-mode"
   "Add TODO item." t)
+
+;; text-mode -------------------------------------------------------------------
+(defun pesche-text-mode-hook()
+  ;(turn-on-auto-fill)
+  (filladapt-mode 1)
+  (setq filladapt-mode-line-string nil)
+
+  ;; das hier sollte eigentlich bei globalem font-lock nicht nötig sein...
+  (turn-on-font-lock)
+)
+(add-hook 'text-mode-hook 'pesche-text-mode-hook)
 
 
 ;; html/sgml/xml allgemeines ---------------------------------------------------

@@ -2,9 +2,9 @@
 ;;  Emacs Startup File
 ;;
 ;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id: //netzadmin/emacs/pesche/.emacs#43 $
-;;     $Change: 19569 $
-;;   $DateTime: 2004/08/30 23:11:59 $
+;;         $Id: //netzadmin/emacs/pesche/.emacs#44 $
+;;     $Change: 20009 $
+;;   $DateTime: 2004/10/29 17:01:14 $
 ;;     $Author: peter.steiner $
 ;;    $Created: Wed Jul 6 19:52:18 1994 $
 
@@ -510,9 +510,14 @@ saving keyboard macros (see insert-kbd-macro)."
       ))
 
 (custom-set-variables
+  ;; custom-set-variables was added by Custom -- don't edit or cut/paste it!
+  ;; Your init file should contain only one such instance.
+ '(hscroll-global-mode t nil (hscroll))
  '(hscroll-mode-name nil)
- '(scroll-preserve-screen-position t)
- '(hscroll-global-mode t nil (hscroll)))
-(custom-set-faces)
+ '(scroll-preserve-screen-position t))
+(custom-set-faces
+  ;; custom-set-faces was added by Custom -- don't edit or cut/paste it!
+  ;; Your init file should contain only one such instance.
+ )
 
 

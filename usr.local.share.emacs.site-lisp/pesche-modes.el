@@ -1,11 +1,14 @@
 ;; Pesche' Modes
 ;;
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#15 $
-;;     $Change: 19560 $
-;;   $DateTime: 2004/08/30 09:52:43 $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#16 $
+;;     $Change: 20009 $
+;;   $DateTime: 2004/10/29 17:01:14 $
 ;;     $Author: peter.steiner $
 ;;    $Created: 1999/06/02 $
 ;;  $Copyright: Peter Steiner <pesche@schlau.ch>
+
+;; Default-Liste für find-file löschen, damit wir unsere eigene pflegen können
+(setq-default ff-other-file-alist nil)
 
 ;; lisp modes ------------------------------------------------------------------
 (defun pesche-emacs-lisp-mode-hook()
@@ -29,6 +32,26 @@
 ;; C mode und alle Verwandten --------------------------------------------------
 ;; Files auf .rh sollen auch Header Files sein (resource header)
 (setq auto-mode-alist (append '(("\\.rh\\'" . c-mode)) auto-mode-alist))
+
+;; default aus find-file.el leicht abgeändert für .cxx und .cpp (nicht
+;; nur .hh und .h)
+(setq-default ff-other-file-alist
+              (append '(
+                        ("\\.cc$"  (".hh" ".h"))
+                        ("\\.hh$"  (".cc" ".C"))
+
+                        ("\\.c$"   (".h"))
+                        ("\\.h$"   (".c" ".cc" ".C" ".CC" ".cxx" ".cpp"))
+
+                        ("\\.C$"   (".H"  ".hh" ".h"))
+                        ("\\.H$"   (".C"  ".CC"))
+
+                        ("\\.CC$"  (".HH" ".H"  ".hh" ".h"))
+                        ("\\.HH$"  (".CC"))
+
+                        ("\\.cxx$" (".hxx" ".hpp" ".hh" ".h"))
+                        ("\\.cpp$" (".hpp" ".hxx" ".hh" ".h"))
+                        ) ff-other-file-alist))
 
 ;; In bestimmten Verzeichnissen gehen wir von HW C Files aus...
 (setq auto-mode-alist

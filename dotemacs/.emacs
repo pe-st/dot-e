@@ -2,9 +2,9 @@
 ;;  Emacs Startup File
 ;;
 ;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id: //netzadmin/emacs/pesche/.emacs#34 $
-;;     $Change: 17507 $
-;;   $DateTime: 2003/09/10 09:24:43 $
+;;         $Id: //netzadmin/emacs/pesche/.emacs#35 $
+;;     $Change: 17903 $
+;;   $DateTime: 2003/11/03 17:11:01 $
 ;;     $Author: peter.steiner $
 ;;    $Created: Wed Jul 6 19:52:18 1994 $
 
@@ -284,8 +284,11 @@ saving keyboard macros (see insert-kbd-macro)."
   (require 'which-func))
 (add-to-list 'which-func-modes 'cperl-mode)
 ; aus irgendeinem Grund muss man den Modus zweimal toggeln...
-(which-func-mode 0)
-(which-func-mode 1)
+(if (not (eq window-system 'mac))
+    (progn
+      (which-func-mode 0)
+      (which-func-mode 1)
+      ))
 
 ; den Minibuffer konfigurieren -------------------------------------------------
 (resize-minibuffer-mode 1)      ; automatische Grössenanpassung

@@ -2,14 +2,10 @@
 ;;;
 ;;; Copyright (c) 1997 by Matthew Cravit.
 
-;;     $Source: g:/archiv/cvsroot/site-lisp/generic-pilrc.el,v $
-;;   $Revision: 1.3 $
-;;       $Date: 1999/04/08 19:03:49 $
-;;     $Author: pesche $
 ;; Author: Matthew Cravit <mcravit@best.com>
 ;; Maintainer: Matthew Cravit <mcravit@best.com>
 ;; Created: Wed Jul 30 10:46:58 1997
-;; Version: 0.1
+;; $Id: generic-pilrc.el,v 1.4 1999/04/08 19:41:52 pesche Exp $
 
 ;; This file contains a generic mode (which requires generic-mode.el) for
 ;; editing PILRC files. PILRC is the resource compiler for applications to
@@ -22,6 +18,16 @@
 
 ;; This mode also provides some functions for inserting resource templates
 ;; which can be edited as needed.
+
+;; Bugs:
+;; * The Keyword BITMAP is always font-locked as a Command (font-lock-type-face)
+;;   though it can also be an Attribute. See the examples:
+;;
+;;   Command:
+;;       BITMAP ID kidBitmap "pilrc.bmp"
+;;
+;;   Attribute:
+;;       FORMBITMAP AT (10 15) BITMAP kidBitmap
 
 (require 'generic)
 (require 'font-lock)
@@ -37,7 +43,7 @@
           ;; Autovalues
           ; auto bottom center prevbottom prevheight prevleft
           ; prevright prevtop prevwidth right
-          ("\\<\\(AUTO\\|CENTER\\|PREVLEFT\\|PREVTOP\\|PREVRIGHT\\|PREVBOTTOM\\|PREVWIDTH\\|PREVHEIGHT\\)\\>"
+          ("\\<\\(AUTO\\|BOTTOM\\|CENTER\\|PREV\\(BOTTOM\\|HEIGHT\\|LEFT\\|RIGHT\\|TOP\\|WIDTH\\)\\|RIGHT\\)\\>"
            1 'font-lock-reference-face)
           ;; Attributes
           ; at autoid autoshift begin boldframe checked columns columnwidths
@@ -47,7 +53,7 @@
           ; nonusable nosavebehind numeric pagesize rightalign rightanchor
           ; rows savebehind separator singleline underlined usable value
           ; visibleitems warning
-          ("\\<\\(BEGIN\\|END\\|FRAME\\|NOFRAME\\|USABLE\\|MODAL\\|SAVEBEHIND\\|DISABLED\\|NONUSABLE\\|LEFTANCHOR\\|RIGHTANCHOR\\|LEFTALIGN\\|BOLDFRAME\\|FONT\\|GROUP\\|CHECKED\\|EDITABLE\\|NONEDITABLE\\|UNDERLINED\\|SINGLELINE\\|MULTIPLELINES\\|MAXCHARS\\|VISIBLEITEMS\\|ROWS\\|COLUMNS\\|COLUMNWIDTHS\\|INFORMATION\\|CONFIRMATION\\|WARNING\\|ERROR\\|MESSAGE\\|BUTTONS\\|AT\\)\\>"
+          ("\\<\\(AT\\|AUTOID\\|AUTOSHIFT\\|BEGIN\\|BOLDFRAME\\|CHECKED\\|COLUMNS\\|COLUMNWIDTHS\\|COMPRESS\\|CONFIRMATION\\|DISABLED\\|DYNAMICSIZE\\|EDITABLE\\|END\\|ERROR\\|FONT\\|FORCECOMPRESS\\|FRAME\\|GROUP\\|INFORMATION\\|LEFTALIGN\\|LEFTANCHOR\\|MAX\\|MAXCHARS\\|MIN\\|MODAL\\|MULTIPLELINES\\|NOCOMPRESS\\|NOFRAME\\|NONEDITABLE\\|NONUSABLE\\|NOSAVEBEHIND\\|NUMERIC\\|PAGESIZE\\|RIGHTALIGN\\|RIGHTANCHOR\\|ROWS\\|SAVEBEHIND\\|SEPARATOR\\|SINGLELINE\\|UNDERLINED\\|USABLE\\|VALUE\\|VISIBLEITEMS\\|WARNING\\)\\>"
            1 'font-lock-keyword-face)
           ;; Commands
           ; alert application applicationiconname bitmap bitmapgray bitmapgrey
@@ -55,9 +61,9 @@
           ;; Objects
           ; button buttons checkbox field formbitmap gadget
           ; graffitistateindicator label list menuitem message
-          ; popuplist popuptrigger pushbutton pulldown
+          ; popuplist popuptrigger pulldown pushbutton
           ; repeatbutton scrollbar selectortrigger table title
-          ("\\<\\(FORM\\|BUTTON\\|PUSHBUTTON\\|CHECKBOX\\|POPUPTRIGGER\\|SELECTORTRIGGER\\|REPEATBUTTON\\|LABEL\\|FIELD\\|POPUPLIST\\|LIST\\|FORMBITMAP\\|GADGET\\|TABLE\\|GRAFFITISTATEINDICATOR\\|MENUITEM\\|PULLDOWN\\|MENU\\|ALERT\\|VERSION\\|STRING\\|APPLICATIONICONNAME\\|APPLICATION\\|TITLE\\|TRANSLATION\\)\\>"
+          ("\\<\\(ALERT\\|APPLICATION\\|APPLICATIONICONNAME\\|BITMAP\\|BITMAPGRAY\\|BITMAPGREY\\|BUTTON\\|BUTTONS\\|CHECKBOX\\|FIELD\\|FORM\\|FORMBITMAP\\|GADGET\\|GRAFFITISTATEINDICATOR\\|ICON\\|LABEL\\|LIST\\|MENU\\|MENUITEM\\|MESSAGE\\|POPUPLIST\\|POPUPTRIGGER\\|PULLDOWN\\|PUSHBUTTON\\|REPEATBUTTON\\|SCROLLBAR\\|SELECTORTRIGGER\\|SMALLICON\\|STRING\\|TABLE\\|TITLE\\|TRANSLATION\\|TRAP\\|VERSION\\)\\>"
            1 'font-lock-type-face)
           ;; ID-Attributes (with an ID parameter)
           ; defaultbtnid id helpid menuid

@@ -35,6 +35,11 @@
 ;;; todo
 ;; font-locking: words are not colored if followed by a bracket. Why?
 ;; Indenting: comments
+;; Tab key: should behave more like in c-mode
+;; M-q takes one line too much
+;; lingo-case-expr-regexp must not inspect comments and strings
+;; new Director 8.5 keywords
+;; \ should not be an escape character (messes up "\")
 
 ;;; History:
 
@@ -61,7 +66,7 @@
 (defconst lingo-endif-regexp "^[ \t]*[Ee]nd[ \t]*[Ii]f")
 
 (defconst lingo-case-regexp "^[ \t]*[Cc]ase[ \t]+.*")
-(defconst lingo-case-expr-regexp "^[ \t]*\\S-.*:.*$")
+(defconst lingo-case-expr-regexp "^[ \t]*\\S-.*:[ \t]*$")
 (defconst lingo-case-otherwise-regexp "^[ \t]*[Oo]therwise\\([ \t]+.*\\)?$")
 ;;(defconst lingo-case-expr-regexp "^[ \t]*\\w+\\(,[ \t]*\\w+\\)[ \t]*:.*")
 (defconst lingo-case-end-regexp "^[ \t]*[Ee]nd[ \t]*[Cc]ase")

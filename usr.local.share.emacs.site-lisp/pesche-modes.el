@@ -1,7 +1,7 @@
 ;; Pesche' Modes
 ;;
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#10 $
-;;   $DateTime: 2003/08/13 09:11:56 $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#11 $
+;;   $DateTime: 2003/11/07 22:46:39 $
 ;;     $Author: peter.steiner $
 ;;  $Copyright: Peter Steiner <pesche@schlau.ch>
 
@@ -208,6 +208,20 @@ Javadoc comments."
 
 (add-hook 'cperl-mode-hook 'pesche-cperl-mode-hook)
 
+
+;; lingo-mode ------------------------------------------------------------------
+(autoload 'lingo-mode "lingo-mode" "Major mode for editing Lingo files." t)
+(setq auto-mode-alist (append '(("\\.[Ll][Ss]\\'" . lingo-mode)) auto-mode-alist))
+
+(defun pesche-lingo-mode-hook()
+  ;; den Tabulator dressieren
+  (setq tab-width                2
+        indent-tabs-mode         nil)
+
+  (imenu-add-to-menubar "Index")
+  )
+
+(add-hook 'lingo-mode-hook 'pesche-lingo-mode-hook)
 
 ;; WoMan mode ------------------------------------------------------------------
 ;; mode zum Lesen von 'man' Dokumentation ohne externes Programm

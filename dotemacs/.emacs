@@ -74,14 +74,27 @@
   (next-line arg))
 
 
+;; diese Funktion habe ich aus dem .emacs von Jack Repenning <jackr@informix.com>
+(defun toggle-line-wrap ()
+  "Toggles the line-wrap function.
+Covers (and equates) both horizontal and vertical splits."
+  (interactive)
+  (setq truncate-lines (setq truncate-partial-width-windows (not
+                                                             truncate-lines)))
+  (recenter (- (count-lines (window-start) (point))
+               (if (bolp) 0 1)))
+  )
+
+
 ;; general configuration -------------------------------------------------------
 
 ;; Emacs-Päckli auch in meinem lokalen emacs-Verzeichnis suchen
-(if (file-accessible-directory-p "~/emacs/gnus/lisp/")
-    (setq load-path (append (list "~/emacs/gnus/lisp/") load-path)))
-(if (file-accessible-directory-p "~/emacs/custom/")
-    (setq load-path (append (list "~/emacs/custom/") load-path)))
-(setq-default load-path (append '("~/emacs") load-path))
+(if (file-accessible-directory-p "~/emacs/gnus/lisp")
+    (setq load-path (append '("~/emacs/gnus/lisp") load-path)))
+(if (file-accessible-directory-p "~/emacs/custom")
+    (setq load-path (append '("~/emacs/custom") load-path)))
+(if (file-accessible-directory-p "~/emacs")
+    (setq load-path (append '("~/emacs") load-path)))
 
 (setq-default fill-column 77)           ;; column for line breaking in auto-fill-mode
 (setq make-backup-files t)
@@ -340,7 +353,6 @@
 
 
 ;; makefile mode
-;=(autoload 'makefile-mode "makefile" "Makefile Editing Mode" t)
 (setq auto-mode-alist (append '(("[Mm]akefile$" . makefile-mode)
                                 ("\\.mk$" . makefile-mode)
                                 ("\\.mak$" . makefile-mode)
@@ -349,6 +361,15 @@
           (function (lambda ()
                       (setq-default tab-width        8
                                     indent-tabs-mode t)
+                      (imenu-add-to-menubar "Index")
+                      )))
+
+;; perl mode
+(add-hook 'perl-mode-hook
+          (function (lambda ()
+;                      (setq-default tab-width        8
+;                                    indent-tabs-mode t)
+                      (imenu-add-to-menubar "Index")
                       )))
 
 ;; TeX and related modes

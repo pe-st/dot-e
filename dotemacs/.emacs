@@ -2,10 +2,10 @@
 ;;  Emacs Startup File
 ;;
 ;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id: //depot/src/phoenix/machine/options.lnt#17 $
-;;     $Change: 668 $
-;;   $DateTime: 2003/08/27 17:05:30 $
-;;     $Author: pesche $
+;;         $Id: //netzadmin/emacs/pesche/.emacs#34 $
+;;     $Change: 17507 $
+;;   $DateTime: 2003/09/10 09:24:43 $
+;;     $Author: peter.steiner $
 ;;    $Created: Wed Jul 6 19:52:18 1994 $
 
 

@@ -4,8 +4,8 @@
 ;;      Author: Peter Steiner <unistein@isbe.ch>
 ;;     Created: Wed Jul 6 19:52:18 1994
 ;;     $Source: g:/archiv/cvsroot/home/.emacs,v $
-;;   $Revision: 1.24 $
-;;       $Date: 1999/08/13 20:58:50 $
+;;   $Revision: 1.25 $
+;;       $Date: 1999/08/31 22:17:21 $
 ;;     $Author: pesche $
 
 
@@ -287,6 +287,14 @@ saving keyboard macros (see insert-kbd-macro)."
 (set-face-foreground 'font-lock-constant-face "ForestGreen")
 (copy-face 'font-lock-constant-face 'font-lock-reference-face)
 
+; die Farben für die HTML faces müssen ebenfalls mit Gewalt geändert werden
+(setq font-lock-background-mode 'light)
+(require 'html-helper-mode)
+(set-face-foreground  html-helper-bold-face        "Peru")
+(set-face-foreground  html-helper-italic-face      "Peru")
+(set-face-foreground  html-helper-underline-face   "Peru")
+(set-face-foreground  html-tag-face                "Firebrick")
+
 (setq font-lock-face-attributes
       '((font-lock-comment-face       "SlateGray")
         (font-lock-string-face        "Sienna" "LightBlue")
@@ -294,9 +302,6 @@ saving keyboard macros (see insert-kbd-macro)."
         (font-lock-function-name-face "Blue")
         (font-lock-variable-name-face "Blue")
         (font-lock-type-face          "Black")
-; nicht mehr nötig, da dies weiter oben mit dem 'Brecheisen' geschieht
-;        (font-lock-constant-face      "ForestGreen")    ;; 20.x
-;        (font-lock-reference-face     "ForestGreen")    ;; 19.x
         (info-node                    "Blue")
         (info-xref                    "Blue")
         (makefile-space-face          nil "HotPink")
@@ -323,12 +328,13 @@ saving keyboard macros (see insert-kbd-macro)."
       (set-face-font 'font-lock-function-name-face pesche-default-bold)
       (set-face-font 'font-lock-variable-name-face pesche-default-regular)
       (set-face-font 'font-lock-type-face          pesche-default-bold)
-; nicht mehr nötig, da dies weiter oben mit dem 'Brecheisen' geschieht
-;       (set-face-font 'font-lock-constant-face      lucida-typewriter-bold-italic)
-;       (if (eq window-system 'win32)
-;           (set-face-font 'font-lock-reference-face lucida-typewriter-bold-italic))
+      (set-face-font 'html-helper-bold-face        pesche-default-bold)
+      (set-face-font 'html-helper-italic-face      pesche-default-italic)
+      (set-face-font 'html-helper-underline-face   pesche-default-bold)
+      (set-face-font 'html-tag-face                pesche-default-regular)
       )))
 ;       ))
+
 
 
 ;; verschiedene andere Modi ----------------------------------------------------

@@ -1,6 +1,11 @@
 ;;----------------------------------------------------------- -*- Emacs-Lisp -*-
 ;; Improvements to Electric Font Lock Mode
 ;; Author: Pesche <unistein@isbe.ch>
+;;
+;;     $Source: g:/archiv/cvsroot/site-lisp/pesche-font-lock.el,v $
+;;   $Revision: 1.7 $
+;;       $Date: 1999/02/15 22:06:05 $
+;;     $Author: pesche $
 
 ;;; This package provides some improvements to `font-lock-mode':
 
@@ -85,12 +90,13 @@
 ;      ("bool" "true" "false" "uint8" "uint16" "uint32" "int8" "int16" "int32"
 ;       "smallint" "smalluint" "_plm_call" "_bit" "_rom_mem" "_rom_ptr"
 ;       "_near_mem" "_near_ptr" "_fastfar_mem" "_fastfar_ptr" "_far_mem"
-;       "_far_ptr" "_huge_ptr") 
+;       "_far_ptr" "_huge_ptr" "_stk_ptr" "_stk_mem")
        (concat "bool\\|false\\|int\\(8\\|16\\|32\\)\\|small\\(int\\|uint\\)\\|"
                "true\\|uint\\(8\\|16\\|32\\)\\|"
                "_\\(bit\\|fa\\(r_\\(mem\\|ptr\\)\\|stfar_\\(mem\\|ptr\\)\\)\\|"
                "huge_ptr\\|near_\\(mem\\|ptr\\)\\|"
-               "plm_call\\|rom_\\(mem\\|ptr\\)\\)"))
+               "plm_call\\|rom_\\(mem\\|ptr\\)\\|"
+               "stk_\\(mem\\|ptr\\)\\)"))
       )
 
  ;; c font lock keywords 1 ---------------------------------------------

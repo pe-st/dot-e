@@ -546,24 +546,36 @@ saving keyboard macros (see insert-kbd-macro)."
 (gnuserv-start)
 
 ;; printing --------------------------------------------------------------------
-(require 'ps-print)
-(setq ps-paper-type 'ps-a4)
-(setq ps-lpr-command "C:\\Progra~1\\gstools\\gs5.03\\gswin32")
-(setq ps-lpr-switches '("-q -sDEVICE=djet500 -r300 -dNOPAUSE -IC:\\Progra~1\\gstools\\gs5.03;C:\\Progra~1\\gstools\\gs5.03\\fonts;c:\\psfonts"))
-(setq ps-lpr-buffer (concat (getenv "TEMP") "\\psspool.ps"))
+(require 'pesche-print)
+;(require 'ps-print)
+;(setq ps-paper-type 'ps-a4)
+;(setq ps-lpr-command "C:\\Progra~1\\gstools\\gs5.03\\gswin32")
+;(setq ps-lpr-switches '("-q -sDEVICE=djet500 -r300 -dNOPAUSE -IC:\\Progra~1\\gstools\\gs5.03;C:\\Progra~1\\gstools\\gs5.03\\fonts;c:\\psfonts"))
+;(setq ps-lpr-buffer (concat (getenv "TEMP") "\\psspool.ps"))
 
-(defun win32-ps-print-buffer ()
-  (interactive)
-  (setq ps-print-color-p nil)
-  (setq ps-bold-faces '(font-lock-keyword-face))
-  (setq ps-italic-faces '(font-lock-comment-face))
-  (ps-print-buffer-with-faces ps-lpr-buffer)
-  (shell-command
-   (apply 'concat (append (list ps-lpr-command " ")
-                          ps-lpr-switches
-                          (list " " ps-lpr-buffer " -c quit"))))
-  )
+;(defun win32-ps-print-buffer ()
+;  (interactive)
+;  (setq ps-print-color-p nil)
+;  (setq ps-bold-faces '(font-lock-keyword-face))
+;  (setq ps-italic-faces '(font-lock-comment-face))
+;  (ps-print-buffer-with-faces ps-lpr-buffer)
+;  (shell-command
+;   (apply 'concat (append (list ps-lpr-command " ")
+;                          ps-lpr-switches
+;                          (list " " ps-lpr-buffer " -c quit"))))
+;  )
 
+;(setq lpr-command "print")
+;(setq ps-lpr-command "print")
+;(setq lpr-destination '("/D:\\\\host\\share-name"));; for normal printer
+;(setq ps-lpr-destination '("/D:\\\\host\\share-name"));; for postscript printer
+
+;(setq ps-print-use-gs t)                ; t - use ghostscript, nil - do not
+;(setq gs-print-command "C:\\Progra~1\\gstools\\gs5.03\\gswin32")
+;(setq gs-print-switches '("-q -sDEVICE=djet500 -r300 -dNOPAUSE -IC:\\Progra~1\\gstools\\gs5.03;C:\\Progra~1\\gstools\\gs5.03\\fonts;c:\\psfonts"))
+;(setq gs-view-command  "c:\\Progra~1\\gstools\\gsview\\gsview32.exe")
+;(setq ps-paper-type 'ps-a4)
+;(require  'print-nt)
 
 ;;; ********************
 ;;; Load ange-ftp, which uses the FTP protocol as a pseudo-filesystem.

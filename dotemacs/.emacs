@@ -2,9 +2,9 @@
 ;;  Emacs Startup File
 ;;
 ;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id: //netzadmin/emacs/pesche/.emacs#37 $
-;;     $Change: 18008 $
-;;   $DateTime: 2003/11/11 19:20:55 $
+;;         $Id: //netzadmin/emacs/pesche/.emacs#38 $
+;;     $Change: 18140 $
+;;   $DateTime: 2003/11/25 19:04:06 $
 ;;     $Author: peter.steiner $
 ;;    $Created: Wed Jul 6 19:52:18 1994 $
 
@@ -247,6 +247,12 @@ saving keyboard macros (see insert-kbd-macro)."
 (global-set-key (kbd "C-<return>") 'duplicate-line)     ;; self-written
 (global-set-key (kbd "C-<kp-enter>") 'duplicate-line)   ;; self-written
 
+;; einige Korrekturen für den Mac
+(global-set-key (kbd "C-<kp-home>") 'beginning-of-buffer)
+(global-set-key (kbd "C-<kp-end>") 'end-of-buffer)
+(global-set-key (kbd "<kp-delete>") 'delete-char)
+
+;; Funktionstasten
 (global-set-key (kbd "<f6>") 'other-window)             ;; C-x o
 (global-set-key (kbd "C-<f6>") 'bury-buffer)            ;;
 

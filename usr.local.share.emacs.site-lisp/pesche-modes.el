@@ -1,7 +1,7 @@
 ;; Pesche' Modes
 ;;
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#12 $
-;;   $DateTime: 2003/11/11 07:03:12 $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#13 $
+;;   $DateTime: 2003/11/25 19:04:06 $
 ;;     $Author: peter.steiner $
 ;;  $Copyright: Peter Steiner <pesche@schlau.ch>
 
@@ -217,6 +217,13 @@ Javadoc comments."
 
 (add-hook 'cperl-mode-hook 'pesche-cperl-mode-hook)
 
+
+;; python-mode -----------------------------------------------------------------
+(setq auto-mode-alist
+      (append '(("\\.py\\'" . python-mode)
+                ("\\.pyw\\'" . python-mode))
+              auto-mode-alist))
+(autoload 'python-mode "python-mode" nil t)
 
 ;; lingo-mode ------------------------------------------------------------------
 (autoload 'lingo-mode "lingo-mode" "Major mode for editing Lingo files." t)

@@ -1,14 +1,14 @@
 ;; Pesche' Modes
 ;;
 ;;     $Source: g:/archiv/cvsroot/site-lisp/pesche-modes.el,v $
-;;   $Revision: 1.1 $
-;;       $Date: 1999/06/02 21:09:17 $
+;;   $Revision: 1.2 $
+;;       $Date: 1999/07/19 21:38:12 $
 ;;     $Author: pesche $
 
 ;; lisp modes
 (defun pesche-emacs-lisp-mode-hook()
-  (setq-default tab-width        8
-                indent-tabs-mode nil)
+  (setq tab-width        8
+        indent-tabs-mode nil)
 
   ;; Syntax etwas anpassen, damit (zB) Markieren mit Doppelklick nicht
   ;; bei '-' oder Umlauten Halt macht
@@ -46,19 +46,26 @@
         comment-multi-line nil
         font-lock-comment-start-regexp nil
         c-double-slash-is-comments-p t)
+
   ;; Syntax etwas anpassen, damit (zB) Markieren mit Doppelklick nicht
   ;; bei '_' oder Umlauten Halt macht
   (modify-syntax-entry ?_ "w")
   (modify-syntax-for-umlaut)
+
   ;; Mein Codierstil ist ein abgeänderter 'Stroustrup'
   (c-set-style  "Stroustrup")
   (c-set-offset 'case-label '+)
   (c-set-offset 'statement-case-open '+)
   (c-set-offset 'arglist-close 0)
-  (setq-default tab-width                4
-                indent-tabs-mode         nil
-                c-tab-always-indent      nil
-                c++-tab-always-indent    nil)
+  (c-set-offset 'inextern-lang 0)
+  (c-set-offset 'cpp-macro 'c-lineup-dont-change)
+  (c-set-offset 'cpp-macro-cont '+)
+
+  ;; den Tabulator dressieren
+  (setq tab-width                4
+        indent-tabs-mode         nil
+        c-tab-always-indent      nil
+        c++-tab-always-indent    nil)
 
   ;; alle 'Kästchen' in das 'Outline'-Menü aufnehmen
   (setq imenu-generic-expression
@@ -97,8 +104,8 @@
                     last))))
 
 (defun pesche-makefile-mode-hook()
-  (setq-default tab-width        8
-                indent-tabs-mode t)
+  (setq tab-width        8
+        indent-tabs-mode t)
 
   ; korrigiere regexp für Zuweisungen (Fehler tritt nur
   ; bei imenu auf, font-lock ist okay)
@@ -122,8 +129,8 @@
   (local-unset-key (kbd ":"))
   (local-unset-key (kbd ";"))
   (local-unset-key (kbd "RET"))
-  (setq-default tab-width        8
-                indent-tabs-mode t)
+  (setq tab-width        8
+        indent-tabs-mode t)
 
   ;; Syntax etwas anpassen, damit (zB) Markieren mit Doppelklick nicht
   ;; bei '_' oder Umlauten Halt macht

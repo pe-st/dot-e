@@ -5,7 +5,7 @@
 ;; Author: Matthew Cravit <mcravit@best.com>
 ;; Maintainer: Matthew Cravit <mcravit@best.com>
 ;; Created: Wed Jul 30 10:46:58 1997
-;; $Id: generic-pilrc.el,v 1.5 1999/04/14 19:10:58 pesche Exp $
+;; $Id: generic-pilrc.el,v 1.6 1999/04/14 20:05:46 pesche Exp $
 
 ;; This file contains a generic mode (which requires generic-mode.el) for
 ;; editing PILRC files. PILRC is the resource compiler for applications to
@@ -32,42 +32,49 @@
 (require 'generic)
 (require 'font-lock)
 
-(defun pilrc-setup nil
-        (font-lock-mode 1)
-        (font-lock-fontify-buffer))
+(defun pilrc-setup ()
+  ; damit font-lock auch bei Bezeichner mit einem '_' richtig funktioniert,
+  ; muss die syntax-table geändert werden. Dazu gibt es extra eine lokale
+  ; font-lock-syntax-table. Leider wird die von generic.el nicht unterstützt,
+  ; aber die folgende Zeile hilft dem ab
+  ; (und das 't' sagt, dass die Schlüsselwörter case-insensitiv sind)
+  (nconc font-lock-defaults '(t ((?_ . "w"))))
+  (font-lock-mode 1)
+  (font-lock-fontify-buffer)
+  )
 
 (defvar pilrc-autovalue-list
   (list
-   "AUTO" "BOTTOM" "CENTER" "PREVBOTTOM" "PREVHEIGHT" "PREVLEFT"
-   "PREVRIGHT" "PREVTOP" "PREVWIDTH" "RIGHT"
+   "auto" "bottom" "center" "prevbottom" "prevheight" "prevleft"
+   "prevright" "prevtop" "prevwidth" "right"
    )
   "pilrc autovalues.")
 
 (defvar pilrc-attribute-list
   (list
-   "AT" "AUTOID" "AUTOSHIFT" "BEGIN" "BOLDFRAME" "CHECKED" "COLUMNS" "COLUMNWIDTHS"
-   "COMPRESS" "CONFIRMATION" "DISABLED" "DYNAMICSIZE" "EDITABLE" "END" "ERROR" "FONT"
-   "FORCECOMPRESS" "FRAME" "GROUP" "INFORMATION" "LEFTALIGN" "LEFTANCHOR" "MAX"
-   "MAXCHARS" "MIN" "MODAL" "MULTIPLELINES" "NOCOMPRESS" "NOFRAME" "NONEDITABLE"
-   "NONUSABLE" "NOSAVEBEHIND" "NUMERIC" "PAGESIZE" "RIGHTALIGN" "RIGHTANCHOR"
-   "ROWS" "SAVEBEHIND" "SEPARATOR" "SINGLELINE" "UNDERLINED" "USABLE" "VALUE"
-   "VISIBLEITEMS" "WARNING"
+   "at" "autoid" "autoshift" "begin" "boldframe" "checked" "columns" "columnwidths"
+   "compress" "confirmation" "disabled" "dynamicsize" "editable" "end" "error" "font"
+   "forcecompress" "frame" "group" "information" "leftalign" "leftanchor" "max"
+   "maxchars" "min" "modal" "multiplelines" "nocompress" "noframe" "noneditable"
+   "nonusable" "nosavebehind" "numeric" "pagesize" "rightalign" "rightanchor"
+   "rows" "savebehind" "separator" "singleline" "underlined" "usable" "value"
+   "visibleitems" "warning"
    )
   "pilrc attributes.")
 
 (defvar pilrc-command-list
   (list
-   "ALERT" "APPLICATION" "APPLICATIONICONNAME" "BITMAP" "BITMAPGRAY" "BITMAPGREY"
-   "FORM" "ICON" "MENU" "SMALLICON" "STRING" "TRANSLATION" "TRAP" "VERSION"
+   "alert" "application" "applicationiconname" "bitmap" "bitmapgray" "bitmapgrey"
+   "form" "icon" "menu" "smallicon" "string" "translation" "trap" "version"
    )
   "pilrc commands.")
 
 (defvar pilrc-object-list
   (list
-   "BUTTON" "BUTTONS" "CHECKBOX" "FIELD" "FORMBITMAP" "GADGET"
-   "GRAFFITISTATEINDICATOR" "LABEL" "LIST" "MENUITEM" "MESSAGE"
-   "POPUPLIST" "POPUPTRIGGER" "PULLDOWN" "PUSHBUTTON"
-   "REPEATBUTTON" "SCROLLBAR" "SELECTORTRIGGER" "TABLE" "TITLE"
+   "button" "buttons" "checkbox" "field" "formbitmap" "gadget"
+   "graffitistateindicator" "label" "list" "menuitem" "message"
+   "popuplist" "popuptrigger" "pulldown" "pushbutton"
+   "repeatbutton" "scrollbar" "selectortrigger" "table" "title"
    )
   "pilrc objects.")
 
@@ -89,7 +96,6 @@
            (1 'font-lock-keyword-face)
            (2 'font-lock-variable-name-face)
           ))
-;          ) nil nil ((?. . "w")))
         (list "\\.rcp$")
         (list 'pilrc-setup)
         "Generic mode for pilrc files.")

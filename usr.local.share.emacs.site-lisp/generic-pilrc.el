@@ -3,8 +3,8 @@
 ;;; Copyright (c) 1997 by Matthew Cravit.
 
 ;;     $Source: g:/archiv/cvsroot/site-lisp/generic-pilrc.el,v $
-;;   $Revision: 1.2 $
-;;       $Date: 1999/03/31 14:04:10 $
+;;   $Revision: 1.3 $
+;;       $Date: 1999/04/08 19:03:49 $
 ;;     $Author: pesche $
 ;; Author: Matthew Cravit <mcravit@best.com>
 ;; Maintainer: Matthew Cravit <mcravit@best.com>
@@ -23,71 +23,82 @@
 ;; This mode also provides some functions for inserting resource templates
 ;; which can be edited as needed.
 
-;; Bugs:
-;; * Lines with have an ID or MENUID and then an identifier name and then a
-;;   newline, such as:
-;;
-;;        FORM ID frm_Main
-;;
-;;   with nothing between the identifier and the newline, don't get fontified
-;;   properly. This is no doubt a regexp problem, and I'm working on figuring
-;;   out why it's not working. Lines like
-;;
-;;        FORM ID frm_Main USABLE
-;;
-;;   do get fontified correctly.
-
 (require 'generic)
 (require 'font-lock)
 
 (defun pilrc-setup nil
-	(font-lock-mode 1)
-	(font-lock-fontify-buffer))
+        (font-lock-mode 1)
+        (font-lock-fontify-buffer))
 
 (define-generic-mode 'pilrc-generic-mode
-	(list "//")
-	nil
-	'(("\\<\\(AUTO\\|CENTER\\|PREVLEFT\\|PREVTOP\\|PREVRIGHT\\|PREVBOTTOM\\|PREVWIDTH\\|PREVHEIGHT\\)\\>" 1 'font-lock-reference-face)
-	  ("\\<\\(BEGIN\\|END\\|FRAME\\|NOFRAME\\|USABLE\\|MODAL\\|SAVEBEHIND\\|DISABLED\\|NONUSABLE\\|LEFTANCHOR\\|RIGHTANCHOR\\|BOLDFRAME\\|FONT\\|GROUP\\|CHECKED\\|EDITABLE\\|NONEDITABLE\\|UNDERLINED\\|SINGLELINE\\|MULTIPLELINES\\|MAXCHARS\\|VISIBLEITEMS\\|ROWS\\|COLUMNS\\|COLUMNWIDTHS\\|INFORMATION\\|CONFIRMATION\\|WARNING\\|ERROR\\|MESSAGE\\|BUTTONS\\|AT\\)\\>" 1 'font-lock-keyword-face)
-	  ("\\<\\(FORM\\|BUTTON\\|PUSHBUTTON\\|CHECKBOX\\|POPUPTRIGGER\\|SELECTORTRIGGER\\|REPEATBUTTON\\|LABEL\\|FIELD\\|POPUPLIST\\|LIST\\|FORMBITMAP\\|GADGET\\|TABLE\\|GRAFFITISTATEINDICATOR\\|MENUITEM\\|PULLDOWN\\|MENU\\|ALERT\\|VERSION\\|STRING\\|APPLICATIONICONNAME\\|APPLICATION\\|TITLE\\|TRANSLATION\\)\\>" 1 'font-lock-type-face)
-	  ("\\b\\(MENUID\\|ID\\|HELPID\\|DEFAULTBTNID\\)\\b\\s +?\\b\\(\\S *?\\)\\b"
-	   (1 'font-lock-keyword-face)
-	   (2 'font-lock-variable-name-face)
-	  ))
-	(list "\\.rcp$")
-	(list 'pilrc-setup)
-	"Generic mode for pilrc files.")
+        (list "//")
+        nil
+        '(
+          ;; Autovalues
+          ; auto bottom center prevbottom prevheight prevleft
+          ; prevright prevtop prevwidth right
+          ("\\<\\(AUTO\\|CENTER\\|PREVLEFT\\|PREVTOP\\|PREVRIGHT\\|PREVBOTTOM\\|PREVWIDTH\\|PREVHEIGHT\\)\\>"
+           1 'font-lock-reference-face)
+          ;; Attributes
+          ; at autoid autoshift begin boldframe checked columns columnwidths
+          ; compress confirmation disabled dynamicsize editable end error font
+          ; forcecompress frame group information leftalign leftanchor max
+          ; maxchars min modal multiplelines nocompress noframe noneditable
+          ; nonusable nosavebehind numeric pagesize rightalign rightanchor
+          ; rows savebehind separator singleline underlined usable value
+          ; visibleitems warning
+          ("\\<\\(BEGIN\\|END\\|FRAME\\|NOFRAME\\|USABLE\\|MODAL\\|SAVEBEHIND\\|DISABLED\\|NONUSABLE\\|LEFTANCHOR\\|RIGHTANCHOR\\|LEFTALIGN\\|BOLDFRAME\\|FONT\\|GROUP\\|CHECKED\\|EDITABLE\\|NONEDITABLE\\|UNDERLINED\\|SINGLELINE\\|MULTIPLELINES\\|MAXCHARS\\|VISIBLEITEMS\\|ROWS\\|COLUMNS\\|COLUMNWIDTHS\\|INFORMATION\\|CONFIRMATION\\|WARNING\\|ERROR\\|MESSAGE\\|BUTTONS\\|AT\\)\\>"
+           1 'font-lock-keyword-face)
+          ;; Commands
+          ; alert application applicationiconname bitmap bitmapgray bitmapgrey
+          ; form icon menu smallicon string translation trap version
+          ;; Objects
+          ; button buttons checkbox field formbitmap gadget
+          ; graffitistateindicator label list menuitem message
+          ; popuplist popuptrigger pushbutton pulldown
+          ; repeatbutton scrollbar selectortrigger table title
+          ("\\<\\(FORM\\|BUTTON\\|PUSHBUTTON\\|CHECKBOX\\|POPUPTRIGGER\\|SELECTORTRIGGER\\|REPEATBUTTON\\|LABEL\\|FIELD\\|POPUPLIST\\|LIST\\|FORMBITMAP\\|GADGET\\|TABLE\\|GRAFFITISTATEINDICATOR\\|MENUITEM\\|PULLDOWN\\|MENU\\|ALERT\\|VERSION\\|STRING\\|APPLICATIONICONNAME\\|APPLICATION\\|TITLE\\|TRANSLATION\\)\\>"
+           1 'font-lock-type-face)
+          ;; ID-Attributes (with an ID parameter)
+          ; defaultbtnid id helpid menuid
+          ("\\b\\(MENUID\\|ID\\|HELPID\\|DEFAULTBTNID\\)\\b\\s +\\b\\(\\(\\w\\|_\\)+\\)\\b"
+           (1 'font-lock-keyword-face)
+           (2 'font-lock-variable-name-face)
+          ))
+        (list "\\.rcp$")
+        (list 'pilrc-setup)
+        "Generic mode for pilrc files.")
 
 (defun pilrc-insert-form nil
   (interactive)
   (insert "FORM ID identifier AT ( left top width height )\n"
-	  "MENUID identifier\n"
-	  "HELPID identifier\n"
-	  "BEGIN\n"
-	  "\tTITLE \"Title\"\n"
-	  "<objects>\n"
-	  "END\n\n"))
+          "MENUID identifier\n"
+          "HELPID identifier\n"
+          "BEGIN\n"
+          "\tTITLE \"Title\"\n"
+          "<objects>\n"
+          "END\n\n"))
 
 (defun pilrc-insert-menu nil
   (interactive)
   (insert "MENU ID identifier\n"
-	  "BEGIN\n"
-	  "\tPULLDOWN \"Title\"\n"
-	  "\tBEGIN\n"
-	  "\t\tMENUITEM \"Title\" identifier \"hotkey\"\n"
-	  "\tEND\n"
-	  "END\n\n"))
+          "BEGIN\n"
+          "\tPULLDOWN \"Title\"\n"
+          "\tBEGIN\n"
+          "\t\tMENUITEM \"Title\" identifier \"hotkey\"\n"
+          "\tEND\n"
+          "END\n\n"))
 
 (defun pilrc-insert-alert nil
   (interactive)
   (insert "ALERT ID identifier\n"
-	  "type\n"
-	  "HELPID identifier\n"
-	  "BEGIN\n"
-	  "\tTITLE \"title\"\n"
-	  "\tMESSAGE \"message\"\n"
-	  "\tBUTTONS \"btntext\"\n"
-	  "END\n\n"))
+          "type\n"
+          "HELPID identifier\n"
+          "BEGIN\n"
+          "\tTITLE \"title\"\n"
+          "\tMESSAGE \"message\"\n"
+          "\tBUTTONS \"btntext\"\n"
+          "END\n\n"))
 
 (defun pilrc-insert-version nil
   (interactive)
@@ -116,8 +127,10 @@
 (defun pilrc-insert-translation nil
   (interactive)
   (insert "TRANSLATION \"language\"\n"
-	  "BEGIN\n"
-	  "\t\"original\" = \"translated\"\n"
-	  "END\n\n"))
+          "BEGIN\n"
+          "\t\"original\" = \"translated\"\n"
+          "END\n\n"))
 
 (provide 'generic-pilrc)
+
+; eof

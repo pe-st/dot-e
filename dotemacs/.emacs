@@ -2,9 +2,9 @@
 ;;  Emacs Startup File
 ;;
 ;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id: //netzadmin/emacs/pesche/.emacs#40 $
-;;     $Change: 19205 $
-;;   $DateTime: 2004/06/07 16:45:31 $
+;;         $Id: //netzadmin/emacs/pesche/.emacs#41 $
+;;     $Change: 19539 $
+;;   $DateTime: 2004/08/23 22:46:03 $
 ;;     $Author: peter.steiner $
 ;;    $Created: Wed Jul 6 19:52:18 1994 $
 
@@ -442,14 +442,15 @@ saving keyboard macros (see insert-kbd-macro)."
 (setq gnus-directory "~/gnus/")
 
 
-;; gnuserv (nur mit NT)
+;; gnuserv (nur mit NT), sonst emacsserver
 (if (or (eq window-system 'win32)
         (eq window-system 'w32))
     (progn
       (require 'gnuserv)
       (setq gnuserv-frame (selected-frame)) ;; immer das gleiche Fenster verwenden
       (gnuserv-start)
-      ))
+      )
+  (server-start))
 
 ;; printing --------------------------------------------------------------------
 (require 'pesche-print)

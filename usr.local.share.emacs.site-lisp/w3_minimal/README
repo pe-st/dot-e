@@ -1,0 +1,19 @@
+This directory contains some files from the Emacs/W3 (web browser for
+emacs). Only files used by doxymacs.el are included. So if w3 is not
+installed, doxymacs can use those files.
+
+Versions
+w3       : 4.0pre.47
+doxymacs : 1.5.0
+
+To use it put something like
+
+; if the w3 package is not installed use the minimal version from
+; ~/site-lisp/w3_minimal (only files used by doxymacs.el)
+(if (and (eq (locate-library "url") nil)
+         (file-accessible-directory-p "~/site-lisp/w3_minimal"))
+    (setq load-path (append '("~/site-lisp/w3_minimal") load-path)))
+
+in your .emacs
+
+2003/10/31 miw

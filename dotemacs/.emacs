@@ -2,9 +2,9 @@
 ;;  Emacs Startup File
 ;;
 ;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id: //netzadmin/emacs/pesche/.emacs#42 $
-;;     $Change: 19560 $
-;;   $DateTime: 2004/08/30 09:52:43 $
+;;         $Id: //netzadmin/emacs/pesche/.emacs#43 $
+;;     $Change: 19569 $
+;;   $DateTime: 2004/08/30 23:11:59 $
 ;;     $Author: peter.steiner $
 ;;    $Created: Wed Jul 6 19:52:18 1994 $
 
@@ -259,7 +259,7 @@ saving keyboard macros (see insert-kbd-macro)."
 
 ;; Funktionstasten
 (global-set-key (kbd "<f6>") 'other-window)             ;; C-x o
-(global-set-key (kbd "C-<f6>") 'bury-buffer)            ;;
+(global-set-key (kbd "C-<f6>") 'ff-find-other-file)     ;;
 
 (global-set-key (kbd "<f5>") '(lambda()(interactive)(revert-buffer t)))
 (global-set-key (kbd "S-<f5>") '(lambda()(interactive)(revert-buffer t t)))

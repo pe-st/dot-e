@@ -4,9 +4,9 @@
 ;;      Author: Peter Steiner <unistein@isbe.ch>
 ;;     Created: Wed Jul 6 19:52:18 1994
 ;;     $Source: g:/archiv/cvsroot/home/.emacs,v $
-;;   $Revision: 1.29 $
-;;       $Date: 2000/10/30 21:24:50 $
-;;     $Author: pesche $
+;;   $Revision: 1.30 $
+;;       $Date: 2001/09/04 22:04:50 $
+;;     $Author: donnerpesche $
 
 
 ;; general configuration -------------------------------------------------------
@@ -64,23 +64,25 @@
 ;; fonts -----------------------------------------------------------------------
 ;; Paare von Werten (mindestens für Lucida Sans Typewriter)
 ;; 10-75 / 11-82 / 12-90 / 13-97 / 14-105 / 15-112
-(if (eq (string-match "PIAZZA" (system-name)) 0)
+(if (eq (string-match "DONNERVOGEL" (system-name)) 0)
     (defvar lucida-font-size "13-97")  ;; auf PIAZZA: etwas grösser (ca. 9.7 Punkt)
     (defvar lucida-font-size "11-82")  ;; sonst (ca. 8.2 Punkt)
     )
 
+; emacs 21 mit (w32-select-font) ergibt:
+;-outline-Lucida Sans Typewriter-normal-r-normal-normal-11-82-96-96-c-*-iso8859-15
 (defvar lucida-typewriter-regular
   (concat "-*-Lucida Sans Typewriter-normal-r-*-*-"
-          lucida-font-size "-*-*-c-*-iso8859-1"))
+          lucida-font-size "-*-*-c-*-iso8859-15"))
 (defvar lucida-typewriter-italic
   (concat "-*-Lucida Sans Typewriter-normal-i-*-*-"
-          lucida-font-size "-*-*-c-*-iso8859-1"))
+          lucida-font-size "-*-*-c-*-iso8859-15"))
 (defvar lucida-typewriter-bold
   (concat "-*-Lucida Sans Typewriter-semibold-r-*-*-"
-          lucida-font-size "-*-*-c-*-iso8859-1"))
+          lucida-font-size "-*-*-c-*-iso8859-15"))
 (defvar lucida-typewriter-bold-italic
   (concat "-*-Lucida Sans Typewriter-semibold-i-*-*-"
-          lucida-font-size "-*-*-c-*-iso8859-1"))
+          lucida-font-size "-*-*-c-*-iso8859-15"))
 
 
 ;(defvar courier-font-size "10-100-75-75-m-60")
@@ -143,13 +145,15 @@
                (foreground-color  . "Black")
                (background-color  . "WhiteSmoke")
                (cursor-color      . "MediumBlue")
-               (icon-type         . t)         ; gnu picture as Emacs icon
+;               (icon-type         . t)         ; gnu picture as Emacs icon
                (icon-name         . nil)       ; use frame title
                ))
        ;; Spezial-Behandlung des ersten Fensters
        (setq initial-frame-alist
              '( ; (top . 1) (left . 400)
                (width . 90) (height . 50)
+;               (icon-type         . t)         ; gnu picture as Emacs icon
+               (icon-name         . nil)       ; use frame title
                ))
        (setq frame-title-format "Emacs - %b")  ; set frame title to buffer name
        (setq icon-title-format  "Emacs - %b")  ; set  icon title to buffer name
@@ -243,6 +247,7 @@ saving keyboard macros (see insert-kbd-macro)."
 
 ; Das Buffer-Menu verbessern
 (require 'msb)
+(msb-mode 1)
 (setq msb-max-menu-items 30)
 (setq msb-display-most-recently-used 30)
 

@@ -22,9 +22,11 @@
     (progn
       (make-face 'pesche-tab-face)
       (make-face 'pesche-space-face)
+      (make-face 'hw-keyword-face)
       (set-face-background 'pesche-tab-face   "Moccasin")
 ;      (set-face-background 'pesche-tab-face   "CornflowerBlue")
       (set-face-background 'pesche-space-face "Gold")
+      (set-face-foreground 'hw-keyword-face "Red")
       ))
 
 ;(if (fboundp 'facemenu-unlisted-faces)
@@ -35,10 +37,13 @@
   "Face to use for highlighting tab characters in Font-Lock mode.")
 (defvar pesche-space-face 'pesche-space-face
   "Face to use for highlighting trailing spaces in Font-Lock mode.")
+(defvar hw-keyword-face 'hw-keyword-face
+  "Face to use for highlighting keywords according HW coding guide.")
 
 ;; C/C++ font lock -----------------------------------------------------
 ;; Kopie aus font-lock.el (Emacs 19.34.6), 
 ;; aber Präprozessor-Kommandi dürfen eingerückt sein
+;; spezieller Font hw-keyword-face für HW-Schlüsselwörter (nach Richtlinien)
 (let ((c-keywords
 ;      ("break" "continue" "do" "else" "for" "if" "return" "switch" "while")
        "break\\|continue\\|do\\|else\\|for\\|if\\|return\\|switch\\|while")
@@ -69,6 +74,16 @@
 	       "s\\(hort\\|igned\\|t\\(atic\\|ruct\\)\\)\\|"
 	       "t\\(emplate\\|ypedef\\)\\|un\\(ion\\|signed\\)\\|"
 	       "v\\(irtual\\|o\\(id\\|latile\\)\\)"))		; 11 ()s deep.
+      (hw-c-keywords
+;      ("bool" "true" "false" "uint8" "uint16" "uint32" "int8" "int16" "int32"
+;       "smallint" "smalluint" "_plm_call" "_bit" "_rom_mem" "_rom_ptr"
+;       "_near_mem" "_near_ptr" "_fastfar_mem" "_fastfar_ptr" "_far_mem"
+;       "_far_ptr" "_huge_ptr") 
+       (concat "bool\\|false\\|int\\(8\\|16\\|32\\)\\|small\\(int\\|uint\\)\\|"
+               "true\\|uint\\(8\\|16\\|32\\)\\|"
+               "_\\(bit\\|fa\\(r_\\(mem\\|ptr\\)\\|stfar_\\(mem\\|ptr\\)\\)\\|"
+               "huge_ptr\\|near_\\(mem\\|ptr\\)\\|"
+               "plm_call\\|rom_\\(mem\\|ptr\\)\\)"))
       )
 
  ;; c font lock keywords 1 ---------------------------------------------
@@ -113,6 +128,9 @@
     '("\\<\\(case\\|goto\\)\\>[ \t]*\\(\\sw+\\)?"
       (1 font-lock-keyword-face) (2 font-lock-reference-face nil t))
     '("^[ \t]*\\(\\sw+\\)[ \t]*:" 1 font-lock-reference-face)
+    ;;
+    ;; Fontify all HW keywords.
+    (cons (concat "\\<\\(" hw-c-keywords "\\)\\>") 'hw-keyword-face)
     )))
 
  ;; c font lock keywords 3 ---------------------------------------------
@@ -277,6 +295,15 @@
    ;; Highlight spaces that precede tabs.
    ;; They can make a tab fail to be effective.
    '("^\\( +\\)\t" 1 makefile-space-face)))
+
+
+;; font lock für jeden major mode anpassen -----------------------------
+(add-hook 'font-lock-mode-hook
+	  '(lambda()
+	     (setq font-lock-keywords
+		   (append font-lock-keywords
+			   '(("[\t]+" (0 'pesche-tab-face t))
+			     ("[\040\t]+$" (0 'pesche-space-face t)))))))
 
 
 (provide 'pesche-font-lock)

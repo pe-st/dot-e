@@ -243,6 +243,10 @@ saving keyboard macros (see insert-kbd-macro)."
 (cond (window-system 
        (global-set-key (kbd "S-<mouse-2>") 'imenu)))
 
+; Menus etwas anpassen an grosse Bildschirme
+(setq imenu-max-items 40)
+(setq buffers-menu-max-size 30)
+
 
 ;(if (eq window-system 'x)
 ;    (progn

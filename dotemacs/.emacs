@@ -4,8 +4,8 @@
 ;;      Author: Peter Steiner <unistein@isbe.ch>
 ;;     Created: Wed Jul 6 19:52:18 1994
 ;;     $Source: g:/archiv/cvsroot/home/.emacs,v $
-;;   $Revision: 1.27 $
-;;       $Date: 2000/03/27 23:17:49 $
+;;   $Revision: 1.28 $
+;;       $Date: 2000/03/30 20:34:44 $
 ;;     $Author: pesche $
 
 
@@ -230,9 +230,16 @@ saving keyboard macros (see insert-kbd-macro)."
 (setq imenu-sort-function 'imenu--sort-by-name)
 (setq buffers-menu-max-size 30)
 
+; Das Buffer-Menu verbessern
 (require 'msb)
 (setq msb-max-menu-items 30)
 (setq msb-display-most-recently-used 30)
+
+; im File-Menu die zuletzt geöffneten Files anzeigen (und speichern)
+(require 'recentf)
+(setq recentf-max-saved-items 100)
+(setq recentf-max-menu-items 30)
+(recentf-mode)
 
 ; Anzeige des Funktionsnamens in der Modeline
 (setq which-func-maxout         0         ;; enabled, regardless buffer size
@@ -371,6 +378,7 @@ saving keyboard macros (see insert-kbd-macro)."
 (require 'pesche-print)
 
 ;; Pesches menu ----------------------------------------------------------------
+(setq pesche-menu-name "Pesche")
 (require 'pesche-menu)
 
 
@@ -425,7 +433,7 @@ saving keyboard macros (see insert-kbd-macro)."
 
 (custom-set-variables
  '(hscroll-mode-name nil)
- '(scroll-preserve-screen-position t t)
+ '(scroll-preserve-screen-position t)
  '(hscroll-global-mode t nil (hscroll)))
 (custom-set-faces)
 

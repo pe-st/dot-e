@@ -1,8 +1,8 @@
 ;; Pesche's Menu
 ;;
 ;;     $Source: g:/archiv/cvsroot/site-lisp/pesche-menu.el,v $
-;;   $Revision: 1.7 $
-;;       $Date: 2000/03/30 19:27:45 $
+;;   $Revision: 1.8 $
+;;       $Date: 2000/03/30 20:33:59 $
 ;;     $Author: pesche $
 
 
@@ -61,9 +61,13 @@ files will be brought to foreground"
 
 ;; Hauptmenu -------------------------------------------------------------------
 
+(defvar pesche-menu-name "Extra"
+  "*Displayed Name of Pesche's extra menu.")
+
 ; Menu definieren
 (defvar menu-bar-pesche-menu (make-sparse-keymap "Pesche"))
-(define-key global-map [menu-bar pesche-menu] (cons "Pesche" menu-bar-pesche-menu))
+(define-key global-map [menu-bar pesche-menu]
+  (cons pesche-menu-name menu-bar-pesche-menu))
 
 ; Menu immer vor dem Hilfe-Menu anzeigen (zweitletztes Menu)
 (setq menu-bar-final-items '(pesche-menu help-menu))
@@ -174,11 +178,13 @@ files will be brought to foreground"
 ;; andere Menüs anpassen -------------------------------------------------------
 ; weitere Menü-Anpassungen (das Drucken betreffend) sind in pesche-print.el
 
-;; den Windows FileOpen Dialog in das File-Menu einhängen
+; den Windows FileOpen Dialog in das File-Menu einhängen
+; (und zwar direkt nach dem normalen Open File)
 (if (or (eq window-system 'win32)
         (eq window-system 'w32))
-    (define-key menu-bar-files-menu [open-file-w32]
-      '("Open File (Windows)..." . dlgopen-open-files)))
+    (define-key-after menu-bar-files-menu [open-file-w32]
+      '("Open File (Windows)..." . dlgopen-open-files)
+      'open-file))
 
 
 ;; Modul abschliessen ----------------------------------------------------------

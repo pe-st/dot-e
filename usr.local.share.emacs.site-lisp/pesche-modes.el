@@ -1,9 +1,9 @@
 ;; Pesche' Modes
 ;;
 ;;     $Source: g:/archiv/cvsroot/site-lisp/pesche-modes.el,v $
-;;   $Revision: 1.7 $
-;;       $Date: 2000/10/30 21:22:51 $
-;;     $Author: pesche $
+;;   $Revision: 1.8 $
+;;       $Date: 2001/09/04 22:01:37 $
+;;     $Author: donnerpesche $
 
 ;; lisp modes ------------------------------------------------------------------
 (defun pesche-emacs-lisp-mode-hook()
@@ -58,6 +58,8 @@ Javadoc comments."
   (local-set-key (kbd "C-M-<") 'pesche-indent-region-fix)
   (local-set-key (kbd "C-M-\\") 'pesche-indent-region-fix)
   (local-set-key (kbd "C-M-e") 'c-comment-edit)
+  (if (>= emacs-major-version 21)
+      (local-set-key (kbd "M-j") 'c-indent-new-comment-line))
 
   ;; das 'elektrische' automatische Einrücken bei Kommentaren ist lästig...
   (local-unset-key (kbd "*"))

@@ -1,9 +1,62 @@
-;; Pesche' Menu
+;; Pesche's Menu
 ;;
 ;;     $Source: g:/archiv/cvsroot/site-lisp/pesche-menu.el,v $
-;;   $Revision: 1.6 $
-;;       $Date: 1999/02/13 00:43:11 $
+;;   $Revision: 1.7 $
+;;       $Date: 2000/03/30 19:27:45 $
 ;;     $Author: pesche $
+
+
+;; Hilfsfunktionen -------------------------------------------------------------
+
+; Standard Windows FileOpen Dialog verwenden
+; (von Binu Jose Philip <binu@teil.soft.net>)
+(defvar dlgopen-executable-path "getfile.exe"
+  "*Executable path for open dialog")
+
+(defvar dlgopen-give-focus-always t
+  "*If multiple file selected give focus when opening or not")
+
+(defun dlgopen-open-files ()
+  "*Provides standard file-open dialog to open files.
+Set the variable 'dlgopen-executable-path' to the path of the
+executable 'getfile.exe'. If it is not in any of the system PATHs.
+If a single file is selected it will be given focus always, if multiple
+files are selected, depending on the value of 'dlgopen-give-focus-always'
+files will be brought to foreground"
+  (interactive)
+
+  ; der Windows-Dialog mach t natülich nur mit Windows Sinn...
+  (if (or (eq window-system 'win32)
+          (eq window-system 'w32))
+      (let ((buffer "") (file-fqn "") (lines-in-page 0) (dir-path ""))
+        (setq buffer (generate-new-buffer "files-to-open"))
+
+        (if (call-process dlgopen-executable-path nil buffer)
+            (save-excursion
+              (set-buffer buffer) (goto-line 1)
+              (setq dir-path (get-current-line))
+
+              ; if buffer empty user has cancelled or open failed
+              ; if only one line in buffer only one file selected so give it focus
+              (if (> (buffer-size) 0)
+                  (if (= (setq lines-in-page (count-lines 1 (buffer-size))) 1)
+                      (find-file dir-path)
+                    (while (> lines-in-page 1)
+                      (setq lines-in-page (- lines-in-page 1))
+                      (next-line 1)
+                      (setq file-fqn (concat dir-path "/" (get-current-line)))
+                      (save-excursion
+                        (if (eq dlgopen-give-focus-always t)
+                            (find-file file-fqn)
+                          (find-file-noselect file-fqn))))))))
+        (kill-buffer buffer))
+    )
+  )
+
+(defun get-current-line()
+  (buffer-substring (save-excursion (beginning-of-line) (point))
+                    (save-excursion (end-of-line) (point)))
+  )
 
 
 ;; Hauptmenu -------------------------------------------------------------------
@@ -116,6 +169,16 @@
 
 (define-key pesche-tab-menu [pesche-detab-buffer]
   '("Detab Buffer" . (lambda()(interactive) (untabify (point-min) (point-max)))))
+
+
+;; andere Menüs anpassen -------------------------------------------------------
+; weitere Menü-Anpassungen (das Drucken betreffend) sind in pesche-print.el
+
+;; den Windows FileOpen Dialog in das File-Menu einhängen
+(if (or (eq window-system 'win32)
+        (eq window-system 'w32))
+    (define-key menu-bar-files-menu [open-file-w32]
+      '("Open File (Windows)..." . dlgopen-open-files)))
 
 
 ;; Modul abschliessen ----------------------------------------------------------

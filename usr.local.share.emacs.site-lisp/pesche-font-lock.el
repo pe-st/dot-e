@@ -1,11 +1,9 @@
-;;----------------------------------------------------------- -*- Emacs-Lisp -*-
 ;; Improvements to Electric Font Lock Mode
-;; Author: Pesche <unistein@isbe.ch>
 ;;
-;;     $Source: g:/archiv/cvsroot/site-lisp/pesche-font-lock.el,v $
-;;   $Revision: 1.11 $
-;;       $Date: 2000/03/27 23:12:48 $
-;;     $Author: pesche $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-font-lock.el#12 $
+;;   $DateTime: 2003/11/11 07:03:12 $
+;;     $Author: peter.steiner $
+;;  $Copyright: Peter Steiner <pesche@schlau.ch>
 
 ;;; This package provides some improvements to `font-lock-mode':
 
@@ -487,6 +485,11 @@
 ;                               (1 pesche-strong-tab-face) (2 pesche-space-face nil t))
                              ("[\040\t]+$" (0 'pesche-space-face t)))))))
 
+;; doxymacs mode ---------------------------------------------------------------
+(defun my-doxymacs-font-lock-hook ()
+  (if (or (eq major-mode 'c-mode) (eq major-mode 'c++-mode))
+      (doxymacs-font-lock)))
+(add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)
 
 (provide 'pesche-font-lock)
 

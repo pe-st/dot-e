@@ -1,7 +1,7 @@
 ;; Pesche' Modes
 ;;
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#11 $
-;;   $DateTime: 2003/11/07 22:46:39 $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#12 $
+;;   $DateTime: 2003/11/11 07:03:12 $
 ;;     $Author: peter.steiner $
 ;;  $Copyright: Peter Steiner <pesche@schlau.ch>
 
@@ -115,6 +115,15 @@ Javadoc comments."
   (imenu-add-to-menubar "Index")
   )
 (add-hook 'c-mode-common-hook 'pesche-c-mode-common-hook)
+
+
+;; doxymacs mode ---------------------------------------------------------------
+(require 'doxymacs)
+(add-hook 'c-mode-common-hook 'doxymacs-mode)
+(defun my-doxymacs-font-lock-hook ()
+  (if (or (eq major-mode 'c-mode) (eq major-mode 'c++-mode))
+      (doxymacs-font-lock)))
+(add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)
 
 
 ;; makefile mode ---------------------------------------------------------------

@@ -4,8 +4,8 @@
 ;;      Author: Peter Steiner <unistein@isbe.ch>
 ;;     Created: Wed Jul 6 19:52:18 1994
 ;;     $Source: g:/archiv/cvsroot/home/.emacs,v $
-;;   $Revision: 1.15 $
-;;       $Date: 1999/02/13 01:27:20 $
+;;   $Revision: 1.16 $
+;;       $Date: 1999/03/06 18:09:21 $
 ;;     $Author: pesche $
 
 
@@ -134,11 +134,11 @@ This function is the opposite of `bury-buffer'."
 (require 'scroll-in-place)
 
 ;; die gewohnten Windows-Shortcuts C-z, C-x, C-c, C-v möglichst beibehalten
-(load "cua-mode")
-(CUA-mode t)
-; (require 'pc-select)
-; (pc-bindings-mode)
-; (pc-selection-mode)
+; (load "cua-mode")
+; (CUA-mode t)
+(require 'pc-select)
+(pc-bindings-mode)
+(pc-selection-mode)
 
 
 ;; display configuration -------------------------------------------------------
@@ -218,6 +218,7 @@ saving keyboard macros (see insert-kbd-macro)."
 
 (global-set-key (kbd "C-g") 'goto-line)
 (global-set-key (kbd "C-z") 'undo)
+(global-set-key (kbd "C-v") 'yank)
 (global-set-key (kbd "C-x C-<") 'uncomment-region)      ;; self-written
 (global-set-key (kbd "C-x C-\\") 'uncomment-region)     ;; zB Dos-Box: C-< == C-\
 (global-set-key (kbd "C-x C->") 'comment-region)        ;; standard emacs lisp
@@ -303,19 +304,23 @@ saving keyboard macros (see insert-kbd-macro)."
 (setq auto-mode-alist (append '(("\\.el$" . emacs-lisp-mode)
                                 ("\\.emacs$" . emacs-lisp-mode)
                                 ) auto-mode-alist))
-(add-hook 'emacs-lisp-mode-hook
-          (function (lambda ()
-                      (setq-default tab-width        8
-                                    indent-tabs-mode nil)
-                      (modify-syntax-for-umlaut)
+(defun pesche-emacs-lisp-mode-hook()
+  (setq-default tab-width        8
+                indent-tabs-mode nil)
 
-                      ;; alle Kommentarzeilen, die mit mindestens drei '-' aufhören,
-                      ;; in das 'Outline'-Menü eintragen
-                      (setq imenu-generic-expression
-                            (append imenu-generic-expression
-                                    '(("Outline" ";+[ \\t]+\\([ A-Za-z0-9äöüÄÖÜ/+]+\\)---*[ \\t]*$" 1))))
-                      (imenu-add-to-menubar "Index")
-                      )))
+  ;; Syntax etwas anpassen, damit (zB) Markieren mit Doppelklick nicht
+  ;; bei '-' oder Umlauten Halt macht
+  (modify-syntax-for-umlaut)
+  (modify-syntax-entry ?- "w")
+
+  ;; alle Kommentarzeilen, die mit mindestens drei '-' aufhören,
+  ;; in das 'Outline'-Menü eintragen
+  (setq imenu-generic-expression
+        (append imenu-generic-expression
+                '(("Outline" ";+[ \\t]+\\([ A-Za-z0-9äöüÄÖÜ/+]+\\)---*[ \\t]*$" 1))))
+  (imenu-add-to-menubar "Index")
+  )
+(add-hook 'emacs-lisp-mode-hook 'pesche-emacs-lisp-mode-hook)
 
 ;; C mode und alle Verwandten --------------------------------------------------
 ;; cc-mode 5.21 kennt das "richtige" Verhalten von Delete und Backspace
@@ -407,15 +412,25 @@ saving keyboard macros (see insert-kbd-macro)."
 
 
 ;; assembler mode --------------------------------------------------------------
-(add-hook 'asm-mode-hook
-          (function (lambda ()
-                      (local-unset-key (kbd "<tab>"))
-                      (local-unset-key (kbd ":"))
-                      (local-unset-key (kbd ";"))
-                      (setq-default tab-width        8
-                                    indent-tabs-mode t)
-;                      (imenu-add-to-menubar "Index")
-                      )))
+(defun pesche-asm-mode-hook()
+  (local-unset-key (kbd "<tab>"))
+  (local-unset-key (kbd ":"))
+  (local-unset-key (kbd ";"))
+  (local-unset-key (kbd "RET"))
+  (setq-default tab-width        8
+                indent-tabs-mode t)
+
+  ;; Syntax etwas anpassen, damit (zB) Markieren mit Doppelklick nicht
+  ;; bei '_' oder Umlauten Halt macht
+  (modify-syntax-for-umlaut)
+  (modify-syntax-entry ?_ "w")
+  (modify-syntax-entry ?. "w")  ; praktisch für move.l etc
+  (modify-syntax-entry ?- "w")  ; praktisch in "C-Kommentaren"
+  (modify-syntax-entry ?> "w")  ; praktisch in "C-Kommentaren"
+
+;  (imenu-add-to-menubar "Index")
+  )
+(add-hook 'asm-mode-hook 'pesche-asm-mode-hook)
 
 ;; perl mode -------------------------------------------------------------------
 (autoload 'cperl-mode "cperl-mode" "alternate mode for editing Perl programs" t)
@@ -492,6 +507,7 @@ saving keyboard macros (see insert-kbd-macro)."
 (add-hook 'bibtex-mode-hook        'turn-on-font-lock)
 (add-hook 'texinfo-mode-hook       'turn-on-font-lock)
 (add-hook 'postscript-mode-hook    'turn-on-font-lock)
+(add-hook 'outline-mode-hook       'turn-on-font-lock)
 
 
 ;; cperl verändert auf 'unfreundliche' Art constant-face,
@@ -505,7 +521,7 @@ saving keyboard macros (see insert-kbd-macro)."
         (font-lock-string-face        "Sienna" "LightBlue")
         (font-lock-keyword-face       "Firebrick")
         (font-lock-function-name-face "Blue")
-        (font-lock-variable-name-face "Black")
+        (font-lock-variable-name-face "Blue")
         (font-lock-type-face          "Black")
 ; nicht mehr nötig, da dies weiter oben mit dem 'Brecheisen' geschieht
 ;        (font-lock-constant-face      "ForestGreen")    ;; 20.x

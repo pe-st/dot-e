@@ -1,8 +1,8 @@
 ;; Pesche' Modes
 ;;
 ;;     $Source: g:/archiv/cvsroot/site-lisp/pesche-modes.el,v $
-;;   $Revision: 1.4 $
-;;       $Date: 1999/08/13 21:00:06 $
+;;   $Revision: 1.5 $
+;;       $Date: 1999/12/12 23:25:42 $
 ;;     $Author: pesche $
 
 ;; lisp modes ------------------------------------------------------------------
@@ -58,6 +58,7 @@
   (c-set-offset 'statement-case-open '+)
   (c-set-offset 'arglist-close 0)
   (c-set-offset 'inextern-lang 0)
+  (c-set-offset 'innamespace 0)
   (c-set-offset 'cpp-macro 'c-lineup-dont-change)
   (c-set-offset 'cpp-macro-cont '+)
 
@@ -66,6 +67,9 @@
         indent-tabs-mode         nil
         c-tab-always-indent      nil
         c++-tab-always-indent    nil)
+
+  ;; case sensitiv suchen
+  (setq case-fold-search nil)
 
   ;; alle 'Kästchen' in das 'Outline'-Menü aufnehmen
   (setq imenu-generic-expression
@@ -160,6 +164,9 @@
   (setq tab-width                4
         indent-tabs-mode         nil
         cperl-tab-always-indent  nil)
+
+  ;; case sensitiv suchen
+  (setq case-fold-search nil)
 
   (imenu-add-to-menubar "Index")
   )

@@ -4,8 +4,8 @@
 ;;      Author: Peter Steiner <unistein@isbe.ch>
 ;;     Created: Wed Jul 6 19:52:18 1994
 ;;     $Source: g:/archiv/cvsroot/home/.emacs,v $
-;;   $Revision: 1.16 $
-;;       $Date: 1999/03/06 18:09:21 $
+;;   $Revision: 1.17 $
+;;       $Date: 1999/04/22 20:22:41 $
 ;;     $Author: pesche $
 
 
@@ -156,22 +156,26 @@ This function is the opposite of `bury-buffer'."
 
 (defvar lucida-typewriter-regular
   (concat "-*-Lucida Sans Typewriter-normal-r-*-*-"
-          my-font-size "-*-*-c-*-*-ansi-"))
+          my-font-size "-*-*-c-*-iso8859-1"))
 (defvar lucida-typewriter-italic
   (concat "-*-Lucida Sans Typewriter-normal-i-*-*-"
-          my-font-size "-*-*-c-*-*-ansi-"))
+          my-font-size "-*-*-c-*-iso8859-1"))
 (defvar lucida-typewriter-bold
   (concat "-*-Lucida Sans Typewriter-semibold-r-*-*-"
-          my-font-size "-*-*-c-*-*-ansi-"))
+          my-font-size "-*-*-c-*-iso8859-1"))
 (defvar lucida-typewriter-bold-italic
   (concat "-*-Lucida Sans Typewriter-semibold-i-*-*-"
-          my-font-size "-*-*-c-*-*-ansi-"))
+          my-font-size "-*-*-c-*-iso8859-1"))
 
 
 ; WindowsNT und Linux haben immer noch verschiedene Schriften...
 (if (or (eq window-system 'win32)
         (eq window-system 'w32))
     (progn
+      ; Workaround für 20.3.7.1 von Jason Rumney <jasonr@altavista.net>
+      ; (03 Apr 1999 in ntemacs-users)
+      (if (not (eq (string-match "20.3.7.1" (emacs-version)) nil))
+          (set-w32-system-coding-system 'raw-text))
       (setq win32-enable-italics t)
       (setq w32-enable-italics t)
       (set-default-font           lucida-typewriter-regular)
@@ -481,10 +485,6 @@ saving keyboard macros (see insert-kbd-macro)."
 (add-hook 'html-helper-mode-hook 'pesche-html-helper-mode-hook)
 
 
-;; pplog mode ------------------------------------------------------------------
-(require 'pplog-mode)
-
-
 ;; dynamische Abkürzungen ------------------------------------------------------
 ;; immer case-sensitiv !
 (setq dabbrev-case-fold-search nil)
@@ -556,6 +556,14 @@ saving keyboard macros (see insert-kbd-macro)."
 ;       (if (eq window-system 'win32)
 ;           (set-face-font 'font-lock-reference-face lucida-typewriter-bold-italic))
       ))
+
+
+;; verschiedene andere Modi ----------------------------------------------------
+; die generic-Modi sollten erst nach dem font-lock Setup geladen werden,
+; da sie sonst ihre eigene Initialisierung vornehmen
+(require 'generic-pilrc)        ; Palm/Pilot Ressourcen-Definitionen
+(require 'generic-x)
+(require 'pplog-mode)
 
 
 ;; Klammer-Gegenstücke anfärben

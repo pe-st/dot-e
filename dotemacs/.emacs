@@ -4,8 +4,8 @@
 ;;      Author: Peter Steiner <unistein@isbe.ch>
 ;;     Created: Wed Jul 6 19:52:18 1994
 ;;     $Source: g:/archiv/cvsroot/home/.emacs,v $
-;;   $Revision: 1.14 $
-;;       $Date: 1999/02/13 00:09:50 $
+;;   $Revision: 1.15 $
+;;       $Date: 1999/02/13 01:27:20 $
 ;;     $Author: pesche $
 
 
@@ -129,13 +129,16 @@ This function is the opposite of `bury-buffer'."
       (setq-default hscroll-mode t)
       (setq-default hscroll-mode-name nil)
       (hscroll-mode)
-      (require 'scroll-in-place)
       )
     )
+(require 'scroll-in-place)
 
-(require 'pc-select)
-(pc-bindings-mode)
-(pc-selection-mode)
+;; die gewohnten Windows-Shortcuts C-z, C-x, C-c, C-v möglichst beibehalten
+(load "cua-mode")
+(CUA-mode t)
+; (require 'pc-select)
+; (pc-bindings-mode)
+; (pc-selection-mode)
 
 
 ;; display configuration -------------------------------------------------------

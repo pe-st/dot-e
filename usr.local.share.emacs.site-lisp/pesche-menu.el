@@ -1,9 +1,11 @@
 ;; Pesche's Menu
 ;;
-;;     $Source: g:/archiv/cvsroot/site-lisp/pesche-menu.el,v $
-;;   $Revision: 1.8 $
-;;       $Date: 2000/03/30 20:33:59 $
-;;     $Author: pesche $
+;;      Author: Peter Steiner <pesche@schlau.ch>
+;;         $Id: //netzadmin/emacs/pesche/.emacs#39 $
+;;     $Change: 18323 $
+;;   $DateTime: 2004/01/05 09:09:46 $
+;;     $Author: peter.steiner $
+;;    $Created: Wed Jul 6 19:52:18 1994 $
 
 
 ;; Hilfsfunktionen -------------------------------------------------------------
@@ -159,6 +161,9 @@ files will be brought to foreground"
 
 (define-key pesche-tab-menu [pesche-tab-4]
   '("Tabstop 4" . (lambda()(interactive) (setq tab-width 4) (redraw-display))))
+
+(define-key pesche-tab-menu [pesche-tab-3]
+  '("Tabstop 3" . (lambda()(interactive) (setq tab-width 3) (redraw-display))))
 
 (define-key pesche-tab-menu [pesche-entab-region]
   '("Entab Region" . tabify))

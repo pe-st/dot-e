@@ -1,8 +1,8 @@
 ;; Pesche' Menu
 ;;
 ;;     $Source: g:/archiv/cvsroot/site-lisp/pesche-menu.el,v $
-;;   $Revision: 1.4 $
-;;       $Date: 1998/10/10 21:48:01 $
+;;   $Revision: 1.5 $
+;;       $Date: 1998/10/27 22:36:18 $
 ;;     $Author: pesche $
 
 
@@ -58,10 +58,15 @@
 (define-key global-map [menu-bar pesche-menu find-menu]
   (cons "Find special" pesche-find-menu))
 
+(define-key pesche-find-menu [pesche-remove-trails]
+  '("Remove Trailing Whitespace" .
+    (lambda()(interactive)
+      (query-replace-regexp "[ \t]+$" ""))))
+
 (define-key pesche-find-menu [pesche-find-trails]
   '("Trailing Whitespace" .
     (lambda()(interactive)
-      (nonincremental-re-search-forward "[ \t]$"))))
+      (nonincremental-re-search-forward "[ \t]+$"))))
 
 ;; findet /**/, /*-*/, /*--*/ und /*---*/
 (define-key pesche-find-menu [pesche-find-annot]

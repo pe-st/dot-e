@@ -4,8 +4,8 @@
 ;;      Author: Peter Steiner <unistein@isbe.ch>
 ;;     Created: Wed Jul 6 19:52:18 1994
 ;;     $Source: g:/archiv/cvsroot/home/.emacs,v $
-;;   $Revision: 1.25 $
-;;       $Date: 1999/08/31 22:17:21 $
+;;   $Revision: 1.26 $
+;;       $Date: 1999/12/12 23:24:20 $
 ;;     $Author: pesche $
 
 
@@ -302,6 +302,7 @@ saving keyboard macros (see insert-kbd-macro)."
         (font-lock-function-name-face "Blue")
         (font-lock-variable-name-face "Blue")
         (font-lock-type-face          "Black")
+        (font-lock-builtin-face       "DarkGoldenrod")
         (info-node                    "Blue")
         (info-xref                    "Blue")
         (makefile-space-face          nil "HotPink")
@@ -328,6 +329,7 @@ saving keyboard macros (see insert-kbd-macro)."
       (set-face-font 'font-lock-function-name-face pesche-default-bold)
       (set-face-font 'font-lock-variable-name-face pesche-default-regular)
       (set-face-font 'font-lock-type-face          pesche-default-bold)
+      (set-face-font 'font-lock-builtin-face       pesche-default-bold)
       (set-face-font 'html-helper-bold-face        pesche-default-bold)
       (set-face-font 'html-helper-italic-face      pesche-default-italic)
       (set-face-font 'html-helper-underline-face   pesche-default-bold)

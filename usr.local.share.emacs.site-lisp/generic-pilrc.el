@@ -5,7 +5,7 @@
 ;; Author: Matthew Cravit <mcravit@best.com>
 ;; Maintainer: Matthew Cravit <mcravit@best.com>
 ;; Created: Wed Jul 30 10:46:58 1997
-;; $Id: generic-pilrc.el,v 1.6 1999/04/14 20:05:46 pesche Exp $
+;; $Id: generic-pilrc.el,v 1.7 1999/04/22 22:26:08 pesche Exp $
 
 ;; This file contains a generic mode (which requires generic-mode.el) for
 ;; editing PILRC files. PILRC is the resource compiler for applications to
@@ -32,6 +32,15 @@
 (require 'generic)
 (require 'font-lock)
 
+; imenu needs a local keymap
+(defvar pilrc-mode-map nil
+  "Local keymap for generic-pilrc mode.")
+
+(if pilrc-mode-map
+    nil
+  (setq pilrc-mode-map (make-sparse-keymap))
+  )
+
 (defun pilrc-setup ()
   ; damit font-lock auch bei Bezeichner mit einem '_' richtig funktioniert,
   ; muss die syntax-table geändert werden. Dazu gibt es extra eine lokale
@@ -39,8 +48,19 @@
   ; aber die folgende Zeile hilft dem ab
   ; (und das 't' sagt, dass die Schlüsselwörter case-insensitiv sind)
   (nconc font-lock-defaults '(t ((?_ . "w"))))
-  (font-lock-mode 1)
-  (font-lock-fontify-buffer)
+
+  ; imenu support
+  (use-local-map (nconc (make-sparse-keymap) pilrc-mode-map))
+  (setq imenu-generic-expression
+        `((nil ,(concat "^\\("
+                       ;; Use an optimized regexp.
+                       (regexp-opt pilrc-command-list t)
+                       "\\>.*\\)$")
+               1))
+        imenu-case-fold-search t)
+  (imenu-add-to-menubar "Index")
+;   (font-lock-mode 1)
+;   (font-lock-fontify-buffer)
   )
 
 (defvar pilrc-autovalue-list
@@ -96,7 +116,7 @@
            (1 'font-lock-keyword-face)
            (2 'font-lock-variable-name-face)
           ))
-        (list "\\.rcp$")
+        (list "\\.rcp\\'")
         (list 'pilrc-setup)
         "Generic mode for pilrc files.")
 

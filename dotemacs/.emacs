@@ -38,6 +38,42 @@
   ) 
 
 
+(defun duplicate-line (arg)
+  "Duplicate current line, leaving point in lower line."
+  (interactive "*p")
+
+  ;; save the point for undo
+  (setq buffer-undo-list (cons (point) buffer-undo-list))
+
+  ;; local variables for start and end of line
+  (let ((bol (save-excursion (beginning-of-line) (point)))
+	eol)
+    (save-excursion
+
+      ;; don't use forward-line for this, because you would have
+      ;; to check whether you are at the end of the buffer
+      (end-of-line)
+      (setq eol (point))
+
+      ;; store the line and disable the recording of undo information
+      (let ((line (buffer-substring bol eol))
+	    (buffer-undo-list t)
+	    (count arg))
+        ;; insert the line arg times
+	(while (> count 0)
+          (newline)         ;; because there is no newline in 'line'
+	  (insert line)
+	  (setq count (1- count)))
+        )
+
+      ;; create the undo information
+      (setq buffer-undo-list (cons (cons eol (point)) buffer-undo-list)))
+    ) ; end-of-let
+
+  ;; put the point in the lowest line and return
+  (next-line arg))
+
+
 ;; general configuration -------------------------------------------------------
 
 ;; Emacs-Päckli auch in meinem lokalen emacs-Verzeichnis suchen
@@ -49,7 +85,7 @@
 
 (setq-default fill-column 77)           ;; column for line breaking in auto-fill-mode
 (setq make-backup-files t)
-;(put 'eval-expression 'disabled nil)    ;; enable `eval-expression'
+(put 'eval-expression 'disabled nil)    ;; enable `eval-expression'
 
 ;; Zeilen nicht automatisch umbrechen, wenn sie zu lang sind; dafür
 ;; einen Minor-Mode laden, damit bei langen Zeilen automatisch gescrollt wird
@@ -70,49 +106,82 @@
 ;(require 'column)
 ;(display-column-mode 1)
 
+;; fonts -----------------------------------------------------------------------
+;; Paare von Werten (mindestens für Lucida Sans Typewriter)
+;; 10-75 / 11-82 / 12-90 / 13-97 / 14-105 / 15-112
+(if (eq (string-match "PIAZZA" (system-name)) 0) 
+    (defvar my-font-size "13-97")  ;; auf PIAZZA: etwas grösser (ca. 9.7 Punkt)
+    (defvar my-font-size "11-82")  ;; sonst (ca. 8.2 Punkt)
+    )
+
+(defvar lucida-typewriter-regular
+  (concat "-*-Lucida Sans Typewriter-normal-r-*-*-"
+          my-font-size "-*-*-c-*-*-ansi-"))
+(defvar lucida-typewriter-italic
+  (concat "-*-Lucida Sans Typewriter-normal-i-*-*-" 
+          my-font-size "-*-*-c-*-*-ansi-"))
+(defvar lucida-typewriter-bold
+  (concat "-*-Lucida Sans Typewriter-semibold-r-*-*-"
+          my-font-size "-*-*-c-*-*-ansi-"))
+(defvar lucida-typewriter-bold-italic
+  (concat "-*-Lucida Sans Typewriter-semibold-i-*-*-"
+          my-font-size "-*-*-c-*-*-ansi-"))
+
 (cond (window-system
+       ;; default-Parameter für alle Fenster
        (setq default-frame-alist
              '((width             . 81)
                (height            . 45)
-;               (top               . 0)
-;               (left              . 400)
-;        (font              . "-*-Courier New-normal-r-*-*-13-97-*-*-c-*-*-ansi-")
                (foreground-color  . "Black")
                (background-color  . "WhiteSmoke")
                (cursor-color      . "MediumBlue")
+;               (font              . "-*-Lucida Sans Typewriter-normal-r-*-*-13-97-*-*-c-*-*-ansi-")
                (icon-type         . t)         ; gnu picture as Emacs icon
                (icon-name         . nil)       ; use frame title
                ))
+       ;; Spezial-Behandlung des ersten Fensters
+       (setq initial-frame-alist
+             '( ; (top . 1) (left . 400)
+               (width . 90) (height . 50)
+               ))
        (setq frame-title-format "Emacs - %b")  ; set frame title to buffer name
        (setq icon-title-format  "Emacs - %b")  ; set  icon title to buffer name
-;       (setq initial-frame-alist
-;             '((top               . 1)
-;               (left              . 400)
-;               ))
        ))
 
 ; WindowsNT und Linux haben immer noch verschiedene Schriften...
 (if (eq window-system 'win32)
     (progn
       (setq win32-enable-italics t)
-      ;(set-default-font "-*-Courier-normal-r-*-*-13-97-*-*-c-*-*-ansi-")
-      (set-default-font "-*-Lucida Sans Typewriter-normal-r-*-*-13-97-*-*-c-*-*-ansi-")
-      (set-face-font 'bold "-*-Lucida Sans Typewriter-semibold-r-*-*-13-97-*-*-c-*-*-ansi-")
-      (set-face-font 'italic "-*-Lucida Sans Typewriter-normal-i-*-*-13-97-*-*-c-*-*-ansi-")
-      (set-face-font 'bold-italic "-*-Lucida Sans Typewriter-semibold-i-*-*-13-97-*-*-c-*-*-ansi-")
-      ))
+      (set-default-font           lucida-typewriter-regular)
+      (set-face-font 'default     lucida-typewriter-regular)
+      (set-face-font 'bold        lucida-typewriter-bold)
+      (set-face-font 'italic      lucida-typewriter-italic)
+      (set-face-font 'bold-italic lucida-typewriter-bold-italic)
+      )
+  )
 
 ;; keyboard configuration ------------------------------------------------------
-;;; re-enable C-x C-c (is disabled by site-start.el)
-;(global-set-key "\C-x\C-c" 'save-buffers-kill-emacs)
 
 (global-set-key "\C-g" 'goto-line)
 ;(global-set-key "\C-x\C-a" 'insert-time-and-author) ;; self-written
 ;(global-set-key "\C-x\C-m" 'insert-header)          ;; self-written
 (global-set-key "\C-z" 'undo)
-(define-key ctl-x-map [(control <)] 'uncomment-region)       ;; self-written
+(define-key ctl-x-map [(control <)] 'uncomment-region)     ;; self-written
 (define-key ctl-x-map [(control >)] 'comment-region)       ;; standard emacs lisp
+(define-key global-map [(C-return)] 'duplicate-line)       ;; self-written
+(define-key global-map [(C-kp-enter)] 'duplicate-line)     ;; self-written
 
+(cond (window-system 
+        (define-key global-map [S-mouse-2] 'imenu)))
+
+;(if (eq window-system 'x)
+;    (progn
+;      (load "x-compose")
+;      ;; use shift-control-section as compose key
+;      (define-key global-map [(control degree)] compose-map)
+;      ;; disable degree as a dead key
+;      (define-key global-map [degree] 'self-insert-command)
+;      ))
 
 ;;; conditional keyboard configuration
 ;(cond 
@@ -206,28 +275,6 @@
 ;      (define-key global-map [?\334] "\"U")
 ;      ))
 
-;;; menu and toolbar customisations ---------------------------------------------
-;(if (and (>= emacs-major-version 19)
-;         (>= emacs-minor-version 12))
-;    (progn
-;      ;; remove buffer navigating items from menubar
-;      (delete-menu-item '("Top"))
-;      (delete-menu-item '("<<<"))
-;      (delete-menu-item '(" . "))
-;      (delete-menu-item '(">>>"))
-;      (delete-menu-item '("Bot"))
-;      )
-;  )
-;
-;;; remove/don't display toolbar
-;(if (and (featurep 'toolbar) 
-;         (eq (device-type (selected-device)) 'x)) 
-;    (progn
-;      (remove-specifier default-toolbar 'global)
-;      (add-spec-list-to-specifier default-toolbar 'nil)
-;      )
-;  )
-
 
 
 ;; mode specific configuration -------------------------------------------------
@@ -241,6 +288,15 @@
 ;          (append Info-directory-list '("~/info/" "/opt/local/GNU/info/")))
 ;  )
 
+;; WoMan stuff for reading man pages in emacs
+(autoload 'woman "woman" 
+  "Decode and browse a UN*X man page." t)
+(autoload 'woman-find-file "woman"
+  "Find, decode and browse a specific UN*X man-page file." t)
+(setq man-path '("x:/gnuwin32/b18/man"))
+;(setq woman-path '("x:\gnuwin32\b18\man" "e:\usr\man"))
+
+
 ;; lisp modes
 (setq auto-mode-alist (append '(("\\.el$" . emacs-lisp-mode)
                                 ("\\.emacs$" . emacs-lisp-mode)
@@ -249,58 +305,51 @@
           (function (lambda ()
                       (setq-default tab-width        8
                                     indent-tabs-mode nil)
+                      (imenu-add-to-menubar "Index")
                       )))
 
 ;; c++ mode
-
-;;       ;; take the newer c++ mode from cc-mode, not the BOCM (Boring Old C Mode)
-;;       (fmakunbound 'c-mode)
-;;       (makunbound 'c-mode-map)
-;;       (fmakunbound 'c++-mode)
-;;       (makunbound 'c++-mode-map)
-;;       (makunbound 'c-style-alist)
-;       (autoload 'c++-mode "cc-mode" "C++ Editing Mode" t)
-;       (autoload 'c-mode   "cc-mode" "C Editing Mode" t)
-       (setq auto-mode-alist (append '(("\\.C$"  . c-mode)
-				       ("\\.cc$" . c++-mode)
-				       ("\\.hh$" . c++-mode)
-				       ("\\.c$"  . c-mode)
-				       ("\\.h$"  . c-mode)
-				       ) auto-mode-alist))
-       (add-hook 'c-mode-common-hook
-		 (function (lambda ()
-			     (local-set-key [delete] 'delete-char)
-			     (local-set-key [backspace] 'c-electric-delete)
-                             ;; auch in C die neuen C++-Kommentare verwenden
-                             (c-enable-//-in-c-mode)
-                             (setq comment-start "// "
-                                   comment-end ""
-                                   comment-multi-line nil
-                                   font-lock-comment-start-regexp nil
-                                   c-double-slash-is-comments-p t)
-			     ;; setup my personal indenting style
-			     (c-set-style  "Stroustrup")
-			     (c-set-offset 'case-label '+)
-                             (c-set-offset 'statement-case-open '+)
-			     (c-set-offset 'arglist-close 0)
-			     (setq-default tab-width                8
-					   indent-tabs-mode         nil
-                                           c-tab-always-indent      nil
-                                           c++-tab-always-indent    nil)
-			     )))
+(setq auto-mode-alist (append '(("\\.C$"  . c-mode)
+                                ("\\.cc$" . c++-mode)
+                                ("\\.hh$" . c++-mode)
+                                ("\\.c$"  . c-mode)
+                                ("\\.h$"  . c-mode)
+                                ) auto-mode-alist))
+(add-hook 'c-mode-common-hook
+          (function (lambda ()
+                      (local-set-key [delete] 'delete-char)
+                      (local-set-key [backspace] 'c-electric-delete)
+                      ;; auch in C die neuen C++-Kommentare verwenden
+                      (c-enable-//-in-c-mode)
+                      (setq comment-start "// "
+                            comment-end ""
+                            comment-multi-line nil
+                            font-lock-comment-start-regexp nil
+                            c-double-slash-is-comments-p t)
+                      ;; setup my personal indenting style
+                      (c-set-style  "Stroustrup")
+                      (c-set-offset 'case-label '+)
+                      (c-set-offset 'statement-case-open '+)
+                      (c-set-offset 'arglist-close 0)
+                      (setq-default tab-width                8
+                                    indent-tabs-mode         nil
+                                    c-tab-always-indent      nil
+                                    c++-tab-always-indent    nil)
+                      (imenu-add-to-menubar "Index")
+                      )))
 
 
 ;; makefile mode
 ;=(autoload 'makefile-mode "makefile" "Makefile Editing Mode" t)
-;=(setq auto-mode-alist (append '(("[Mm]akefile$" . makefile-mode)
-;=                                ("\\.mk$" . makefile-mode)
-;=                                ("\\.mak$" . makefile-mode)
-;=                                ) auto-mode-alist))
-;=(add-hook 'makefile-mode-hook
-;=          (function (lambda ()
-;=                      (setq-default tab-width        8
-;=                                    indent-tabs-mode t)
-;=                      )))
+(setq auto-mode-alist (append '(("[Mm]akefile$" . makefile-mode)
+                                ("\\.mk$" . makefile-mode)
+                                ("\\.mak$" . makefile-mode)
+                                ) auto-mode-alist))
+(add-hook 'makefile-mode-hook
+          (function (lambda ()
+                      (setq-default tab-width        8
+                                    indent-tabs-mode t)
+                      )))
 
 ;; TeX and related modes
 ;(cond
@@ -366,38 +415,58 @@
 (add-hook 'lisp-mode-hook          'turn-on-font-lock)
 (add-hook 'c-mode-hook		   'turn-on-font-lock)
 (add-hook 'c++-mode-hook	   'turn-on-font-lock)
+(add-hook 'asm-mode-hook           'turn-on-font-lock)
+(add-hook 'makefile-mode-hook      'turn-on-font-lock)
+(add-hook 'perl-mode-hook          'turn-on-font-lock)
 (add-hook 'TeX-mode-hook           'turn-on-font-lock)
 (add-hook 'tex-mode-hook           'turn-on-font-lock)
 (add-hook 'bibtex-mode-hook        'turn-on-font-lock)
 (add-hook 'texinfo-mode-hook       'turn-on-font-lock)
 (add-hook 'postscript-mode-hook    'turn-on-font-lock)
-(add-hook 'makefile-mode-hook      'turn-on-font-lock)
-(add-hook 'perl-mode-hook          'turn-on-font-lock)
 
 (require 'font-lock)
 (require 'fast-lock)
 (add-hook 'font-lock-mode-hook 'turn-on-fast-lock)
+(require 'pesche-font-lock)
 
 (setq font-lock-face-attributes
-      '((font-lock-comment-face "SlateGray")
-        (font-lock-string-face "Sienna" "LightBlue")
-        (font-lock-keyword-face "Firebrick")
+      '((font-lock-comment-face       "SlateGray")
+        (font-lock-string-face        "Sienna" "LightBlue")
+        (font-lock-keyword-face       "Firebrick")
         (font-lock-function-name-face "Blue")
         (font-lock-variable-name-face "Black")
-        (font-lock-type-face "Black")
-        (font-lock-reference-face "ForestGreen")))
+        (font-lock-type-face          "Black")
+        (font-lock-reference-face     "ForestGreen")
+        ))
 
 (font-lock-make-faces)
 
 ; WindowsNT und Linux haben immer noch verschiedene Schriften...
 (if (eq window-system 'win32)
     (progn
-      (set-face-font 'font-lock-comment-face "-*-Lucida Sans Typewriter-normal-i-*-*-13-97-*-*-c-*-*-ansi-")
-      (set-face-font 'font-lock-keyword-face "-*-Lucida Sans Typewriter-semibold-r-*-*-13-97-*-*-c-*-*-ansi-")
-      (set-face-font 'font-lock-function-name-face "-*-Lucida Sans Typewriter-semibold-r-*-*-13-97-*-*-c-*-*-ansi-")
-      (set-face-font 'font-lock-type-face "-*-Lucida Sans Typewriter-semibold-r-*-*-13-97-*-*-c-*-*-ansi-")
-      (set-face-font 'font-lock-reference-face "-*-Lucida Sans Typewriter-semibold-i-*-*-13-97-*-*-c-*-*-ansi-")
+      (set-face-font 'font-lock-comment-face       lucida-typewriter-italic)
+      (set-face-font 'font-lock-string-face        lucida-typewriter-regular)
+      (set-face-font 'font-lock-keyword-face       lucida-typewriter-bold)
+      (set-face-font 'font-lock-function-name-face lucida-typewriter-bold)
+      (set-face-font 'font-lock-variable-name-face lucida-typewriter-regular)
+      (set-face-font 'font-lock-type-face          lucida-typewriter-bold)
+      (set-face-font 'font-lock-reference-face     lucida-typewriter-bold-italic)
       ))
+
+
+;(eval-after-load
+; "font-lock"
+; '(setq font-lock-defaults-alist
+;       (append '(;;(lisp-mode .           (lisp-font-lock-keywords-2))
+;                 ;;(emacs-lisp-mode .     (lisp-font-lock-keywords-2))
+;                 (cc-mode .             (c-font-lock-keywords-3 nil nil ((?\_ . "w"))))
+;                 ;;(latex-mode .          (tex-font-lock-keywords-2))
+;                 ;;(plain-tex-mode .      (tex-font-lock-keywords-2))
+;                 ;;(tex-mode .            (tex-font-lock-keywords-2))
+;                 (dired-mode .          (dired-font-lock-keywords))
+;                 )
+;               font-lock-defaults-alist)))
+;(eval-after-load "font-lock" '(require 'font-lock-extra))
 
 
 ;; Klammer-Gegenstücke anfärben
@@ -408,10 +477,34 @@
 ;(global-set-key [?\C-\(] 'stig-paren-toggle-dingaling-mode)
 ;(global-set-key [?\C-\)] 'stig-paren-toggle-sexp-mode)
 
-
 ;; Gnus-Reader -----------------------------------------------------------------
 ;; weitere Konfiguration siehe .gnus
 (autoload 'gnus-unplugged "gnus-agent" "Start Gnus unplugged." t)
+
+
+;; gnuserv
+(require 'gnuserv)
+(setq gnuserv-frame (selected-frame)) ;; immer das gleiche Fenster verwenden
+(gnuserv-start)
+
+;; printing --------------------------------------------------------------------
+(require 'ps-print)
+(setq ps-paper-type 'ps-a4)
+(setq ps-lpr-command "C:\\Progra~1\\gstools\\gs5.03\\gswin32")
+(setq ps-lpr-switches '("-q -sDEVICE=djet500 -r300 -dNOPAUSE -IC:\\Progra~1\\gstools\\gs5.03;C:\\Progra~1\\gstools\\gs5.03\\fonts;c:\\psfonts"))
+(setq ps-lpr-buffer (concat (getenv "TEMP") "\\psspool.ps"))
+
+(defun win32-ps-print-buffer ()
+  (interactive)
+  (setq ps-print-color-p nil)
+  (setq ps-bold-faces '(font-lock-keyword-face))
+  (setq ps-italic-faces '(font-lock-comment-face))
+  (ps-print-buffer-with-faces ps-lpr-buffer)
+  (shell-command
+   (apply 'concat (append (list ps-lpr-command " ")
+                          ps-lpr-switches
+                          (list " " ps-lpr-buffer " -c quit"))))
+  )
 
 
 ;;; ********************
@@ -455,25 +548,20 @@
 ;      )
 ;(require 'crypt)
 
-;;; func-menu is a package that scans your source file for function definitions
-;;; and makes a menubar entry that lets you jump to any particular function
-;;; definition by selecting it from the menu.  The following code turns this on
-;;; for all of the recognized languages.  Scanning the buffer takes some time,
-;;; but not much.
-;;;
-;(cond ((string-match "Lucid" emacs-version)
-;       (require 'func-menu)
-;       (define-key global-map 'f8 'function-menu)
-;       (add-hook 'find-file-hooks 'fume-add-menubar-entry)
-;       (define-key global-map "\C-cg" 'fume-prompt-function-goto)
-;       (define-key global-map '(shift button3) 'mouse-function-menu)
-;       (define-key global-map '(meta  button1) 'fume-mouse-function-goto)
-;       (setq fume-menubar-menu-location nil)
-;       (setq fume-display-in-modeline-p nil)
-;       ))
+
+;; die letzte gespeicherte Session (= Desktop) laden
+(load "desktop")
+(desktop-load-default)
+(desktop-read)
+;; verschiedene Histories verkürzen, damit mit 'desktop' nicht zu viel 
+;; gespeichert wird
+(add-hook 'kill-emacs-hook
+          '(lambda ()
+             (desktop-truncate search-ring 3)
+             (desktop-truncate regexp-search-ring 3)))
 
 
-;; tell the user that we're through it
+;; Verkünden wir, dass die Arbeit getan
 (message "Finished initialization from .emacs")
 
 ;; eof .emacs

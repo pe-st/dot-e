@@ -4,104 +4,10 @@
 ;;      Author: Peter Steiner <unistein@isbe.ch>
 ;;     Created: Wed Jul 6 19:52:18 1994
 ;;     $Source: g:/archiv/cvsroot/home/.emacs,v $
-;;   $Revision: 1.21 $
-;;       $Date: 1999/06/02 19:41:24 $
+;;   $Revision: 1.22 $
+;;       $Date: 1999/06/02 21:09:29 $
 ;;     $Author: pesche $
 
-
-;; setup special variables and functions ---------------------------------------
-
-(defun insert-timestamp ()
-  "Insert the current time."
-  (interactive)
-  (insert (format-time-string "%Y-%m-%d %H:%M:%S" (current-time)))
-  )
-
-(defun uncomment-region (beg end &optional arg)
-  "Counterpart to comment-region."
-  ;; there is still something wrong for arg > 1 or prefix args, but
-  ;; for just uncommenting, it works
-  (interactive "r/nP")
-  (if (consp arg)
-      (comment-region beg end (- arg))
-    (comment-region beg end (- 1))
-    )
-  )
-
-(defun modify-syntax-for-umlaut ()
-  "Sets the german umlauts to 'word constituent' in current syntax table."
-  (interactive)
-  (modify-syntax-entry ?ä "w")
-  (modify-syntax-entry ?ö "w")
-  (modify-syntax-entry ?ü "w")
-  (modify-syntax-entry ?Ä "w")
-  (modify-syntax-entry ?Ö "w")
-  (modify-syntax-entry ?Ü "w")
-  )
-
-(defun duplicate-line (arg)
-  "Duplicate current line, leaving point in lower line."
-  (interactive "*p")
-
-  ;; save the point for undo
-  (setq buffer-undo-list (cons (point) buffer-undo-list))
-
-  ;; local variables for start and end of line
-  (let ((bol (save-excursion (beginning-of-line) (point)))
-        eol)
-    (save-excursion
-
-      ;; don't use forward-line for this, because you would have
-      ;; to check whether you are at the end of the buffer
-      (end-of-line)
-      (setq eol (point))
-
-      ;; store the line and disable the recording of undo information
-      (let ((line (buffer-substring bol eol))
-            (buffer-undo-list t)
-            (count arg))
-        ;; insert the line arg times
-        (while (> count 0)
-          (newline)         ;; because there is no newline in 'line'
-          (insert line)
-          (setq count (1- count)))
-        )
-
-      ;; create the undo information
-      (setq buffer-undo-list (cons (cons eol (point)) buffer-undo-list)))
-    ) ; end-of-let
-
-  ;; put the point in the lowest line and return
-  (next-line arg))
-
-
-;; diese Funktion habe ich aus dem .emacs von Jack Repenning <jackr@informix.com>
-(defun toggle-line-wrap ()
-  "Toggles the line-wrap function.
-Covers (and equates) both horizontal and vertical splits."
-  (interactive)
-  (setq truncate-lines (setq truncate-partial-width-windows (not
-                                                             truncate-lines)))
-  (recenter (- (count-lines (window-start) (point))
-               (if (bolp) 0 1)))
-  )
-
-;; diese Funktion habe ich aus dem .emacs von Anders Lindgren <andersl@csd.uu.se>
-(defun unbury-buffer (&optional buf)
-  "Select buffer BUF, or the last one in the buffer list.
-This function is the opposite of `bury-buffer'."
-  (interactive)
-  (or buf (setq buf (car (reverse (buffer-list)))))
-  (switch-to-buffer buf))
-
-
-(require 'thingatpt)
-(defun search-quick ()
-  "quick search."
-  (interactive)
-  (let ((string (thing-at-point 'word)))
-    (if (stringp string)
-        (nonincremental-search-forward string))))
 
 ;; general configuration -------------------------------------------------------
 
@@ -114,6 +20,9 @@ This function is the opposite of `bury-buffer'."
     (setq load-path (append '("~/emacs") load-path)))
 (if (file-accessible-directory-p "~/site-lisp")
     (setq load-path (append '("~/site-lisp") load-path)))
+
+(require 'pesche-tools)
+
 
 (setq-default fill-column 77)           ;; column for line breaking in auto-fill-mode
 (setq make-backup-files t)
@@ -363,186 +272,8 @@ saving keyboard macros (see insert-kbd-macro)."
 ; Der Mauszeiger soll vor dem herannahenden Cursor flüchten
 (mouse-avoidance-mode 'exile)
 
-;; lisp modes
-(defun pesche-emacs-lisp-mode-hook()
-  (setq-default tab-width        8
-                indent-tabs-mode nil)
 
-  ;; Syntax etwas anpassen, damit (zB) Markieren mit Doppelklick nicht
-  ;; bei '-' oder Umlauten Halt macht
-  (modify-syntax-for-umlaut)
-  (modify-syntax-entry ?- "w")
-
-  ;; alle Kommentarzeilen, die mit mindestens drei '-' aufhören,
-  ;; in das 'Outline'-Menü eintragen
-  (setq imenu-generic-expression
-        (append imenu-generic-expression
-                '(("Outline" ";+[ \\t]+\\([ A-Za-z0-9äöüÄÖÜ/+]+\\)---*[ \\t]*$" 1))))
-  (imenu-add-to-menubar "Index")
-  )
-(add-hook 'emacs-lisp-mode-hook 'pesche-emacs-lisp-mode-hook)
-
-;; C mode und alle Verwandten --------------------------------------------------
-;; Files auf .rh sollen auch Header Files sein (resource header)
-(setq auto-mode-alist (append '(("\\.rh\\'" . c-mode)) auto-mode-alist))
-
-;; cc-mode 5.21 kennt das "richtige" Verhalten von Delete und Backspace
-;; (aber nur wenn delete-key-deletes-forward existiert)
-(if (not (boundp 'delete-key-deletes-forward))
-    (defvar delete-key-deletes-forward))
-(setq delete-key-deletes-forward t)
-
-(defun pesche-c-mode-common-hook()
-  ;; das 'elektrische' automatische Einrücken bei Kommentaren ist lästig...
-  (local-unset-key (kbd "*"))
-  (local-unset-key (kbd "/"))
-  ;; auch in C die neuen C++-Kommentare verwenden
-  (if (fboundp 'c-enable-//-in-c-mode)
-      (c-enable-//-in-c-mode))
-  (setq comment-start "// "
-        comment-end ""
-        comment-multi-line nil
-        font-lock-comment-start-regexp nil
-        c-double-slash-is-comments-p t)
-  ;; Syntax etwas anpassen, damit (zB) Markieren mit Doppelklick nicht
-  ;; bei '_' oder Umlauten Halt macht
-  (modify-syntax-entry ?_ "w")
-  (modify-syntax-for-umlaut)
-  ;; Mein Codierstil ist ein abgeänderter 'Stroustrup'
-  (c-set-style  "Stroustrup")
-  (c-set-offset 'case-label '+)
-  (c-set-offset 'statement-case-open '+)
-  (c-set-offset 'arglist-close 0)
-  (setq-default tab-width                4
-                indent-tabs-mode         nil
-                c-tab-always-indent      nil
-                c++-tab-always-indent    nil)
-
-  ;; alle 'Kästchen' in das 'Outline'-Menü aufnehmen
-  (setq imenu-generic-expression
-        (append imenu-generic-expression
-                '(("Outline"
-                   "^/\\*[-]+\\+[ \t]*\n|[ \t]+\\([^ \t][- A-Za-zÄÖÜäöü0-9+]*\\).*|"
-                   1)
-                  ("Types"
-                   "^[ \t]*typedef[ \t]+\\(struct[ \t]+[_A-Za-z0-9]+\\)"
-                   1)
-                  )))
-  (imenu-add-to-menubar "Index")
-  )
-(add-hook 'c-mode-common-hook 'pesche-c-mode-common-hook)
-
-
-;; makefile mode ---------------------------------------------------------------
-;; Files auf .mak sollen auch Makefiles sein (ist offenbar nicht üblich)
-(setq auto-mode-alist (append '(("\\.mak\\'" . makefile-mode)) auto-mode-alist))
-
-;; Makefiles im msb-Buffermenü als Makefiles einordnen (bei cperl abgeschaut)
-(defvar msb-menu-cond)
-;(defvar makefile-msb-fixed)
-(defun makefile-msb-fix()
-  ;; Adds makefiles to msb menu, supposes that msb is already loaded
-;  (setq makefile-msb-fixed t)
-  (let* ((l (length msb-menu-cond))
-         (last (nth (1- l) msb-menu-cond))
-         (precdr (nthcdr (- l 2) msb-menu-cond)) ; cdr of this is last
-         (handle (1- (nth 1 last))))
-    (setcdr precdr (list
-                    (list
-                     '(eq major-mode 'makefile-mode)
-                     handle
-                     "Makefiles (%d)")
-                    last))))
-
-(defun pesche-makefile-mode-hook()
-  (setq-default tab-width        8
-                indent-tabs-mode t)
-
-  ; korrigiere regexp für Zuweisungen (Fehler tritt nur
-  ; bei imenu auf, font-lock ist okay)
-  (setq makefile-macroassign-regex
-        "^\\([^ \n\t#][^:#= \t\n]*\\)[ \t]*[*:+]?:?=")
-  ;               --^--  dieses '#' fehlt in make-mode.el
-
-  (imenu-add-to-menubar "Index")
-;   (and (boundp 'msb-menu-cond)
-;        (not makefile-msb-fixed)
-;        (makefile-msb-fix))
-  (makefile-msb-fix)
-  )
-
-(add-hook 'makefile-mode-hook 'pesche-makefile-mode-hook)
-
-
-;; assembler mode --------------------------------------------------------------
-(defun pesche-asm-mode-hook()
-  (local-unset-key (kbd "<tab>"))
-  (local-unset-key (kbd ":"))
-  (local-unset-key (kbd ";"))
-  (local-unset-key (kbd "RET"))
-  (setq-default tab-width        8
-                indent-tabs-mode t)
-
-  ;; Syntax etwas anpassen, damit (zB) Markieren mit Doppelklick nicht
-  ;; bei '_' oder Umlauten Halt macht
-  (modify-syntax-for-umlaut)
-  (modify-syntax-entry ?_ "w")
-  (modify-syntax-entry ?. "w")  ; praktisch für move.l etc
-  (modify-syntax-entry ?- "w")  ; praktisch in "C-Kommentaren"
-  (modify-syntax-entry ?> "w")  ; praktisch in "C-Kommentaren"
-
-;  (imenu-add-to-menubar "Index")
-  )
-(add-hook 'asm-mode-hook 'pesche-asm-mode-hook)
-
-;; perl mode -------------------------------------------------------------------
-(autoload 'cperl-mode "cperl-mode" "alternate mode for editing Perl programs" t)
-;; cperl-mode statt perl-mode verwenden
-(setq auto-mode-alist
-      (append '(("\\.[pP][Llm]\\'" . cperl-mode)) auto-mode-alist ))
-(setq interpreter-mode-alist (append interpreter-mode-alist
-         '(("miniperl" . cperl-mode))))
-
-;; hairy ist etwas allzu haarig...
-;(setq cperl-hairy t)
-
-
-(defun pesche-cperl-mode-hook()
-  ;; einrücken: 4 Zeichen, 'else' darf ohne '{' auf eigener Zeile stehen
-  (cperl-set-style "C++")
-  (imenu-add-to-menubar "Index")
-  )
-
-(add-hook 'cperl-mode-hook 'pesche-cperl-mode-hook)
-
-
-;; html mode -------------------------------------------------------------------
-(autoload 'html-helper-mode "html-helper-mode" "HTML major mode." t)
-;; html-helper-mode statt html-mode verwenden
-(setq auto-mode-alist
-      (append '(("\\.s?html?\\'" . html-helper-mode)) auto-mode-alist))
-(setq html-helper-use-expert-menu t)
-
-;; HTML-Files im msb-Buffermenü als solche einordnen (bei cperl abgeschaut)
-(defvar msb-menu-cond)
-(defun html-msb-fix()
-  (let* ((l (length msb-menu-cond))
-         (last (nth (1- l) msb-menu-cond))
-         (precdr (nthcdr (- l 2) msb-menu-cond)) ; cdr of this is last
-         (handle (1- (nth 1 last))))
-    (setcdr precdr (list
-                    (list
-                     '(eq major-mode 'html-helper-mode)
-                     handle
-                     "Web Files (%d)")
-                    last))))
-
-(defun pesche-html-helper-mode-hook()
-  (html-msb-fix)
-  )
-
-(add-hook 'html-helper-mode-hook 'pesche-html-helper-mode-hook)
-
+(require 'pesche-modes)
 
 ;; dynamische Abkürzungen ------------------------------------------------------
 ;; immer case-sensitiv !
@@ -690,8 +421,8 @@ saving keyboard macros (see insert-kbd-macro)."
 
 (custom-set-variables
  '(hscroll-mode-name nil)
- '(resize-minibuffer-mode t nil (rsz-mini))
  '(scroll-preserve-screen-position t t)
  '(hscroll-global-mode t nil (hscroll)))
 (custom-set-faces)
+
 

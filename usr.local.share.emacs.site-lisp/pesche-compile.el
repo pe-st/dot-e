@@ -1,11 +1,13 @@
 ;; Pesche's Hilfsfunktionen für compile
 ;;
-;;     $Source: g:/archiv/cvsroot/site-lisp/pesche-compile.el,v $
-;;   $Revision: 1.1 $
-;;       $Date: 2002/01/15 21:55:20 $
-;;     $Author: donnerpesche $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-compile.el#2 $
+;;   $DateTime: 2003/10/13 23:55:56 $
+;;     $Author: peter.steiner $
+;;  $Copyright: Peter Steiner <pesche@schlau.ch>
 
 (require 'compile)
+
+(setq compilation-scroll-output t)
 
 ;; helper functions ------------------------------------------------------------
 (defun pesche-basename (filename)

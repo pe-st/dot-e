@@ -2425,7 +2425,8 @@ html-helper-mode-local-JSP-not-ASP are nil"
 ;; Still from Stan Lanning here it comes the code for a "smart switch" to 
 ;; the appropriate scripting mode.
 
-(defvar html-script-toggle-key [f4])
+(defvar html-script-toggle-key [f12])
+;(defvar html-script-toggle-key [f4])
 
 (defvar html-script-narrow-alist
   `((,(regexp-quote "<%") . html-script-narrow-to-asp)

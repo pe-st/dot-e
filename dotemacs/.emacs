@@ -37,6 +37,16 @@
     )
   ) 
 
+(defun modify-syntax-for-umlaut ()
+  "Sets the german umlauts to 'word constituent' in current syntax table."
+  (interactive)
+  (modify-syntax-entry ?ä "w")
+  (modify-syntax-entry ?ö "w")
+  (modify-syntax-entry ?ü "w")
+  (modify-syntax-entry ?Ä "w")
+  (modify-syntax-entry ?Ö "w")
+  (modify-syntax-entry ?Ü "w")
+  )
 
 (defun duplicate-line (arg)
   "Duplicate current line, leaving point in lower line."
@@ -85,6 +95,22 @@ Covers (and equates) both horizontal and vertical splits."
                (if (bolp) 0 1)))
   )
 
+;; diese Funktion habe ich aus dem .emacs von Anders Lindgren <andersl@csd.uu.se>
+(defun unbury-buffer (&optional buf)
+  "Select buffer BUF, or the last one in the buffer list.
+This function is the opposite of `bury-buffer'."
+  (interactive)
+  (or buf (setq buf (car (reverse (buffer-list)))))
+  (switch-to-buffer buf))
+
+
+(require 'thingatpt)
+(defun search-quick ()
+  "quick search."
+  (interactive)
+  (let ((string (thing-at-point 'word)))
+    (if (stringp string)
+        (nonincremental-search-forward string))))
 
 ;; general configuration -------------------------------------------------------
 
@@ -195,7 +221,17 @@ saving keyboard macros (see insert-kbd-macro)."
 (global-set-key (kbd "C-<kp-begin>") 'recenter)         ;; Shift-Ctrl-Keypad-5 (Linux)
 (global-set-key (kbd "C-<return>") 'duplicate-line)     ;; self-written
 (global-set-key (kbd "C-<kp-enter>") 'duplicate-line)   ;; self-written
+
 (global-set-key (kbd "<f6>") 'other-window)             ;; C-x o
+(global-set-key (kbd "C-<f6>") 'bury-buffer)            ;;
+(global-set-key (kbd "C-<tab>") 'bury-buffer)           ;;
+(global-set-key (kbd "S-C-<tab>") 'unbury-buffer)       ;;
+
+(global-set-key (kbd "C-f") 'nonincremental-re-search-forward)          ;;
+(global-set-key (kbd "S-C-f") 'nonincremental-repeat-re-search-forward) ;;
+(global-set-key (kbd "S-C-s") 'nonincremental-repeat-search-forward)    ;;
+(global-set-key (kbd "<f3>") 'nonincremental-repeat-search-forward)     ;;
+(global-set-key (kbd "S-C-q") 'search-quick)            ;; self-written
 
 ;(global-set-key (kbd "C-S-<down>") 'next-error)
 
@@ -261,7 +297,19 @@ saving keyboard macros (see insert-kbd-macro)."
   "Decode and browse a UN*X man page." t)
 (autoload 'woman-find-file "woman"
   "Find, decode and browse a specific UN*X man-page file." t)
-(setq man-path '("x:/gnuwin32/b18/man"))
+;; den Pfad zu den Man-Pages aus GCC_EXEC_PREFIX basteln
+(let ((path (getenv "GCC_EXEC_PREFIX")))
+  (if (stringp path)
+      (progn
+        ;; die Backslashes durch Slashes ersetzen
+        (while (setq i (string-match "[\\]" path))
+          (aset path i ?/))
+        ;; den hinteren Teil des Pfades durch 'man' ersetzen
+        (string-match "H-i386-cygwin32/lib/gcc-lib/" path)
+        (setq man-path (list (replace-match "man" t t path)))
+        )))
+
+;(setq man-path '("x:/gnuwin32/b18/man"))
 ;(setq woman-path '("x:\gnuwin32\b18\man" "e:\usr\man"))
 
 
@@ -273,11 +321,12 @@ saving keyboard macros (see insert-kbd-macro)."
           (function (lambda ()
                       (setq-default tab-width        8
                                     indent-tabs-mode nil)
+                      (modify-syntax-for-umlaut)
 
                       ;; alle Kommentarzeilen, die mit mindestens drei '-' aufhören,
                       ;; in das 'Outline'-Menü eintragen
-                      (setq lisp-imenu-generic-expression 
-                            (append lisp-imenu-generic-expression
+                      (setq imenu-generic-expression 
+                            (append imenu-generic-expression
                                     '(("Outline" ";+[ \\t]+\\([ A-Za-z0-9+]+\\)---*[ \\t]*$" 1))))
                       (imenu-add-to-menubar "Index")
                       )))
@@ -300,12 +349,15 @@ saving keyboard macros (see insert-kbd-macro)."
                             comment-multi-line nil
                             font-lock-comment-start-regexp nil
                             c-double-slash-is-comments-p t)
-                      ;; setup my personal indenting style
+                      ;; Syntax etwas anpassen
+                      (modify-syntax-entry ?_ "w")
+                      (modify-syntax-for-umlaut)
+                      ;; Mein Codierstil ist ein abgeänderter 'Stroustrup'
                       (c-set-style  "Stroustrup")
                       (c-set-offset 'case-label '+)
                       (c-set-offset 'statement-case-open '+)
                       (c-set-offset 'arglist-close 0)
-                      (setq-default tab-width                8
+                      (setq-default tab-width                4
                                     indent-tabs-mode         nil
                                     c-tab-always-indent      nil
                                     c++-tab-always-indent    nil)

@@ -2,9 +2,9 @@
 ;;  Emacs Startup File
 ;;
 ;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id: //netzadmin/emacs/pesche/.emacs#36 $
-;;     $Change: 17963 $
-;;   $DateTime: 2003/11/07 22:22:21 $
+;;         $Id: //netzadmin/emacs/pesche/.emacs#37 $
+;;     $Change: 18008 $
+;;   $DateTime: 2003/11/11 19:20:55 $
 ;;     $Author: peter.steiner $
 ;;    $Created: Wed Jul 6 19:52:18 1994 $
 
@@ -117,6 +117,8 @@
 (cond
  ((eq (string-match "DONNERVOGEL" (system-name)) 0)
   (progn (setq pesche-family "lucida")  (setq pesche-font-size font13pix)))
+ ((eq (string-match "INUVIK" (system-name)) 0)
+  (progn (setq pesche-family "lucida")  (setq pesche-font-size font11pix)))
  ((eq (string-match "PIAZZABOOK"  (system-name)) 0)
   (progn (setq pesche-family "courier") (setq pesche-font-size font12pix)))
  (t

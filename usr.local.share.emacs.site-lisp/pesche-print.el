@@ -13,7 +13,8 @@
 (require 'ps-print)
 
 ;; Konfiguration ---------------------------------------------------------------
-(setq ps-paper-type 'ps-a4)
+(setq ps-paper-type 'a4)
+;(setq ps-paper-type 'ps-a4)
 (setq ps-print-header-frame nil)
 
 ; die Schrift etwas verstellen
@@ -31,7 +32,7 @@
 (setq ps-psnup-switches '(" -l -2 -pa4 ")) ; options for program above
 ;(setq ps-lpr-command "C:\\Progra~1\\gstools\\gs5.03\\gswin32")
 (setq ps-lpr-command "start /min C:\\Progra~1\\gstools\\gs5.03\\gswin32")
-(setq ps-lpr-switches '("-q -sDEVICE=djet500 -r300 -dNOPAUSE -IC:\\Progra~1\\gstools\\gs5.03;C:\\Progra~1\\gstools\\gs5.03\\fonts;c:\\psfonts"))
+(setq ps-lpr-switches '("-q -sPAPERSIZE=a4 -sDEVICE=djet500 -r300 -dNOPAUSE -IC:\\Progra~1\\gstools\\gs5.03;C:\\Progra~1\\gstools\\gs5.03\\fonts;c:\\psfonts"))
 (setq ps-preview-command  "c:\\Progra~1\\gstools\\gsview\\gsview32.exe")
 (setq ps-lpr-buffer (concat (getenv "TEMP") "\\psspool.ps"))
 (setq ps-psnup-buffer (concat (getenv "TEMP") "\\psnup.ps"))
@@ -67,8 +68,8 @@
 (defun pesche-preview-region-with-faces (from to)
   (interactive (list (point) (mark)))
   (pesche-printfile-region-with-faces from to)
-  (start-process-shell-command "gsview" "*Messages*" 
-			       ps-preview-command ps-lpr-buffer)  
+  (start-process-shell-command "gsview" "*Messages*"
+                               ps-preview-command ps-lpr-buffer)
   )
 
 ;; 1up buffer ------------------------------------------------------------------
@@ -110,8 +111,8 @@
 (defun pesche-preview-2up-region-with-faces (from to)
   (interactive (list (point) (mark)))
   (pesche-printfile-2up-region-with-faces from to)
-  (start-process-shell-command "gsview" "*Messages*" 
-			       ps-preview-command ps-psnup-buffer)  
+  (start-process-shell-command "gsview" "*Messages*"
+                               ps-preview-command ps-psnup-buffer)
   )
 
 ;; 2up buffer ------------------------------------------------------------------

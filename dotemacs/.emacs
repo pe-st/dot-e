@@ -2,9 +2,9 @@
 ;;  Emacs Startup File
 ;;
 ;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id: //netzadmin/emacs/pesche/.emacs#44 $
-;;     $Change: 20009 $
-;;   $DateTime: 2004/10/29 17:01:14 $
+;;         $Id: //netzadmin/emacs/pesche/.emacs#45 $
+;;     $Change: 21243 $
+;;   $DateTime: 2005/05/16 23:24:52 $
 ;;     $Author: peter.steiner $
 ;;    $Created: Wed Jul 6 19:52:18 1994 $
 
@@ -63,6 +63,11 @@
         (eq window-system 'w32))
     (standard-display-european t))      ;; vollen 8-Bit Zeichensatz verwenden
 (column-number-mode 1)
+; Mac-Emacs >= 22 unterstützt tool-bar...
+(if (and (>= emacs-major-version 22)
+         (eq window-system 'mac))
+    (tool-bar-mode 0)
+  )
 
 ;; fonts -----------------------------------------------------------------------
 ;; Paare von Werten (gilt unter Windows; der erste Werte ist die Höhe in
@@ -185,7 +190,8 @@ ascii:-apple-monaco-medium-r-normal--9-90-75-75-m-90-mac-roman,
 latin-iso8859-1:-apple-monaco-medium-r-normal--9-90-75-75-m-90-mac-roman")
 
            (set-frame-font "fontset-monaco")
-           (setq mac-keyboard-text-encoding kTextEncodingISOLatin1)
+           (if (< emacs-major-version 22)
+               (setq mac-keyboard-text-encoding kTextEncodingISOLatin1))
            )
          )))
 

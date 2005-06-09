@@ -2,9 +2,9 @@
 ;;  Emacs Startup File
 ;;
 ;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id: //netzadmin/emacs/pesche/.emacs#45 $
-;;     $Change: 21243 $
-;;   $DateTime: 2005/05/16 23:24:52 $
+;;         $Id: //netzadmin/emacs/pesche/.emacs#46 $
+;;     $Change: 21390 $
+;;   $DateTime: 2005/06/09 14:30:32 $
 ;;     $Author: peter.steiner $
 ;;    $Created: Wed Jul 6 19:52:18 1994 $
 
@@ -63,9 +63,10 @@
         (eq window-system 'w32))
     (standard-display-european t))      ;; vollen 8-Bit Zeichensatz verwenden
 (column-number-mode 1)
-; Mac-Emacs >= 22 unterstützt tool-bar...
+; Emacs >= 22 unterstützt tool-bar...
 (if (and (>= emacs-major-version 22)
-         (eq window-system 'mac))
+         (or (eq window-system 'mac)
+             (eq window-system 'w32)))
     (tool-bar-mode 0)
   )
 
@@ -129,8 +130,10 @@
   (progn (setq pesche-family "lucida")  (setq pesche-font-size font13pix)))
  ((eq (string-match "INUVIK" (system-name)) 0)
   (progn (setq pesche-family "lucida")  (setq pesche-font-size font11pix)))
- ((eq (string-match "PIAZZABOOK"  (system-name)) 0)
+ ((eq (string-match "PIAZZABOOK" (system-name)) 0)
   (progn (setq pesche-family "courier") (setq pesche-font-size font12pix)))
+ ((eq (string-match "PAQBOOK" (system-name)) 0)
+  (progn (setq pesche-family "courier") (setq pesche-font-size font11pix)))
  (t
   (progn (setq pesche-family "courier") (setq pesche-font-size font12pix)))
  )

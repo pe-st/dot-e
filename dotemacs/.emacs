@@ -2,9 +2,9 @@
 ;;  Emacs Startup File
 ;;
 ;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id: //netzadmin/emacs/pesche/.emacs#46 $
-;;     $Change: 21390 $
-;;   $DateTime: 2005/06/09 14:30:32 $
+;;         $Id: //netzadmin/emacs/pesche/.emacs#47 $
+;;     $Change: 22587 $
+;;   $DateTime: 2005/10/20 00:10:11 $
 ;;     $Author: peter.steiner $
 ;;    $Created: Wed Jul 6 19:52:18 1994 $
 
@@ -470,7 +470,9 @@ saving keyboard macros (see insert-kbd-macro)."
 
 ;; desktop ---------------------------------------------------------------------
 ;; die letzte gespeicherte Session (= Desktop) laden
-(load "desktop")
+(if (fboundp 'desktop-save-mode)
+    (desktop-save-mode 1)
+  (load "desktop"))
 ; für NT den Default-Namen ändern; für andere Systeme können wir seinlassen
 (if (eq system-type 'windows-nt)
     (setq desktop-basefilename ".emacs.desktop"))

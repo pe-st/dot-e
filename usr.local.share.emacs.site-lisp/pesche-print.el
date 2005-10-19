@@ -1,8 +1,8 @@
 ;; Pesche's Druckerei
 ;;
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-print.el#7 $
-;;     $Change: 20775 $
-;;   $DateTime: 2005/03/11 11:10:32 $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-print.el#8 $
+;;     $Change: 22587 $
+;;   $DateTime: 2005/10/20 00:10:11 $
 ;;     $Author: peter.steiner $
 ;;    $Created: 1997/12/19 $
 ;;  $Copyright: Peter Steiner <pesche@schlau.ch>
@@ -274,41 +274,41 @@
       )
   (progn
     ; die Druck-Einträge von Emacs 21 aus dem Print-Menu entfernen (vgl. menu-bar.el)
-    (define-key menu-bar-files-menu [ps-print-region] nil)
-    (define-key menu-bar-files-menu [ps-print-buffer] nil)
-    (define-key menu-bar-files-menu [ps-print-region-faces] nil)
-    (define-key menu-bar-files-menu [ps-print-buffer-faces] nil)
-    (define-key menu-bar-files-menu [print-region] nil)
-    (define-key menu-bar-files-menu [print-buffer] nil)
-    (define-key menu-bar-files-menu [separator-print] nil)
+    (define-key menu-bar-file-menu [ps-print-region] nil)
+    (define-key menu-bar-file-menu [ps-print-buffer] nil)
+    (define-key menu-bar-file-menu [ps-print-region-faces] nil)
+    (define-key menu-bar-file-menu [ps-print-buffer-faces] nil)
+    (define-key menu-bar-file-menu [print-region] nil)
+    (define-key menu-bar-file-menu [print-buffer] nil)
+    (define-key menu-bar-file-menu [separator-print] nil)
     ))
 
 ; Submenus für Print/Print-to-file/Preview in das File-Menu einhängen
-(define-key-after menu-bar-files-menu [preview]
+(define-key-after menu-bar-file-menu [preview]
   '("Preview" . menu-bar-preview-menu)
   'kill-buffer)
-(define-key-after menu-bar-files-menu [printpdf]
+(define-key-after menu-bar-file-menu [printpdf]
   '("Print to PDF" . menu-bar-printpdf-menu)
   'kill-buffer)
-(define-key-after menu-bar-files-menu [printfile]
+(define-key-after menu-bar-file-menu [printfile]
   '("Print to File" . menu-bar-printfile-menu)
   'kill-buffer)
-(define-key-after menu-bar-files-menu [print]
+(define-key-after menu-bar-file-menu [print]
   '("Print" . menu-bar-print-menu)
   'kill-buffer)
 
 ; Separator im File-Menu
-(define-key-after menu-bar-files-menu [separator-print-options]
+(define-key-after menu-bar-file-menu [separator-print-options]
   '("--")
   'kill-buffer)
 
 ; Submenu für Schriftgrösse
-(define-key-after menu-bar-files-menu [printfont]
+(define-key-after menu-bar-file-menu [printfont]
   '("Print Font Size" . menu-bar-printfont-menu)
   'kill-buffer)
 
 ; toggle für die Papier-Ausrichtung
-(define-key-after menu-bar-files-menu [toggle-print-orientation-mode]
+(define-key-after menu-bar-file-menu [toggle-print-orientation-mode]
   (menu-bar-make-toggle toggle-print-orientation-mode ps-landscape-mode
                         "Paper Orientation Landscape"
                         "Landscape mode %s"
@@ -316,7 +316,7 @@
   'kill-buffer)
 
 ; toggle für die Zebrastreifen beim Drucken
-(define-key-after menu-bar-files-menu [toggle-print-zebra-stripes-mode]
+(define-key-after menu-bar-file-menu [toggle-print-zebra-stripes-mode]
   (menu-bar-make-toggle toggle-print-zebra-stripes-mode ps-zebra-stripes
                         "Print Zebra Stripes"
                         "Zebra Stripe mode %s"
@@ -324,7 +324,7 @@
   'kill-buffer)
 
 ; toggle für das Zeilennummern-Drucken
-(define-key-after menu-bar-files-menu [toggle-print-line-numbers-mode]
+(define-key-after menu-bar-file-menu [toggle-print-line-numbers-mode]
   (menu-bar-make-toggle toggle-print-line-numbers-mode ps-line-number
                         "Print Line Numbers"
                         "Line Number mode %s"
@@ -332,7 +332,7 @@
   'kill-buffer)
 
 ; toggle für den Seitenkopf
-(define-key-after menu-bar-files-menu [toggle-print-header]
+(define-key-after menu-bar-file-menu [toggle-print-header]
   (menu-bar-make-toggle toggle-print-header ps-print-header
                         "Print Page Header"
                         "Page Header mode %s"
@@ -340,14 +340,14 @@
   'kill-buffer)
 
 ; abschliessender Separator im File-Menu
-(define-key-after menu-bar-files-menu [separator-print]
+(define-key-after menu-bar-file-menu [separator-print]
   '("--")
   'kill-buffer)
 
 
 ; das Schriftgrösse-Menu
 (defvar menu-bar-printfont-menu (make-sparse-keymap "Print Font Size"))
-(define-key global-map [menu-bar files printfont]
+(define-key global-map [menu-bar file printfont]
   (cons "Print Font Size" menu-bar-printfont-menu))
 (define-key menu-bar-printfont-menu [printfont-10]
   '(menu-item "10 pt"
@@ -370,7 +370,7 @@
 
 ; das Print-Submenu
 (defvar menu-bar-print-menu (make-sparse-keymap "Print"))
-(define-key global-map [menu-bar files print]
+(define-key global-map [menu-bar file print]
   (cons "Print" menu-bar-print-menu))
 (define-key menu-bar-print-menu [print-region-2up] '("2up Region" . pesche-print-2up-region-with-faces))
 (define-key menu-bar-print-menu [print-buffer-2up] '("2up Buffer" . pesche-print-2up-buffer-with-faces))
@@ -379,7 +379,7 @@
 
 ; das Printfile-Submenu
 (defvar menu-bar-printfile-menu (make-sparse-keymap "Print to File"))
-(define-key global-map [menu-bar files printfile]
+(define-key global-map [menu-bar file printfile]
   (cons "Print to File" menu-bar-printfile-menu))
 (define-key menu-bar-printfile-menu [printfile-region-2up] '("2up Region" . pesche-printfile-2up-region-with-faces))
 (define-key menu-bar-printfile-menu [printfile-buffer-2up] '("2up Buffer" . pesche-printfile-2up-buffer-with-faces))
@@ -388,7 +388,7 @@
 
 ; das PDF-Submenu
 (defvar menu-bar-printpdf-menu (make-sparse-keymap "Print to PDF"))
-(define-key global-map [menu-bar files printpdf]
+(define-key global-map [menu-bar file printpdf]
   (cons "Print to PDF" menu-bar-printpdf-menu))
 (define-key menu-bar-printpdf-menu [printpdf-region-2up] '("2up Region" . pesche-printpdf-2up-region-with-faces))
 (define-key menu-bar-printpdf-menu [printpdf-buffer-2up] '("2up Buffer" . pesche-printpdf-2up-buffer-with-faces))
@@ -397,7 +397,7 @@
 
 ; das Preview-Submenu
 (defvar menu-bar-preview-menu (make-sparse-keymap "Preview"))
-(define-key global-map [menu-bar files preview]
+(define-key global-map [menu-bar file preview]
   (cons "Preview" menu-bar-preview-menu))
 (define-key menu-bar-preview-menu [preview-region-2up] '("2up Region" . pesche-preview-2up-region-with-faces))
 (define-key menu-bar-preview-menu [preview-buffer-2up] '("2up Buffer" . pesche-preview-2up-buffer-with-faces))

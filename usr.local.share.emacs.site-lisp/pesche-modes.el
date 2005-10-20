@@ -1,11 +1,11 @@
 ;; Pesche' Modes
 ;;
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#18 $
-;;     $Change: 22587 $
-;;   $DateTime: 2005/10/20 00:10:11 $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#19 $
+;;     $Change: 22591 $
+;;   $DateTime: 2005/10/20 16:32:49 $
 ;;     $Author: peter.steiner $
 ;;    $Created: 1999/06/02 $
-;;  $Copyright: Peter Steiner <pesche@schlau.ch>
+;;  $Copyright: Peter Steiner <pesche@schlau.ch> $
 
 ;; Default-Liste für find-file löschen, damit wir unsere eigene pflegen können
 (setq-default ff-other-file-alist nil)
@@ -159,6 +159,19 @@ Javadoc comments."
           (eq major-mode 'c++-mode))
       (doxymacs-font-lock)))
 (add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)
+
+
+;; compilation mode ------------------------------------------------------------
+(if (>= emacs-major-version 22)
+    (progn
+      (require 'compile)
+      ;; Standard Microsoft Format (msft) etwas angepasst, damit es auch mit
+      ;; PC-Lint funktioniert
+      (add-to-list 'compilation-error-regexp-alist
+                   '("^\\(\\(?:[a-zA-Z]:\\)?[^:(\t\n]+\\)(\\([0-9]+\\):?\\([0-9]+\\)?)\
+ : \\(?:[Ee]rror\\|\\([Nn]ote\\|[Ii]nfo\\)\\|[Ww]arnin\\(g\\)\\) C?[0-9]+:"
+                     1 2 3 (5 . 4)))
+      ))
 
 
 ;; makefile mode ---------------------------------------------------------------

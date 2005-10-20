@@ -1,11 +1,11 @@
 ;; Pesche's Druckerei
 ;;
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-print.el#8 $
-;;     $Change: 22587 $
-;;   $DateTime: 2005/10/20 00:10:11 $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-print.el#9 $
+;;     $Change: 22590 $
+;;   $DateTime: 2005/10/20 14:17:14 $
 ;;     $Author: peter.steiner $
 ;;    $Created: 1997/12/19 $
-;;  $Copyright: Peter Steiner <pesche@schlau.ch>
+;;  $Copyright: Peter Steiner <pesche@schlau.ch> $
 
 ;; Wir benötigen als Basis das Postscript-Modul von Emacs
 (require 'ps-print)
@@ -267,13 +267,13 @@
 
 (if (< emacs-major-version 21)
     (progn
-      ; die Druck-Einträge von Emacs 20.3 aus dem Print-Menu entfernen (vgl. menu-bar.el)
+      ;; die Druck-Einträge von Emacs 20.3 aus dem Print-Menu entfernen (vgl. menu-bar.el)
       (define-key menu-bar-print-menu [ps-print-buffer] nil)
       (define-key menu-bar-print-menu [ps-print-region] nil)
       (define-key menu-bar-print-menu [separator-ps-print] nil)
       )
   (progn
-    ; die Druck-Einträge von Emacs 21 aus dem Print-Menu entfernen (vgl. menu-bar.el)
+    ;; ditto für Emacs 21 und später (vgl. menu-bar.el)
     (define-key menu-bar-file-menu [ps-print-region] nil)
     (define-key menu-bar-file-menu [ps-print-buffer] nil)
     (define-key menu-bar-file-menu [ps-print-region-faces] nil)
@@ -347,8 +347,11 @@
 
 ; das Schriftgrösse-Menu
 (defvar menu-bar-printfont-menu (make-sparse-keymap "Print Font Size"))
-(define-key global-map [menu-bar file printfont]
-  (cons "Print Font Size" menu-bar-printfont-menu))
+(if (>= emacs-major-version 22)
+    (define-key global-map [menu-bar file printfont]
+      (cons "Print Font Size" menu-bar-printfont-menu))
+  (define-key global-map [menu-bar files printfont]
+    (cons "Print Font Size" menu-bar-printfont-menu)))
 (define-key menu-bar-printfont-menu [printfont-10]
   '(menu-item "10 pt"
               pesche-print-fontsize-10
@@ -370,8 +373,11 @@
 
 ; das Print-Submenu
 (defvar menu-bar-print-menu (make-sparse-keymap "Print"))
-(define-key global-map [menu-bar file print]
-  (cons "Print" menu-bar-print-menu))
+(if (>= emacs-major-version 22)
+    (define-key global-map [menu-bar file print]
+      (cons "Print" menu-bar-print-menu))
+  (define-key global-map [menu-bar files print]
+    (cons "Print" menu-bar-print-menu)))
 (define-key menu-bar-print-menu [print-region-2up] '("2up Region" . pesche-print-2up-region-with-faces))
 (define-key menu-bar-print-menu [print-buffer-2up] '("2up Buffer" . pesche-print-2up-buffer-with-faces))
 (define-key menu-bar-print-menu [print-region]     '("Region"     . pesche-print-region-with-faces))
@@ -379,8 +385,11 @@
 
 ; das Printfile-Submenu
 (defvar menu-bar-printfile-menu (make-sparse-keymap "Print to File"))
-(define-key global-map [menu-bar file printfile]
-  (cons "Print to File" menu-bar-printfile-menu))
+(if (>= emacs-major-version 22)
+    (define-key global-map [menu-bar file printfile]
+      (cons "Print to File" menu-bar-printfile-menu))
+  (define-key global-map [menu-bar files printfile]
+    (cons "Print to File" menu-bar-printfile-menu)))
 (define-key menu-bar-printfile-menu [printfile-region-2up] '("2up Region" . pesche-printfile-2up-region-with-faces))
 (define-key menu-bar-printfile-menu [printfile-buffer-2up] '("2up Buffer" . pesche-printfile-2up-buffer-with-faces))
 (define-key menu-bar-printfile-menu [printfile-region]     '("Region"     . pesche-printfile-region-with-faces))
@@ -388,8 +397,11 @@
 
 ; das PDF-Submenu
 (defvar menu-bar-printpdf-menu (make-sparse-keymap "Print to PDF"))
-(define-key global-map [menu-bar file printpdf]
-  (cons "Print to PDF" menu-bar-printpdf-menu))
+(if (>= emacs-major-version 22)
+    (define-key global-map [menu-bar file printpdf]
+      (cons "Print to PDF" menu-bar-printpdf-menu))
+  (define-key global-map [menu-bar files printpdf]
+    (cons "Print to PDF" menu-bar-printpdf-menu)))
 (define-key menu-bar-printpdf-menu [printpdf-region-2up] '("2up Region" . pesche-printpdf-2up-region-with-faces))
 (define-key menu-bar-printpdf-menu [printpdf-buffer-2up] '("2up Buffer" . pesche-printpdf-2up-buffer-with-faces))
 (define-key menu-bar-printpdf-menu [printpdf-region]     '("Region"     . pesche-printpdf-region-with-faces))
@@ -397,8 +409,11 @@
 
 ; das Preview-Submenu
 (defvar menu-bar-preview-menu (make-sparse-keymap "Preview"))
-(define-key global-map [menu-bar file preview]
-  (cons "Preview" menu-bar-preview-menu))
+(if (>= emacs-major-version 22)
+    (define-key global-map [menu-bar file preview]
+      (cons "Preview" menu-bar-preview-menu))
+  (define-key global-map [menu-bar files preview]
+    (cons "Preview" menu-bar-preview-menu)))
 (define-key menu-bar-preview-menu [preview-region-2up] '("2up Region" . pesche-preview-2up-region-with-faces))
 (define-key menu-bar-preview-menu [preview-buffer-2up] '("2up Buffer" . pesche-preview-2up-buffer-with-faces))
 (define-key menu-bar-preview-menu [preview-region]     '("Region"     . pesche-preview-region-with-faces))

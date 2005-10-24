@@ -1,8 +1,8 @@
 ;; Pesche' Modes
 ;;
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#19 $
-;;     $Change: 22591 $
-;;   $DateTime: 2005/10/20 16:32:49 $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#20 $
+;;     $Change: 22626 $
+;;   $DateTime: 2005/10/24 22:56:41 $
 ;;     $Author: peter.steiner $
 ;;    $Created: 1999/06/02 $
 ;;  $Copyright: Peter Steiner <pesche@schlau.ch> $
@@ -299,17 +299,13 @@ Javadoc comments."
   "Decode and browse a UN*X man page." t)
 (autoload 'woman-find-file "woman"
   "Find, decode and browse a specific UN*X man-page file." t)
-;; den Pfad zu den Man-Pages aus GCC_EXEC_PREFIX basteln
-(let ((path (getenv "GCC_EXEC_PREFIX")))
-  (if (stringp path)
-      (progn
-        ;; die Backslashes durch Slashes ersetzen
-        (while (setq i (string-match "[\\]" path))
-          (aset path i ?/))
-        ;; den hinteren Teil des Pfades durch 'man' ersetzen
-        (string-match "H-i386-cygwin32/lib/gcc-lib/" path)
-        (setq woman-manpath (list (replace-match "man" t t path)))
-        )))
+
+(setq woman-use-own-frame nil)
+
+;; die Cygwin Man-Pages werden nicht sonst nicht automatisch gefunden...
+(if (eq system-type 'windows-nt)
+    (setq woman-manpath
+          '("C:/cygwin/usr/man" "C:/mingw/man")))
 
 ;; todo-mode -------------------------------------------------------------------
 (autoload 'todo-mode "todo-mode"
@@ -379,124 +375,36 @@ Javadoc comments."
 (add-hook 'html-helper-mode-hook 'pesche-html-helper-mode-hook)
 
 
-;; sgml mode -------------------------------------------------------------------
-(autoload 'sgml-mode "psgml" "Major mode to edit SGML files." t )
-
-(setq sgml-auto-insert-required-elements t
-      sgml-auto-activate-dtd             t
-      )
-
-;; font-locking konfigurieren
-(setq sgml-set-face t
-      sgml-markup-faces
-      '((comment   . font-lock-comment-face)
-        (doctype   . font-lock-reference-face)
-        (start-tag . font-lock-function-name-face)
-        (end-tag   . font-lock-function-name-face)
-        (entity    . font-lock-string-face)
-        (ignored   . font-lock-comment-face)
-        (ms-end    . font-lock-keyword-face)
-        (ms-start  . font-lock-keyword-face)
-        (pi        . font-lock-reference-face)
-        (sgml      . font-lock-reference-face)
-        (short-ref . font-lock-reference-face)
-        ))
-
-; Buffer-lokale Variabeln in einer Hook-Funktion setzen
-(defun pesche-sgml-mode-hook()
-  (setq sgml-always-quote-attributes       t
-        sgml-indent-data                   t
-        sgml-indent-step                   2
-        sgml-minimize-attributes           nil
-        sgml-omittag                       nil
-        sgml-shorttag                      nil
-        )
-  )
-
-(add-hook 'sgml-mode-hook 'pesche-sgml-mode-hook)
-
-
-;; PSGML menus for creating new documents
-(setq sgml-custom-dtd
-      '(
-;         ("HTML 2.0 Strict Level 1"
-;          "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0 Strict Level 1//EN\">")
-;         ("HTML 2.0 Level 1"
-;          "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0 Level 1//EN\">")
-;         ("HTML 2.0"
-;          "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">")
-        ("HTML 3.2"
-         "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2 Final//EN\">")
-        ("HTML 4 Loose/Transitional"
-         "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">")
-        ("HTML 4 Strict"
-         "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\">")
-        ("HTML 4 Frameset"
-         "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Frameset//EN\">")
-        ("DocBook 3.1"
-         "<!DOCTYPE Book PUBLIC \"-//OASIS//DTD DocBook V3.1//EN\">")
-        )
-      )
-
-;; ecat support
-(setq sgml-ecat-files
-      (list
-       (expand-file-name (concat (getenv "SGML") "/dtd/html/ecatalog"))
-       (expand-file-name (concat (getenv "SGML") "/dtd/docbook-3.1/ecatalog"))
-       ))
-
-;; psgml-dsssl -----------------------------------------------------------------
-(autoload 'sgml-dsssl-make-spec "psgml-dsssl" nil t)
-
-;; psgml-jade ------------------------------------------------------------------
-
-; the default commands are unix ones
-(setq sgml-command-list
-  (list
-   (list "Jade" "jade -c%catalogs -t%backend -d%stylesheet %file"
-         'sgml-run-command t
-         '(("jade:\\(.*\\):\\(.*\\):\\(.*\\):E:" 1 2 3)))
-   (list "JadeTeX" "tex \"&jadetex\" %tex"
-         'sgml-run-command nil)
-   (list "JadeTeX PDF" "virpdftex \"&pdfjadetex\" %tex"
-         'sgml-run-command t)
-   (list "dvips" "dvips %dvi"
-         'sgml-run-command nil)
-   (list "View dvi" "yap %dvi"
-         'sgml-run-background t)
-   (list "View PDF" "gsview32 %pdf"
-         'sgml-run-command nil)
-   (list "View ps" "gsview32 %ps"
-         'sgml-run-command nil))
-  )
-
-; the default sgml-shell is hardcoded to /bin/sh
-(setq sgml-shell shell-file-name)
-
-;; load psgml-jade extension
-(add-hook 'sgml-mode-hook '(lambda () (require 'psgml-jade)))
-
-
-;; sgml-html-mode mode ---------------------------------------------------------
-(defun sgml-html-mode ()
-  "This version of html mode is just a wrapper around sgml mode."
-  (interactive)
-  (sgml-mode)
-  (make-local-variable 'sgml-declaration)
-  (make-local-variable 'sgml-default-doctype-name)
-  (setq sgml-default-doctype-name    "html"
-        sgml-declaration             (concat (getenv "SGML") "/dtd/html/html.dcl")
-        sgml-omittag                 t  ; normales SGML hat hier nil
-        sgml-shorttag                t  ; normales SGML hat hier nil
-        )
-  )
-
 ;; xml-mode --------------------------------------------------------------------
-(setq auto-mode-alist
-      (append '(("\\.xml\\'" . xml-mode)) auto-mode-alist))
-(autoload 'xml-mode "psgml" nil t)
-(setq sgml-xml-declaration (concat (getenv "SGML") "/dtd/html/xml.dcl"))
 
+;; wenn möglich nxml-mode verwenden (ab Emacs 21)
+(if (and (fboundp 'make-hash-table)
+         (boundp 'fontification-functions))
+    (progn
+      (load "rng-auto.el")
+      (add-to-list 'auto-mode-alist
+                   (cons (concat "\\." (regexp-opt '("xml" "xsl" "xsd" "sch" "rng" "xslt" "xhtml" "svg" "rss") t) "\\'")
+                         'nxml-mode))
+      (require 'fmode)
+      (fmode-replace-default-mode 'xml-mode 'nxml-mode)
+      (fmode-replace-default-mode 'sgml-mode 'nxml-mode)
+      (fmode-replace-default-mode 'html-mode 'nxml-mode)
+      (add-hook 'nxml-mode-hook
+                '(lambda ()
+                   (progn
+                     ;; replace the nxml default for C-RET
+                     (define-key nxml-mode-map "\M-_" 'nxml-complete)
+                     (define-key nxml-mode-map [C-return] 'duplicate-line)
+                     )))
+;;       (add-to-list 'magic-mode-alist
+;;                    '("<\\?xml " . nxml-mode) t)
+      )
+;;   (progn
+;;     (setq auto-mode-alist
+;;           (append '(("\\.xml\\'" . xml-mode)) auto-mode-alist))
+;;     (autoload 'xml-mode "psgml" nil t)
+;;     (setq sgml-xml-declaration (concat (getenv "SGML") "/dtd/html/xml.dcl"))
+    )
 
 ;; dtd-mode --------------------------------------------------------------------
 (autoload 'dtd-mode "tdtd" "Major mode for SGML and XML DTDs." t)

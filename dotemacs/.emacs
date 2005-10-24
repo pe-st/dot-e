@@ -2,9 +2,9 @@
 ;;  Emacs Startup File
 ;;
 ;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id: //netzadmin/emacs/pesche/.emacs#47 $
-;;     $Change: 22587 $
-;;   $DateTime: 2005/10/20 00:10:11 $
+;;         $Id: //netzadmin/emacs/pesche/.emacs#48 $
+;;     $Change: 22626 $
+;;   $DateTime: 2005/10/24 22:56:41 $
 ;;     $Author: peter.steiner $
 ;;    $Created: Wed Jul 6 19:52:18 1994 $
 
@@ -38,16 +38,23 @@
 
 ;; Zeilen nicht automatisch umbrechen, wenn sie zu lang sind; dafür
 ;; einen Minor-Mode laden, damit bei langen Zeilen automatisch gescrollt wird
-;; (ab Emacs 20 über customize...)
 (setq-default truncate-lines t)
-(if (<= emacs-major-version 19)
+(cond
+ ((<= emacs-major-version 19)
     (progn
       (require 'hscroll)
       (setq-default hscroll-mode t)
       (setq-default hscroll-mode-name nil)
       (hscroll-mode)
-      )
-    )
+      ))
+ ((= emacs-major-version 20)
+    (progn
+      '(hscroll-global-mode t nil (hscroll))
+      '(hscroll-mode-name nil)
+      '(scroll-preserve-screen-position t)
+      ))
+ ;; ab Version 21 automatisch richtig...
+ )
 (require 'scroll-in-place)
 
 ;; die gewohnten Windows-Shortcuts C-z, C-x, C-c, C-v möglichst beibehalten
@@ -504,7 +511,9 @@ saving keyboard macros (see insert-kbd-macro)."
              (desktop-truncate regexp-search-ring 3)))
 
 
-;; Verkünden wir, dass die Arbeit getan
+;; Verkünden wir, dass die Arbeit getan (und den Splash-Screen wollen wir nicht)
+(if (boundp 'inhibit-startup-message)
+    (setq inhibit-startup-message t))
 (message "Finished initialization from .emacs")
 
 ;; customize -------------------------------------------------------------------
@@ -523,12 +532,8 @@ saving keyboard macros (see insert-kbd-macro)."
 (custom-set-variables
   ;; custom-set-variables was added by Custom -- don't edit or cut/paste it!
   ;; Your init file should contain only one such instance.
- '(hscroll-global-mode t nil (hscroll))
- '(hscroll-mode-name nil)
- '(scroll-preserve-screen-position t))
+ )
 (custom-set-faces
   ;; custom-set-faces was added by Custom -- don't edit or cut/paste it!
   ;; Your init file should contain only one such instance.
  )
-
-

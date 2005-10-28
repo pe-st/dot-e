@@ -2,9 +2,9 @@
 ;;  Emacs Startup File
 ;;
 ;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id: //netzadmin/emacs/pesche/.emacs#48 $
-;;     $Change: 22626 $
-;;   $DateTime: 2005/10/24 22:56:41 $
+;;         $Id: //netzadmin/emacs/pesche/.emacs#49 $
+;;     $Change: 22651 $
+;;   $DateTime: 2005/10/28 13:58:11 $
 ;;     $Author: peter.steiner $
 ;;    $Created: Wed Jul 6 19:52:18 1994 $
 
@@ -66,9 +66,13 @@
 
 
 ;; display configuration -------------------------------------------------------
-(if (or (eq window-system 'win32)
-        (eq window-system 'w32))
-    (standard-display-european t))      ;; vollen 8-Bit Zeichensatz verwenden
+(cond ((and (or (eq window-system 'win32)
+                (eq window-system 'w32))
+            (<= emacs-major-version 21))
+       (standard-display-european t))   ;; vollen 8-Bit Zeichensatz verwenden
+      ((>= emacs-major-version 22)
+       (set-language-environment "Latin-1"))    ;; oder Latin-9 oder Windows-1252?
+      )
 (column-number-mode 1)
 ; Emacs >= 22 unterstützt tool-bar...
 (if (and (>= emacs-major-version 22)
@@ -305,6 +309,10 @@ saving keyboard macros (see insert-kbd-macro)."
 ; ; mit 1000 ist dann bei etwa 80 Buffer finito, aber aus einem andern Grund
 ; (setq max-lisp-eval-depth 1000)
 
+;; perforce Integration
+(require 'p4-edit)
+(global-set-key (kbd "C-c p e") 'p4-edit-edit-file)
+
 ; Einfügen von beliebigen Zeichen mit C-q im Dezimalsystem (statt oktal)
 (setq read-quoted-char-radix 10)
 
@@ -339,6 +347,7 @@ saving keyboard macros (see insert-kbd-macro)."
     (require 'which-function)
   (require 'which-func))
 (add-to-list 'which-func-modes 'cperl-mode)
+(add-to-list 'which-func-modes 'hw-c-mode)
 ; aus irgendeinem Grund muss man den Modus zweimal toggeln...
 (if (not (eq window-system 'mac))
     (progn
@@ -347,7 +356,10 @@ saving keyboard macros (see insert-kbd-macro)."
       ))
 
 ; den Minibuffer konfigurieren -------------------------------------------------
-(resize-minibuffer-mode 1)      ; automatische Grössenanpassung
+
+;; automatische Grössenanpassung passiert mindestens ab Emacs 21 automatisch
+(if (< emacs-major-version 21)
+    (resize-minibuffer-mode 1))
 ; im Minibuffer sollen lange Zeilen umgebrochen werden (sonst ist ja
 ; der resize-minibuffer-mode für die Katz)
 (add-hook 'minibuffer-setup-hook
@@ -369,18 +381,14 @@ saving keyboard macros (see insert-kbd-macro)."
 ;; ausgelagerte Mode-Anpassungen ----------------------------------------------
 (require 'pesche-modes)
 
-;; Welcher mode soll für HTML verwendet werden? in pesche-modes werden
-;; sowohl html-helper-mode wie sgml-html-mode unterstützt.
-(setq auto-mode-alist
-;;      (append '(("\\.s?html?\\'" . sgml-html-mode))
-      (append '(("\\.s?html?\\'" . html-helper-mode))
-              auto-mode-alist))
-
-
 ;; dynamische Abkürzungen ------------------------------------------------------
 ;; immer case-sensitiv !
 (setq dabbrev-case-fold-search nil)
 (setq dabbrev-case-replace nil)
+
+;; tags Zeugs ------------------------------------------------------------------
+;; in der Regel wollen wir case-sensitive Tags
+(setq tags-case-fold-search nil)
 
 ;; font lock -------------------------------------------------------------------
 
@@ -482,7 +490,7 @@ saving keyboard macros (see insert-kbd-macro)."
   (load "desktop"))
 ; für NT den Default-Namen ändern; für andere Systeme können wir seinlassen
 (if (eq system-type 'windows-nt)
-    (setq desktop-basefilename ".emacs.desktop"))
+    (setq desktop-basefilename ".emacs.d/.emacs.desktop"))
 (setq desktop-missing-file-warning nil)
 ; die Tabulator-Einstellungen auch mit abspeichern
 (setq-default desktop-locals-to-save (append '(tab-width

@@ -1,8 +1,8 @@
 ;; Improvements to Electric Font Lock Mode
 ;;
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-font-lock.el#13 $
-;;     $Change: 19560 $
-;;   $DateTime: 2004/08/30 09:52:43 $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-font-lock.el#14 $
+;;     $Change: 22651 $
+;;   $DateTime: 2005/10/28 13:58:11 $
 ;;     $Author: peter.steiner $
 ;;    $Created: 1997/11/27 $
 ;;  $Copyright: Peter Steiner <pesche@schlau.ch>
@@ -142,7 +142,9 @@
 
 ;; doxymacs mode ---------------------------------------------------------------
 (defun my-doxymacs-font-lock-hook ()
-  (if (or (eq major-mode 'c-mode) (eq major-mode 'c++-mode))
+  (if (or (eq major-mode 'c-mode)
+          (eq major-mode 'c++-mode)
+          (eq major-mode 'hw-c-mode))
       (doxymacs-font-lock)))
 (add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)
 

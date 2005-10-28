@@ -1,8 +1,8 @@
 ;; Pesche' Modes
 ;;
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#20 $
-;;     $Change: 22626 $
-;;   $DateTime: 2005/10/24 22:56:41 $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#21 $
+;;     $Change: 22651 $
+;;   $DateTime: 2005/10/28 13:58:11 $
 ;;     $Author: peter.steiner $
 ;;    $Created: 1999/06/02 $
 ;;  $Copyright: Peter Steiner <pesche@schlau.ch> $
@@ -53,12 +53,12 @@
                         ("\\.cpp$" (".hpp" ".hxx" ".hh" ".h"))
                         ) ff-other-file-alist))
 
-;; In bestimmten Verzeichnissen gehen wir von HW C Files aus...
-(setq auto-mode-alist
-      (append '(("/hal/[^/]+/[^/]+\\.[ch]\\'" . hw-c-mode)
-                ("/subsys/[^/]+/[^/]+\\.[ch]\\'" . hw-c-mode)
-                ("/vmi/[^/]+\\.[ch]\\'" . hw-c-mode))
-              auto-mode-alist))
+;; ;; In bestimmten Verzeichnissen gehen wir von HW C Files aus...
+;; (setq auto-mode-alist
+;;       (append '(("/hal/[^/]+/[^/]+\\.[ch]\\'" . hw-c-mode)
+;;                 ("/subsys/[^/]+/[^/]+\\.[ch]\\'" . hw-c-mode)
+;;                 ("/vmi/[^/]+\\.[ch]\\'" . hw-c-mode))
+;;               auto-mode-alist))
 (autoload 'hw-c-mode "hw-c-mode" "Major mode for HW C files." t)
 
 ;; cc-mode 5.21 kennt das "richtige" Verhalten von Delete und Backspace

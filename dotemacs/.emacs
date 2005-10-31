@@ -2,9 +2,9 @@
 ;;  Emacs Startup File
 ;;
 ;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id: //netzadmin/emacs/pesche/.emacs#49 $
-;;     $Change: 22651 $
-;;   $DateTime: 2005/10/28 13:58:11 $
+;;         $Id: //netzadmin/emacs/pesche/.emacs#50 $
+;;     $Change: 22660 $
+;;   $DateTime: 2005/10/31 18:00:57 $
 ;;     $Author: peter.steiner $
 ;;    $Created: Wed Jul 6 19:52:18 1994 $
 
@@ -12,14 +12,22 @@
 ;; general configuration -------------------------------------------------------
 
 ;; Emacs-Päckli auch in meinem lokalen emacs-Verzeichnis suchen
-;; für Emacsen < 20 noch ein zusätzliches Verzeichnis emacs19
-(if (<= emacs-major-version 19)
-    (if (file-accessible-directory-p "~/emacs/emacs19")
-        (setq load-path (append '("~/emacs/emacs19") load-path))))
 (if (file-accessible-directory-p "~/emacs")
-    (setq load-path (append '("~/emacs") load-path)))
+    (progn
+      (setq load-path (append '("~/emacs") load-path))
+      (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
+          (progn
+            (cd "~/emacs")
+            (normal-top-level-add-subdirs-to-load-path)))
+      ))
 (if (file-accessible-directory-p "~/site-lisp")
-    (setq load-path (append '("~/site-lisp") load-path)))
+    (progn
+      (setq load-path (append '("~/site-lisp") load-path))
+      (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
+          (progn
+            (cd "~/site-lisp")
+            (normal-top-level-add-subdirs-to-load-path)))
+      ))
 
 (require 'pesche-tools)
 (require 'pesche-compile)

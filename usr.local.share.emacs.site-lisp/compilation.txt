@@ -271,6 +271,10 @@ made it more strict about the error message that follows.
 keyboard handler.c(537) : warning C4005: 'min' : macro redefinition
 d:\tmp\test.c(23) : error C2143: syntax error : missing ';' before 'if'
 
+** CppUnit format
+
+.\test\bo_dll_test.cpp(149) : error : Assertion
+
 
 ** PC-Lint one line format (-hF1) (with or without column)
 (-"format=%(%f(%l:%c) :%) %t %n: %m")

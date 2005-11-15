@@ -271,6 +271,13 @@ made it more strict about the error message that follows.
 keyboard handler.c(537) : warning C4005: 'min' : macro redefinition
 d:\tmp\test.c(23) : error C2143: syntax error : missing ';' before 'if'
 
+** VC additional lines
+
+C:\L\thirdparty\cppunit\latest\include\cppunit/extensions/TestFixtureFactory.h(39) : error C2259: 'xx' : cannot instantiate abstract class
+        c:\L\change\ps-1248\subsys/tools/test/iac_dll_test_case.hpp(58) : see declaration of 'xxx'
+        C:\L\thirdparty\cppunit\latest\include\cppunit/extensions/TestFixtureFactory.h(38) : while compiling class template member function 'xxx'
+
+
 ** CppUnit format
 
 .\test\bo_dll_test.cpp(149) : error : Assertion

@@ -14,8 +14,8 @@
 
 ;; WARNING:
 ;; This is a beta version!
-;; Suitable for XEmacs 19.14, GNU Emacs 19.34 and newer versions. 
-;; Be very careful when using with older versions! 
+;; Suitable for XEmacs 19.14, GNU Emacs 19.34 and newer versions.
+;; Be very careful when using with older versions!
 ;; This program causes some older emacs version to
 ;; hang with loss of unsaved data!
 ;;
@@ -36,15 +36,15 @@
 
 ;;; Commentary:
 
-(defconst pplog-mode-version "0.9.17 beta") ;; revision
-(defconst pplog-mode-last-change "1998-09-02") ;; date
+(defconst pplog-mode-version "0.9.2 ps") ;; revision
+(defconst pplog-mode-last-change "2005-11-22") ;; date
 
 ;;; Code:
 
 ;;==================== customize here ====================
 
 ;;--------------------     keys       --------------------
-;; NOTE: 'pplog-hot-key' and 'pplog-return-key' may be equal. 
+;; NOTE: 'pplog-hot-key' and 'pplog-return-key' may be equal.
 ;;       'pplog-return-key', 'pplog-next-or-new-key' and
 ;;       'pplog-newlog-key' must be different from each other.
 
@@ -79,7 +79,7 @@ If no pplog buffer is open, prompts for a filename.")
 ;;;-------------------appearence: colors ------------------
 ;; The begin of unterminated phases, errors and interruptions will be highlighted.
 ;; Choose your favorite colors! Make sure that the colors exist in your system!
-;; If you are running X, have a look at <XRoot>/lib/X11/rgb.txt 
+;; If you are running X, have a look at <XRoot>/lib/X11/rgb.txt
 (defconst phase-fore-color "Blue")       ;"black" )
 (defconst phase-back-color "WhiteSmoke") ;"blue"  )
 (defconst itr-fore-color   "Red")        ;"black" )
@@ -94,7 +94,7 @@ If no pplog buffer is open, prompts for a filename.")
 ;; OBSOLETE     be definded in the header of the pplog file. This header will be inserted
 ;; OBSOLETE     automatically when creating a new logfile (see below). In every case,
 ;; OBSOLETE     all event endings will be checked for matching event beginning. The
-;; OBSOLETE     following two variable tell Emacs what to do when an error is encountered. 
+;; OBSOLETE     following two variable tell Emacs what to do when an error is encountered.
 
 ;; Obviously, the 'events' (i.e. phases, errors, interruptions) depend in some
 ;; way from each other. For example, it should be clear, that you cannot
@@ -129,7 +129,7 @@ If no pplog buffer is open, prompts for a filename.")
   (insert "#  Date of creation:  ")
   (insert (pplog-time-string (current-time)))
   (insert "\n\n")
-;; 2. lines, that define the names of phases and the abbreviations for 
+;; 2. lines, that define the names of phases and the abbreviations for
 ;;    'begin' and 'end', for 'defect' and 'interruptions' (ONE
 ;;    character each) and for the phases (any number of characters)
 ;;    These lines must start with '#!'
@@ -150,7 +150,7 @@ If no pplog buffer is open, prompts for a filename.")
 ;;     you should remove the 'menu entries' paragraph!
 
 ;; ------------------------- general preparations -------------------------
- 
+
 ; -------------------- menu entries --------------------
 
 (if (string-match "XEmacs" emacs-version)
@@ -173,7 +173,7 @@ If no pplog buffer is open, prompts for a filename.")
       )
     )
   )
-;; Menu for GNU Emacs 
+;; Menu for GNU Emacs
   (define-key pplog-mode-map
     [menu-bar pplog]
     (cons "PPLog" (make-sparse-keymap)))
@@ -236,7 +236,7 @@ If no pplog buffer is open, prompts for a filename.")
 (defvar pplog-pplog-buffers)
 (defvar pplog-original-buffer)
 (defvar pplog-unvisited-pplog-buffers)
-(defvar pplog-next-buffer) 
+(defvar pplog-next-buffer)
 
 (defvar pplog-phase-re)
 (defvar pplog-itr-char)
@@ -274,7 +274,7 @@ If no pplog buffer is open, prompts for a filename.")
 (set-face-foreground 'error-face error-fore-color)
 (set-face-background 'error-face error-back-color)
 
-;; global key-binding: 
+;; global key-binding:
 (global-set-key pplog-hot-key 'pplog-hot-key-event-handling)
 ;; make pplog-files recognizable
 (setq auto-mode-alist (cons '("\\.ppl\\'" . pplog-mode) auto-mode-alist))
@@ -300,12 +300,12 @@ If no pplog buffer is open, prompts for a filename.")
     (if (string-match "XEmacs" emacs-version)
       (set-menubar-dirty-flag)
     )
-    (beep)
+;;    (beep)
     (pplog-parse-header)
     (pplog-parse-entries)
-    (beep)
+;;    (beep)
     (pplog-check-timestamp-order)
-    (beep)
+;;    (beep)
   )
 )
 
@@ -313,6 +313,9 @@ If no pplog buffer is open, prompts for a filename.")
   "Check buffer syntax (if there is no prefix argument) before 'recenter'.
 Execute a \"normal\" 'recenter' (with or without prefix arguments) afterwards."
   (interactive "P")
+
+  ;; the faces set by pplog-buffer-check are overwritten by font-lock-mode...
+  (font-lock-mode 0)
   (if (not line-number-arg)
     (pplog-buffer-check)
   )
@@ -359,13 +362,13 @@ Execute a \"normal\" 'recenter' (with or without prefix arguments) afterwards."
       (setq list-element (car pplog-all-buffers))
       (set-buffer list-element)
       (if (equal major-mode 'pplog-mode)
-	(progn 
+	(progn
 ;;; PROBLEM:
 ;;; The order of the buffers is changed!
           (setq pplog-pplog-buffers (cons list-element pplog-pplog-buffers))
         )
         ()
-      )    
+      )
       (setq pplog-all-buffers (cdr pplog-all-buffers))
     )
     (defvar pplog-unvisited-pplog-buffers)
@@ -425,7 +428,7 @@ If there is no pplog-buffer left, the user is prompted for the name of an new or
 ; create new buffer or open existing one
     (pplog-open-log-buffer nil)
 ; otherwise: change to existing buffer and insert timestamp
-    (progn 
+    (progn
       (message "Changed to next buffer: %s" pplog-next-buffer)
       (switch-to-buffer pplog-next-buffer)
       (pplog-insert-timestamp)
@@ -527,7 +530,7 @@ Delete whitespaces, tabs and newlines at the end of the buffer before. You can u
         )
       )
     )
-  )    
+  )
   (goto-char pplog-oldpoint)
 )
 
@@ -630,7 +633,7 @@ You cannot subtract more then 2097152 minutes at once (no joke)!"
     (setq pplog-time-as-list (time-string-as-list (match-string 0)))
     (setq pplog-high-time (- (nth 0 pplog-time-as-list) (/ pplog-sec-sub 65536)))
     (setq pplog-low-time   (- (nth 1 pplog-time-as-list)  (% pplog-sec-sub 65536)))
-    (cond 
+    (cond
       ( (< pplog-low-time 0)
         (progn
           (setq pplog-high-time (- pplog-high-time 1))
@@ -647,7 +650,7 @@ You cannot subtract more then 2097152 minutes at once (no joke)!"
     (setq pplog-offset-correction (- (nth 0 (current-time-zone)) (nth 0 (current-time-zone (list pplog-high-time pplog-low-time)))))
 ; correct time
     (setq pplog-low-time (+ pplog-low-time pplog-offset-correction))
-    (cond 
+    (cond
       ( (< pplog-low-time 0)
         (progn
           (setq pplog-high-time (- pplog-high-time 1))
@@ -762,7 +765,7 @@ The header should contain the characters that mark the begin/the end of an event
   (goto-char 1)
   (setq counter-i 1)
 ; scan maximum 50 lines !!!! (for performance reasons!)
-  (while 
+  (while
     (if (and (re-search-forward "\\(^#!\\)\\(.*\\)" nil t)
 	     (< counter-i 50))
       (prog1
@@ -791,7 +794,7 @@ The header should contain the characters that mark the begin/the end of an event
                 (setq pplog-start-srch 0)
 		(while (string-match "\\( *= *\\(\\([A-Za-z0-9]+\\)\\|\"\\([^\"]+\\)\"\\)\\)\\(\\( *= *\\([A-Za-z0-9]+\\|\"[^\"]+\"\\)\\)*\\)" pplog-phase-string)
 		  (prog1
-		    t  
+		    t
 ;		    (message pplog-phase-string)
 		    (if (match-string 3 pplog-phase-string)
 		       (setq pplog-phase-abbr (match-string 3 pplog-phase-string))
@@ -804,7 +807,7 @@ The header should contain the characters that mark the begin/the end of an event
                         (setq pplog-phase-abbr-list (cons pplog-phase-abbr pplog-phase-abbr-list))
 		    )
 		  )
-		)  
+		)
               )
             )
           )
@@ -826,7 +829,7 @@ The header should contain the characters that mark the begin/the end of an event
   (goto-char 1)
   (setq counter-i 1)
   (while
-; pay attention only to lines beginning with a timestamp 
+; pay attention only to lines beginning with a timestamp
     (if (re-search-forward pplog-new-timestamp-re nil t)
       (progn
         (setq pplog-mb (match-beginning 0))
@@ -849,7 +852,7 @@ The header should contain the characters that mark the begin/the end of an event
                   ((equal pplog-ms3 pplog-itr-char)   (pplog-parse-inside-itr pplog-mb pplog-me))
                   ((equal pplog-ms3 pplog-error-char) (pplog-parse-inside-error pplog-mb pplog-me))
                   ((member pplog-ms3 pplog-phase-abbr-list) (pplog-parse-inside-phase pplog-mb pplog-me pplog-ms3))
-                  (t (pplog-parse-error pplog-mb pplog-me (concat "Unknown event '" pplog-ms3 "'!"))) 
+                  (t (pplog-parse-error pplog-mb pplog-me (concat "Unknown event '" pplog-ms3 "'!")))
                 )
                 ; end of an event? --> error
                 (pplog-parse-error pplog-mb (match-end 3) "No 'event' to end!")
@@ -866,7 +869,7 @@ The header should contain the characters that mark the begin/the end of an event
       )
     )
   )
-) 
+)
 
 
 (defun pplog-parse-inside-phase (pplog-begin-mark pplog-end-mark pplog-phase-abbr)
@@ -895,7 +898,7 @@ The header should contain the characters that mark the begin/the end of an event
               (if (equal (match-string 2) pplog-begin-char)
                 ; begin of an event?
                 (cond
-                  ((equal pplog-ms3 pplog-itr-char)   
+                  ((equal pplog-ms3 pplog-itr-char)
                    (prog1
                      (pplog-parse-inside-itr pplog-mb pplog-me)
                      (setq pplog-parse-success nil)
@@ -916,7 +919,7 @@ The header should contain the characters that mark the begin/the end of an event
                      (setq pplog-parse-success nil)
                    )
                   )
-                  (t (pplog-parse-error pplog-mb pplog-me (concat "Unknown event '" pplog-ms3 "'!"))) 
+                  (t (pplog-parse-error pplog-mb pplog-me (concat "Unknown event '" pplog-ms3 "'!")))
                )
                 ; end of an event? --> entry is valid, only if this is the end of a phase
                 (cond
@@ -970,7 +973,7 @@ The header should contain the characters that mark the begin/the end of an event
               (if (equal (match-string 2) pplog-begin-char)
                 ; begin of an event?
                 (cond
-                  ((equal pplog-ms3 pplog-itr-char)   
+                  ((equal pplog-ms3 pplog-itr-char)
                    (prog1
                      (pplog-parse-inside-itr pplog-mb pplog-me)
                      (setq pplog-parse-success nil)
@@ -1043,7 +1046,7 @@ The header should contain the characters that mark the begin/the end of an event
               (if (equal (match-string 2) pplog-begin-char)
                 ; begin of an event?
                 (cond
-                  ((equal pplog-ms3 pplog-itr-char)   
+                  ((equal pplog-ms3 pplog-itr-char)
                    (prog1
                      (if pplog-itr-in-itr
                        (pplog-parse-inside-itr pplog-mb pplog-me)
@@ -1114,7 +1117,7 @@ The header should contain the characters that mark the begin/the end of an event
       (save-excursion
         (set-window-buffer (selected-window) pplog-buffer)
         (pplog-parse-header)
-        (pplog-parse-entries)      
+        (pplog-parse-entries)
       )
       (set-window-buffer (selected-window) (current-buffer))
     )
@@ -1131,7 +1134,7 @@ Personal Software Process, please refer to
 \"Watts S. Humphrey. A Discipline for Software Engineering.\"
 
 The basic idea of the process logging is finding out how you spend your
-time and in particular how many and what kinds of errors you make, 
+time and in particular how many and what kinds of errors you make,
 at what time, why, and how long it takes you to fix these errors.
 
 This major mode helps you to collect the appropriate date while programming
@@ -1155,7 +1158,7 @@ Here is a short section from an example pplog file:
 1998-08-24 15:48:13 ei
 1998-08-24 19:43:17 ecd
 
-pplog files have a well-defined (but very flexible) syntax in order to 
+pplog files have a well-defined (but very flexible) syntax in order to
 allow for automatic analysis.
 Each line is one entry, starting with a timestamp. Lines starting with
 spaces are arbitrary comments for whatever purpose you want them.
@@ -1168,18 +1171,18 @@ declare them at the top of the pplog file, e.g.:
 #! phase=\"design review\"=dr
 
 'be'/'ee' are 'begin error'/'end error' entries, made when one detects that
-there is some defect. Errors nest into phases. 
+there is some defect. Errors nest into phases.
 Error entries are the most useful part of using pplog mode.
 'bi'/'ei' are 'begin interrupt'/'end interrupt' entries, made when one
 does shortly not work. These are useful for finding out how (un)disturbed
 ones work is and whether interruptions may correlate with defects.
 Interrupts nest into phases and into errors, as required.
 
-'End error' entries are decorated with defect classifications: 
+'End error' entries are decorated with defect classifications:
 The first one is the name of the phase in which the defect was created.
 Subsequently you can have an arbitrary number of arbitrary independent
 defect classifications. In the example there are 3 such classifications:
-defect type (here: 'log', for 'logic error'), defect reason (here: 'cm', 
+defect type (here: 'log', for 'logic error'), defect reason (here: 'cm',
 for 'commission'. Recommended set: omission, commission, typo, documentation,
 knowledge), and defect location (here: name of a source file).
 
@@ -1190,14 +1193,14 @@ personal requirements in order to be most useful.
 Phase names and defect classes can be arbitrary sequences of printable
 non-whitespace characters.
 
-The Perl script 'evalpplog' can be used to produce nice tables from 
+The Perl script 'evalpplog' can be used to produce nice tables from
 pplog files, summarizing frequencies, costs, relative costs etc.
 
 
 Invoking pplog mode:
 ====================
 There are two possibilities to invoke pplog mode:
-1. You explicitely load the pplog mode library by \\[load-file] pplog-mode.el 
+1. You explicitely load the pplog mode library by \\[load-file] pplog-mode.el
 or \\[load-file] pplog-mode.elc (after byte-compiling 'pplog-mode.el').
 OR:
 2. Add ONE of the following lines to your .emacs file, where PATH must be the
@@ -1220,14 +1223,14 @@ This is typically the same key as
 \\[pplog-return-key-event-handling]:
 Return to the buffer where you originally came from.
 \\[pplog-nextlog]:
-Switch to the next pplog buffer. 
+Switch to the next pplog buffer.
 \\[pplog-open-log-buffer-now]:
 Create a new pplog buffer.
 
 
 Log entries:
 ============
-When changing to a logbuffer with one of the defined key-sequences, 
+When changing to a logbuffer with one of the defined key-sequences,
 a timestamp with the current time is automatically inserted. After that, you
 can make entries for the beginning or the end of an 'event'. 'Events' are
 phases (like 'design', 'coding', 'testing' - abbreviated by a multi-character
@@ -1253,7 +1256,7 @@ if no following timestamp is present. The preceeding timestamp is the first
 timestamp backwards from point.
 Of course, all modifications may also be done by hand.
 These functions might not work correctly on the day when daylight savings
-time is switched on or off. 
+time is switched on or off.
 
 
 Problem handling:
@@ -1334,11 +1337,11 @@ http://wwwipd.ira.uka.de/PSP
   (setq mode-name "PPLog")
   (setq major-mode 'pplog-mode)
   (defvar pplog-oldpoint)
-  (message "Personal process log mode (pplog-mode), %s (%s)." 
+  (message "Personal process log mode (pplog-mode), %s (%s)."
            pplog-mode-version pplog-mode-last-change)
 ;ps  (sit-for 2)
   (if (string-match "XEmacs" emacs-version)
-    (add-menu nil "PPLog" 
+    (add-menu nil "PPLog"
       '(
         :included (equal major-mode 'pplog-mode)
         ["Switch to next pplog buffer" pplog-nextlog (equal major-mode 'pplog-mode)]

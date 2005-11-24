@@ -1,8 +1,8 @@
 ;; Pesche' Modes
 ;;
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#23 $
-;;     $Change: 22756 $
-;;   $DateTime: 2005/11/15 15:55:44 $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#24 $
+;;     $Change: 22824 $
+;;   $DateTime: 2005/11/24 09:01:47 $
 ;;     $Author: peter.steiner $
 ;;    $Created: 1999/06/02 $
 ;;  $Copyright: Peter Steiner <pesche@schlau.ch> $
@@ -169,7 +169,7 @@ Javadoc comments."
       ;; PC-Lint funktioniert
       (add-to-list 'compilation-error-regexp-alist
                    '("^ *\\(\\(?:[a-zA-Z]:\\)?[^:(\t\n]+\\)(\\([0-9]+\\):?\\([0-9]+\\)?)\
- : \\(?:[Ee]rror\\|\\([Nn]ote\\|[Ii]nfo\\|see\\|while\\)\\|[Ww]arnin\\(g\\)\\) \\(C?[0-9]+\\)?:?"
+ : \\(?:\\(?:[Ff]atal \\)[Ee]rror\\|\\([Nn]ote\\|[Ii]nfo\\|see\\|while\\)\\|[Ww]arnin\\(g\\)\\) \\(C?[0-9]+\\)?:?"
                      1 2 3 (5 . 4)))
       ))
 

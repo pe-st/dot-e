@@ -1,8 +1,8 @@
 ;; Pesche' Modes
 ;;
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#24 $
-;;     $Change: 22824 $
-;;   $DateTime: 2005/11/24 09:01:47 $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#25 $
+;;     $Change: 22838 $
+;;   $DateTime: 2005/11/25 22:11:53 $
 ;;     $Author: peter.steiner $
 ;;    $Created: 1999/06/02 $
 ;;  $Copyright: Peter Steiner <pesche@schlau.ch> $
@@ -148,6 +148,12 @@ Javadoc comments."
   (imenu-add-to-menubar "Index")
   )
 (add-hook 'c-mode-common-hook 'pesche-c-mode-common-hook)
+
+
+;; C# mode ---------------------------------------------------------------------
+(add-to-list 'auto-mode-alist '("\\.cs\\'" . csharp-mode))
+(autoload 'csharp-mode "csharp-mode"
+  "Major mode for editing C# code." t)
 
 
 ;; doxymacs mode ---------------------------------------------------------------

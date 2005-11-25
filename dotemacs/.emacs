@@ -2,9 +2,9 @@
 ;;  Emacs Startup File
 ;;
 ;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id: //netzadmin/emacs/pesche/.emacs#50 $
-;;     $Change: 22660 $
-;;   $DateTime: 2005/10/31 18:00:57 $
+;;         $Id: //netzadmin/emacs/pesche/.emacs#51 $
+;;     $Change: 22838 $
+;;   $DateTime: 2005/11/25 22:11:53 $
 ;;     $Author: peter.steiner $
 ;;    $Created: Wed Jul 6 19:52:18 1994 $
 
@@ -26,6 +26,15 @@
       (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
           (progn
             (cd "~/site-lisp")
+            (normal-top-level-add-subdirs-to-load-path)))
+      ))
+;; this is not in the default list for Carbon Emacs...
+(if (file-accessible-directory-p "/usr/local/share/emacs/site-lisp")
+    (progn
+      (setq load-path (append '("/usr/local/share/emacs/site-lisp") load-path))
+      (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
+          (progn
+            (cd "/usr/local/share/emacs/site-lisp")
             (normal-top-level-add-subdirs-to-load-path)))
       ))
 
@@ -206,10 +215,30 @@
          (progn
            ; Mac
 
+           (if (boundp 'carbon-emacs-package-carbon-font-enabled)
+               (setq carbon-emacs-package-carbon-font-enabled nil))
+
+;           (create-fontset-from-mac-roman-font
+;            "monaco"
+;            "-apple-monaco-medium-r-normal--10-100-72-72-m-100-mac-roman")
+
+           ;; find the font name with (x-resolve-font-name "*monaco*")
+;           (create-fontset-from-fontset-spec
+;            "-apple-monaco-medium-r-normal--9-*-*-*-*-*-fontset-monaco,
+;ascii:-apple-monaco-medium-r-normal--9-*-*-*-*-*-iso10646-1,
+;latin-iso8859-1:-apple-monaco-medium-r-normal--9-*-*-*-*-*-iso10646-1")
            (create-fontset-from-fontset-spec
-            "-apple-monaco-medium-r-normal--9-*-*-*-*-*-fontset-monaco,
-ascii:-apple-monaco-medium-r-normal--9-90-75-75-m-90-mac-roman,
-latin-iso8859-1:-apple-monaco-medium-r-normal--9-90-75-75-m-90-mac-roman")
+            "-apple-monaco-medium-r-normal--10-*-*-*-*-*-fontset-monaco,
+ascii:-apple-monaco-medium-r-normal--10-*-*-*-*-*-mac-roman,
+latin-iso8859-1:-apple-monaco-medium-r-normal--10-*-*-*-*-*-mac-roman")
+;           (create-fontset-from-fontset-spec
+;            "-apple-monaco-medium-r-normal--11-*-*-*-*-*-fontset-monaco,
+;ascii:-apple-monaco-medium-r-normal--11-*-*-*-*-*-iso10646-1,
+;latin-iso8859-1:-apple-monaco-medium-r-normal--11-*-*-*-*-*-iso10646-1")
+;;           (create-fontset-from-fontset-spec
+;;            "-apple-monaco-medium-r-normal--9-*-*-*-*-*-fontset-monaco,
+;;ascii:-apple-monaco-medium-r-normal--9-90-75-75-m-90-mac-roman,
+;;latin-iso8859-1:-apple-monaco-medium-r-normal--9-90-75-75-m-90-mac-roman")
 
            (set-frame-font "fontset-monaco")
            (if (< emacs-major-version 22)
@@ -415,8 +444,8 @@ saving keyboard macros (see insert-kbd-macro)."
         (font-lock-variable-name-face "Blue")
         (font-lock-type-face          "Black")
         (font-lock-builtin-face       "DarkGoldenrod")
-        (info-node                    "Blue")
-        (info-xref                    "Blue")
+;;        (info-node                    "Blue")
+;;        (info-xref                    "Blue")
         (makefile-space-face          nil "HotPink")
         ))
 

@@ -162,6 +162,16 @@
 (if (not (facep 'font-lock-builtin-face))
     (copy-face 'font-lock-keyword-face 'font-lock-builtin-face))
 
+;; from http://davh.dk/archives/000006.html :
+;; c-paren-re and c-identifier-re were helper macros that got removed from
+;; cc-mode, as noted in the changelog for 2002-09-10.
+;;; Helpers for building regexps.
+(defmacro c-paren-re (re)
+  `(concat "\\(" ,re "\\)"))
+(defmacro c-identifier-re (re)
+  `(concat "\\[^_]"))
+
+
 ;; Primitive type keywords.
 (defconst c-Csharp-primitive-type-kwds
   (eval-when-compile
@@ -642,16 +652,18 @@ Key bindings:
 				     csharp-font-lock-keywords-2 csharp-font-lock-keywords-3)
 	  nil nil ((?_ . "w") (?$ . "w")) nil
 	  (font-lock-mark-block-function . mark-defun)))
-  ;; Compile
-  (make-local-variable 'compilation-error-regexp-alist)
-  (setq compilation-error-regexp-alist
-	(append 
-	 '(
-	   ;;C# Compiler
-	   ;;t.cs(6,18): error SC1006: Name of constructor must match name of class
-	   ("\\(\\([_a-zA-Z]:\\)?[^:(\t\n]+\\)(\\([0-9]+\\)[,]\\([0-9]+\\)): \\(error\\|warning\\) CS[0-9]+:" 1 3 4))
-	 compilation-error-regexp-alist))
-  ;; hocks
+
+;;   ;; Compile
+;;   (make-local-variable 'compilation-error-regexp-alist)
+;;   (setq compilation-error-regexp-alist
+;; 	(append 
+;; 	 '(
+;; 	   ;;C# Compiler
+;; 	   ;;t.cs(6,18): error SC1006: Name of constructor must match name of class
+;; 	   ("\\(\\([_a-zA-Z]:\\)?[^:(\t\n]+\\)(\\([0-9]+\\)[,]\\([0-9]+\\)): \\(error\\|warning\\) CS[0-9]+:" 1 3 4))
+;; 	 compilation-error-regexp-alist))
+
+  ;; hooks
   (run-hooks 'c-mode-common-hook)
   (run-hooks 'csharp-mode-hook)
   (c-update-modeline))

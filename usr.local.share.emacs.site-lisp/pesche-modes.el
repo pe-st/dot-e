@@ -1,8 +1,8 @@
 ;; Pesche' Modes
 ;;
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#25 $
-;;     $Change: 22838 $
-;;   $DateTime: 2005/11/25 22:11:53 $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#26 $
+;;     $Change: 23159 $
+;;   $DateTime: 2006/01/10 10:07:58 $
 ;;     $Author: peter.steiner $
 ;;    $Created: 1999/06/02 $
 ;;  $Copyright: Peter Steiner <pesche@schlau.ch> $
@@ -31,7 +31,10 @@
 
 ;; C mode und alle Verwandten --------------------------------------------------
 ;; Files auf .rh sollen auch Header Files sein (resource header)
-(setq auto-mode-alist (append '(("\\.rh\\'" . c-mode)) auto-mode-alist))
+;; Files auf .dox sollen auch C Files sein (doxygen files)
+(setq auto-mode-alist (append '(("\\.rh\\'" . c-mode)
+                                ("\\.dox\\'" . c-mode))
+                              auto-mode-alist))
 
 ;; default aus find-file.el leicht abgeändert für .cxx und .cpp (nicht
 ;; nur .hh und .h)

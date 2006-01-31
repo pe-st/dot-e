@@ -2,9 +2,9 @@
 ;;  Emacs Startup File
 ;;
 ;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id: //netzadmin/emacs/pesche/.emacs#51 $
-;;     $Change: 22838 $
-;;   $DateTime: 2005/11/25 22:11:53 $
+;;         $Id: //netzadmin/emacs/pesche/.emacs#52 $
+;;     $Change: 23320 $
+;;   $DateTime: 2006/01/31 09:01:44 $
 ;;     $Author: peter.steiner $
 ;;    $Created: Wed Jul 6 19:52:18 1994 $
 
@@ -404,7 +404,6 @@ saving keyboard macros (see insert-kbd-macro)."
 
 ;; mode specific configuration -------------------------------------------------
 ;;(setq default-major-mode 'text-mode)
-;;(setq indent-tabs-mode 't)
 
 ;;; info system: find local info files
 ;(if (boundp 'Info-directory-list)
@@ -415,7 +414,11 @@ saving keyboard macros (see insert-kbd-macro)."
 ; ; Der Mauszeiger soll vor dem herannahenden Cursor flüchten
 ; (mouse-avoidance-mode 'exile)
 
-;; ausgelagerte Mode-Anpassungen ----------------------------------------------
+;; mode defaults ---------------------------------------------------------------
+;; Tabs nur auf expliziten Wunsch verwenden!
+(setq-default indent-tabs-mode nil)
+
+;; ausgelagerte Mode-Anpassungen -----------------------------------------------
 (require 'pesche-modes)
 
 ;; dynamische Abkürzungen ------------------------------------------------------

@@ -1,8 +1,8 @@
 ;; Pesche' Modes
 ;;
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#26 $
-;;     $Change: 23159 $
-;;   $DateTime: 2006/01/10 10:07:58 $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#27 $
+;;     $Change: 24321 $
+;;   $DateTime: 2006/04/29 13:29:08 $
 ;;     $Author: peter.steiner $
 ;;    $Created: 1999/06/02 $
 ;;  $Copyright: Peter Steiner <pesche@schlau.ch> $
@@ -182,6 +182,15 @@ Javadoc comments."
                      1 2 3 (5 . 4)))
       ))
 
+
+;; eiffel mode -----------------------------------------------------------------
+(add-to-list 'auto-mode-alist '("\\.e\\'" . eiffel-mode))
+(autoload 'eiffel-mode "eiffel" "Major mode for Eiffel programs" t)
+(add-hook 'eiffel-mode-hook
+          '(lambda ()
+             (progn
+               (setq eif-indent-increment 4)
+               )))
 
 ;; makefile mode ---------------------------------------------------------------
 ;; Files auf .mak sollen auch Makefiles sein (ist offenbar nicht üblich)

@@ -1,8 +1,8 @@
 ;; Pesche' Modes
 ;;
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#27 $
-;;     $Change: 24321 $
-;;   $DateTime: 2006/04/29 13:29:08 $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#28 $
+;;     $Change: 24783 $
+;;   $DateTime: 2006/06/18 11:30:07 $
 ;;     $Author: peter.steiner $
 ;;    $Created: 1999/06/02 $
 ;;  $Copyright: Peter Steiner <pesche@schlau.ch> $
@@ -189,7 +189,9 @@ Javadoc comments."
 (add-hook 'eiffel-mode-hook
           '(lambda ()
              (progn
-               (setq eif-indent-increment 4)
+               (setq eif-indent-increment 4
+                     tab-width            4
+                     indent-tabs-mode     t)
                )))
 
 ;; makefile mode ---------------------------------------------------------------

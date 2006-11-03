@@ -1,671 +1,400 @@
-;;; csharp-mode.el --- csharp-mode
+;;; csharp-mode.el --- C# mode derived mode
 
-;; Copyright (C) 2002-2003  Free Software Foundation, Inc.
+;; Author:     2005 Dylan R. E. Moonfire
+;; Maintainer: Dylan R. E. Moonfire <contact@mfgames.com>
+;; Created:    Feburary 2005
+;; Modified:   December 2005
+;; Version:    0.5.0
+;; Keywords:   c# languages oop
 
-;; Authors: 2002-2003 Dennis Haney <davh@davh.dk>
-;;          2000 Brad Merrill <zbrad@cybercom.net>
-;; Keywords: c, languages, oop
-;; Version: 1.12
-;; $Id: csharp-mode.el,v 1.23 2003/05/05 19:10:49 davh Exp $
-
-;; This file is free software; you can redistribute it and/or modify
+;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation; either version 2, or (at your option)
-;; any later version.
-
-;; This file is distributed in the hope that it will be useful,
+;; the Free Software Foundation; either version 2 of the License, or
+;; (at your option) any later version.
+;; 
+;; This program is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;; GNU General Public License for more details.
-
+;; 
 ;; You should have received a copy of the GNU General Public License
-;; along with GNU Emacs; see the file COPYING.  If not, write to
+;; along with this program; see the file COPYING.  If not, write to
 ;; the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 ;; Boston, MA 02111-1307, USA.
 
 ;;; Commentary:
+;;
+;;    This is a separate mode to implement the C# constructs and
+;;    font-locking. It is based on the java-mode example from cc-mode.
+;;
+;;    Note: The interface used in this file requires CC Mode 5.30 or
+;;    later.
 
-;; Version one was ripped from version 3.0 from
-;; http://www.cybercom.net/~zbrad/DotNet/Emacs/
+;;; Bugs:
+;;
+;;   Literal strings @"" do not fontify correctly.
+;;
+;;   Method names are not fontified if you have an attribute before it.
+;;
+;;   This code doesn't seem to work when you compile it, then
+;;   load/require in the emacs file. You will get an error (error
+;;   "`c-lang-defconst' must be used in a file") which happens because
+;;   cc-mode doesn't think it is in a buffer while loading directly
+;;   from the init. However, if you call it based on a file extension,
+;;   it works properly. Interestingly enough, this doesn't happen if
+;;   you don't byte-compile cc-mode.
 
-;; Newest version of this can be found here:
-;; http://davh.dk/script/
+;;; .emacs (don't put in (require 'csharp-mode))
+;; (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
+;; (setq auto-mode-alist
+;;    (append '(("\\.cs$" . csharp-mode)) auto-mode-alist))
 
-;; To activate put this in your .emacs:
-
-;; (autoload 'csharp-mode "csharp-mode" 
-;;   "Major mode for editing C# code." t)
-;; (setq auto-mode-alist (cons '( "\\.cs\\'" . csharp-mode ) auto-mode-alist ))
-
-;; BUGS:
-
-;; A lot, most has to do with cc-mode hardcoding things like eg. how enum looks like.
-
-;; TODO:
-
-;; Make own font-lock-match-csharp-style-declaration-item-and-skip-to-next
-
-;; $Log: csharp-mode.el,v $
-;; Revision 1.23  2003/05/05 19:10:49  davh
-;; Hmm. Apparently "get" and "set" are not keywords?!?
+;;; Versions:
 ;;
-;; Revision 1.22  2003/05/04 21:13:32  davh
-;; fix minor speliing error causing try/catch to indent wrong
-;;
-;; Revision 1.21  2003/05/04 21:08:15  davh
-;; # is now a comment starter
-;;
-;; Revision 1.20  2003/05/04 20:00:23  davh
-;; Forgot to actually remove usage of the var i removed
-;;
-;; Revision 1.19  2003/05/04 19:52:43  davh
-;; correct builtin types
-;;
-;; Revision 1.18  2003/05/04 19:45:02  davh
-;; Updated keywords et al.
-;;
-;; Revision 1.17  2003/05/04 18:46:38  davh
-;; ARGG, never set c-offset-style properly. I do now. This means all
-;; default has changed since I just copied what mine set it to (and
-;; changed some of the csharp specific)
-;; get and set are now indented properly and recognized as keywords
-;;
-;; Revision 1.16  2003/05/03 01:01:46  davh
-;; Forgot to change version number
-;;
-;; Revision 1.15  2003/05/03 01:01:29  davh
-;; updated syntactics. It should now detect namespace and classes correctly
-;;
-;; Revision 1.14  2003/05/01 19:24:35  davh
-;; new keywords: "as" and "is"
-;;
-;; Revision 1.13  2003/01/08 21:25:06  davh
-;; patch from Ryan Sammartino. Better preprocesser highlight and xemacs
-;; font-lock fix for it too.
-;;
-;; Revision 1.12  2002/11/08 16:34:47  davh
-;; faces are not vars, they are faces. repeat and cleanse
-;; Added compilation regexp
-;; Thanks to Martin Jul and Jarl Friis (I should have guessed, XEmacs is involved) for the above
-;; c++ regexp is better suited than the c regexp for skipping, make one for csharp when I have time
-;; Fixed typo
-;;
-;; Revision 1.11  2002/11/08 11:00:21  davh
-;; Fix compile warning in Xemacs and fix another ancient font-lock problem with xemacs
-;;
-;; Revision 1.10  2002/11/07 16:01:21  davh
-;; Fix byte-compile plus forgot to update version last time.
-;;
-;; Revision 1.9  2002/11/07 15:54:37  davh
-;; Fix problem with ancient (ie. the current) Xemacs font-lock mode
-;;
-;; Revision 1.8  2002/09/23 20:48:27  davh
-;; A few details. After checking what cc-mode really thinks it looks like
-;; a lot is actually broken, but few ever notices.
-;;
-;; Revision 1.7  2002/07/06 13:58:55  davh
-;; fixing problem with:
-;;
-;; namespace Foobar {
-;;   using System;
-;;
-;; public class Foobar {
-;;   public static void Main() {
-;;     Console.WriteLine ("Damn indention!");
-;;   }
-;; }
-;; }
-;;
-;; versus
-;;
-;; namespace Foobar {
-;;   using System;
-;;
-;;   class Foobar {
-;;     public static void Main() {
-;;       Console.WriteLine ("Damn indention!");
-;;     }
-;;   }
-;; }
-;;
-;; Revision 1.6  2002/06/09 18:06:01  davh
-;; "params" added as keyword
-;;
-;; Revision 1.5  2002/05/31 18:03:45  davh
-;; Didnt get Merrills name with :(
-;;
-;; Revision 1.4  2002/05/31 17:48:00  davh
-;; I moved a comment
-;;
-;; Revision 1.3  2002/05/31 17:45:31  davh
-;; Added website 'n log
-;;
-;; 
+;;    0.1.0 - Initial release.
+;;    0.2.0 - Fixed the identification on the "enum" keyword.
+;;          - Fixed the font-lock on the "base" keyword
+;;    0.3.0 - Added a regex to fontify attributes. It isn't the
+;;            the best method, but it handles single-like attributes
+;;            well.
+;;          - Got "super" not to fontify as a keyword.
+;;          - Got extending classes and interfaces to fontify as something.
+;;    0.4.0 - Removed the attribute matching because it broke more than
+;;            it fixed.
+;;          - Corrected a bug with namespace not being properly identified
+;;            and treating the class level as an inner object, which screwed
+;;            up formatting.
+;;          - Added "partial" to the keywords.
+;;    0.5.0 - Found bugs with compiled cc-mode and loading from init files.
+;;          - Updated the eval-when-compile to code to let the mode be
+;;            compiled.
 
 ;;; Code:
-
-(provide 'csharp-mode)
-
-(require 'compile)
 (require 'cc-mode)
-(require 'font-lock)
 
+;; These are only required at compile time to get the sources for the
+;; language constants.  (The cc-fonts require and the font-lock
+;; related constants could additionally be put inside an
+;; (eval-after-load "font-lock" ...) but then some trickery is
+;; necessary to get them compiled.)
 (eval-when-compile
-  (require 'compile)
-  (require 'cc-mode)
-  (require 'font-lock)
-)
+  (let ((load-path
+	 (if (and (boundp 'byte-compile-dest-file)
+		  (stringp byte-compile-dest-file))
+	     (cons (file-name-directory byte-compile-dest-file) load-path)
+	   load-path)))
+    (load "cc-mode" nil t)
+    (load "cc-fonts" nil t)
+    (load "cc-langs" nil t)))
 
-;;xemacs fix
-(if (not (facep 'font-lock-constant-face))
-    (copy-face 'font-lock-reference-face 'font-lock-constant-face))
-(if (not (facep 'font-lock-builtin-face))
-    (copy-face 'font-lock-keyword-face 'font-lock-builtin-face))
+(eval-and-compile
+  ;; Make our mode known to the language constant system.  Use Java
+  ;; mode as the fallback for the constants we don't change here.
+  ;; This needs to be done also at compile time since the language
+  ;; constants are evaluated then.
+  (c-add-language 'csharp-mode 'java-mode))
 
-;; from http://davh.dk/archives/000006.html :
-;; c-paren-re and c-identifier-re were helper macros that got removed from
-;; cc-mode, as noted in the changelog for 2002-09-10.
-;;; Helpers for building regexps.
-(defmacro c-paren-re (re)
-  `(concat "\\(" ,re "\\)"))
-(defmacro c-identifier-re (re)
-  `(concat "\\[^_]"))
+;; TODO
+;; Defines our constant for finding attributes.
+;;(defconst csharp-attribute-regex "\\[\\([XmlType]+\\)(")
+;;(defconst csharp-attribute-regex "\\[\\(.\\)")
 
+;; Java uses a series of regexes to change the font-lock for class
+;; references. The problem comes in because Java uses Pascal (leading
+;; space in names, SomeClass) for class and package names, but
+;; Camel-casing (initial lowercase, upper case in words,
+;; i.e. someVariable) for variables. The notation suggested by EMCA is
+;; to use Pasacal notation for everything, except inner variables. So,
+;; the regex and formatting actually produces very wrong results.
+;;(error (byte-compile-dest-file))
+;;(error (c-get-current-file))
+(c-lang-defconst c-opt-after-id-concat-key
+  csharp (if (c-lang-const c-opt-identifier-concat-key)
+	     (c-lang-const c-symbol-start)))
 
-;; Primitive type keywords.
-(defconst c-Csharp-primitive-type-kwds
-  (eval-when-compile
-    (regexp-opt '(
-                  "bool" "byte" "char" "decimal"
-                  "double" "float" "int" "long"
-                  "object" "sbyte" "short" "string"
-                  "uint" "ulong" "ushort"
-                  ))))
+(c-lang-defconst c-basic-matchers-before
+  csharp `(
+	   ;; Font-lock the attributes by searching for the
+	   ;; appropriate regex and marking it as TODO.
+	   ;;,`(,(concat "\\(" csharp-attribute-regex "\\)")
+	   ;;   0 font-lock-function-name-face)
+	   
+	   ;; Put a warning face on the opener of unclosed strings that
+	   ;; can't span lines.  Later font
+	   ;; lock packages have a `font-lock-syntactic-face-function' for
+	   ;; this, but it doesn't give the control we want since any
+	   ;; fontification done inside the function will be
+	   ;; unconditionally overridden.
+	   ,(c-make-font-lock-search-function
+	     ;; Match a char before the string starter to make
+	     ;; `c-skip-comments-and-strings' work correctly.
+	     (concat ".\\(" c-string-limit-regexp "\\)")
+	     '((c-font-lock-invalid-string)))
+	   
+	   ;; Fontify keyword constants.
+	   ,@(when (c-lang-const c-constant-kwds)
+	       (let ((re (c-make-keywords-re nil
+			   (c-lang-const c-constant-kwds))))
+		 `((eval . (list ,(concat "\\<\\(" re "\\)\\>")
+				 1 c-constant-face-name)))))
+	   
+	   ;; Fontify all keywords except the primitive types.
+	   ,`(,(concat "\\<" (c-lang-const c-regular-keywords-regexp))
+	      1 font-lock-keyword-face)
 
-;; Declaration specifier keywords.
-(defconst c-Csharp-specifier-kwds
-  ;;stole from c and c++, may be completly bogus
-  (eval-when-compile
-    (regexp-opt '(
-                  "const" "extern" "static" "override" "namespace"
-                  "friend" "inline" "virtual"
-                  ))))
+	   ;; Fontify leading identifiers in fully qualified names like
+	   ;; "Foo.Bar".
+	   ,@(when (c-lang-const c-opt-identifier-concat-key)
+	       `((,(byte-compile
+		    `(lambda (limit)
+		       (while (re-search-forward
+			       ,(concat "\\(\\<" ; 1
+					"\\(" (c-lang-const c-symbol-key)
+					"\\)" ; 2
+					"[ \t\n\r\f\v]*"
+					(c-lang-const
+					 c-opt-identifier-concat-key)
+					"[ \t\n\r\f\v]*"
+					"\\)"
+					"\\("
+					(c-lang-const
+					 c-opt-after-id-concat-key)
+					"\\)")
+			       limit t)
+			 (unless (progn
+				   (goto-char (match-beginning 0))
+				   (c-skip-comments-and-strings limit))
+			   (or (get-text-property (match-beginning 2) 'face)
+			       (c-put-font-lock-face (match-beginning 2)
+						     (match-end 2)
+						     c-reference-face-name))
+			   (goto-char (match-end 1)))))))))
+	   ))
 
-;; Class/struct declaration keywords.
-(defconst c-Csharp-class-kwds "class\\|struct")
+;; C# does not allow a leading qualifier operator. It also doesn't
+;; allow the ".*" construct of Java. So, we redo this regex without
+;; the "\\|\\*" regex.
+(c-lang-defconst c-identifier-key
+  csharp (concat "\\(" (c-lang-const c-symbol-key) "\\)" ; 1
+		 (concat "\\("
+			 "[ \t\n\r\f\v]*"
+			 (c-lang-const c-opt-identifier-concat-key)
+			 "[ \t\n\r\f\v]*"
+			 (concat "\\("
+				 "\\(" (c-lang-const c-symbol-key) "\\)"
+				 "\\)")
+			 "\\)*")))
 
-;; Keywords introducing other declaration-level blocks.
-(defconst c-Csharp-extra-toplevel-kwds "extern\\|namespace")
+;; C# has a few rules that are slightly different than Java for
+;; operators. This also removed the Java's "super" and replaces it
+;; with the C#'s "base".
+(c-lang-defconst c-operators
+  csharp `((prefix "base")))
 
-;; Keywords introducing other declaration-level constructs.
-(defconst c-Csharp-other-decl-kwds
-  ;;stole from c and c++, may be completly bogus
-  (eval-when-compile
-    (regexp-opt '(
-                  "enum" "typedef" "template"
-                  ))))
+;; C#, unlike Java, does use CPP prefixes for the regions and other directives.
+(c-lang-defconst c-opt-cpp-prefix
+  csharp "\\s *#\\s *")
 
-;; Protection label keywords in classes.
-(defconst c-Csharp-protection-kwds
-  (eval-when-compile
-    (regexp-opt '(
-                  "new" "public" "protected" "internal" "private"
-                  "static" "virtual" "override" "abstract" "sealed"
-                  "extern" "unsafe"
-                  ))))
+;; C# uses the following assignment operators
+(c-lang-defconst c-assignment-operators
+  csharp '("=" "*=" "/=" "%=" "+=" "-=" ">>=" "<<=" "&=" "^=" "|="))
 
-;; Statement keywords followed directly by a block.
-(defconst c-Csharp-block-stmt-1-kwds
-  (eval-when-compile
-    (regexp-opt '(
-                  "do" "else" "try" "finally" "get" "set"
-                  ))))
+;; This defines the primative types for C#
+(c-lang-defconst c-primitive-type-kwds
+  ;; ECMA-344, S8
+  csharp '("object" "string" "sbyte" "short" "int" "long" "byte"
+           "ushort" "uint" "ulong" "float" "double" "bool" "char"
+	   "decimal" "void"))
 
-;; Statement keywords followed by a paren sexp and then by a block.
-(defconst c-Csharp-block-stmt-2-kwds
-  (eval-when-compile
-    (regexp-opt '(
-                  "foreach" "for" "if"  "while" "switch"
-                  "catch" 
-                  ))))
+;; The keywords that define that the following is a type, such as a
+;; class definition.
+(c-lang-defconst c-type-prefix-kwds
+  ;; ECMA-344, S?
+  csharp '("class" "interface" "enum" "struct"))
 
-;; Statement keywords followed by an expression or nothing.
-(defconst c-Csharp-simple-stmt-kwds
-  ;;stole from c and java, may be completly bogus
-  "break\\|continue\\|goto\\|return\\|throw")
+;; Type modifier keywords. They appear anywhere in types, but modifiy
+;; instead create one.
+(c-lang-defconst c-type-modifier-kwds
+  ;; EMCA-344, S?
+  csharp '("readonly" "const"))
 
-;; Keywords introducing labels in blocks.
-(defconst c-Csharp-label-kwds
-  ;;stole from c, may be completly bogus
-  "case\\|default")
+;; Structures that are similiar to classes.
+(c-lang-defconst c-class-decl-kwds
+  ;; EMCA-344, S?
+  csharp '("class" "interface"))
 
-;; Keywords that can occur anywhere in expressions.
-(defconst c-Csharp-expr-kwds
-  ;;may be completly bogus and missing a lot
-  (eval-when-compile
-    (regexp-opt '(
-                  "sizeof" "typeof" "new" "this" "throw"
-                  ))))
+;; The various modifiers used for class and method descriptions.
+(c-lang-defconst c-modifier-kwds
+  csharp '("public" "partial" "private" "const" "abstract"
+ 	   "protected" "ref" "out" "static" "virtual"
+ 	   "override" "params" "internal"))
 
-;; All keywords.
-(defconst c-Csharp-keywords
-  (concat c-Csharp-primitive-type-kwds "\\|"
-          c-Csharp-specifier-kwds "\\|"
-          c-Csharp-class-kwds "\\|"
-          c-Csharp-extra-toplevel-kwds "\\|"
-          c-Csharp-other-decl-kwds "\\|"
-          c-Csharp-protection-kwds "\\|"
-          c-Csharp-block-stmt-1-kwds "\\|"
-          c-Csharp-block-stmt-2-kwds "\\|"
-          c-Csharp-simple-stmt-kwds "\\|"
-          c-Csharp-label-kwds "\\|"
-          c-Csharp-expr-kwds
-          ))
+;; We don't use the protection level stuff because it breaks the
+;; method indenting. Not sure why, though.
+(c-lang-defconst c-protection-kwds
+  csharp nil)
 
-(defconst c-Csharp-attrib-key (concat "\["
-                                      "\\s *" c-symbol-key "\\(\\s *([^)]*)\\)?\\s *"
-                                      "\\(?:,"
-                                      "\\s *" c-symbol-key "\\(\\s *([^)]*)\\)?\\s *"
-                                      "\\)*\]"))
-(defconst c-Csharp-protection-key
-  (concat "\\<" (c-paren-re c-Csharp-protection-kwds) "\\>"))
+;; Define the keywords that can have something following after them.
+(c-lang-defconst c-type-list-kwds
+  csharp '("struct" "class" "interface" "is" "as"
+	   "delegate" "event"))
 
-;; Regexps introducing class definitions.
-(defconst c-Csharp-class-key
-  (concat
-   "\\(" c-Csharp-attrib-key "\\s +\\)*"
-   "\\(" c-Csharp-protection-key "\\s +\\)*"
-   "\\(" c-Csharp-class-kwds "\\)\\s +"
-   c-symbol-key                       ;name of the class
-   "\\(\\s *:\\s *" c-symbol-key	;maybe followed by parent(s)
-   "\\(\\s *,\\s *" c-symbol-key "\\)*"
-   "\\)?"
-   ))
+;; This allows the classes after the : in the class declartion to be
+;; fontified. 
+(c-lang-defconst c-typeless-decl-kwds
+  csharp '(":"))
 
-(defconst c-Csharp-extra-toplevel-key (c-paren-re c-Csharp-extra-toplevel-kwds))
+;; Sets up the enum to handle the list properly
+(c-lang-defconst c-brace-list-decl-kwds
+  csharp '("enum"))
 
-;; regexp describing access protection clauses.  language specific
-(defconst c-Csharp-access-key 
-  (concat "\\<\\(" c-Csharp-protection-kwds "\\)\\>[ \t]*:"
-          ))
+;; We need to remove Java's package keyword
+(c-lang-defconst c-ref-list-kwds
+  csharp '("using" "namespace"))
 
-;; keywords introducing conditional blocks
-(defconst c-Csharp-conditional-key 
-  (c-identifier-re
-   (concat c-Csharp-block-stmt-1-kwds "\\|" c-Csharp-block-stmt-2-kwds)
-   ))
+;; Follow-on blocks that don't require a brace
+(c-lang-defconst c-block-stmt-2-kwds
+  csharp '("for" "if" "switch" "while" "catch" "foreach"
+	   "checked" "unchecked" "lock"))
 
-;; keywords describing method definition introductions
-(defconst c-Csharp-method-key
-  (concat
-   "\\(" c-Csharp-attrib-key "\\s *\\)*"
-   "\\(\\<" (c-paren-re c-Csharp-specifier-kwds) "\\>\\s +\\)*"
-   c-symbol-key "\\s *"               ;return type
-   c-symbol-key                       ;name
-   "\\([.]" c-symbol-key "\\)*"       ;or class.class.name
-   "\\s *\\(([^)]*)\\)"               ;params
-   ))
+;; Statements that break out of braces
+(c-lang-defconst c-simple-stmt-kwds
+  csharp '("return" "continue" "break" "throw" "goto"))
 
-(defconst c-Csharp-comment-start-regexp "\\(?:#\\(?:end\\)?region\\>\\|/[/*]\\)")
+;; Statements that allow a label
+;; TODO?
+(c-lang-defconst c-before-label-kwds
+  csharp nil)
 
-(defconst c-Csharp-xmldoc-paragraph-start
-  "@\\(remarks\\|summary\\|exception\\|param\\|returns\\|see\\|c\\)")
+;; Constant keywords
+(c-lang-defconst c-constant-kwds
+  csharp '("true" "false" "null"))
 
-(defconst c-Csharp-inexpr-class-key "\\<new\\>")
+;; Keywords that start "primary expressions."
+(c-lang-defconst c-primary-expr-kwds
+  csharp '("this" "base"))
 
-;; Support for Csharp
+;; We need to treat namespace as an outer block to class indenting
+;; works properly.
+(c-lang-defconst c-other-block-decl-kwds
+  csharp '("namespace"))
 
-(defvar csharp-mode-abbrev-table nil
-  "Abbreviation table used in csharp-mode buffers.")
-(define-abbrev-table 'csharp-mode-abbrev-table ())
+;; We need to include the "as" for the foreach
+(c-lang-defconst c-other-kwds
+  csharp '("in" "sizeof" "typeof"))
 
-(defvar csharp-mode-map ()
-  "Keymap used in csharp-mode buffers.")
-(if csharp-mode-map
-    nil
-  (setq csharp-mode-map (c-make-inherited-keymap))
-  ;; add bindings which are only useful for Csharp
-  )
+(c-lang-defconst c-overloadable-operators
+  ;; EMCA-344, S14.2.1
+  csharp '("+" "-" "*" "/" "%" "&" "|" "^"
+	   "<<" ">>" "==" "!=" ">" "<" ">=" "<="))
+
+;; No cpp in this language, but there's still a "sharppragma" directive to
+;; fontify.  (The definitions for the extra keywords above are enough
+;; to incorporate them into the fontification regexps for types and
+;; keywords, so no additional font-lock patterns are required.)
+(c-lang-defconst c-cpp-matchers
+  csharp (cons
+      ;; Use the eval form for `font-lock-keywords' to be able to use
+      ;; the `c-preprocessor-face-name' variable that maps to a
+      ;; suitable face depending on the (X)Emacs version.
+      '(eval . (list "^\\s *\\(sharppragma\\)\\>\\(.*\\)"
+		     (list 1 c-preprocessor-face-name)
+		     '(2 font-lock-string-face)))
+      ;; There are some other things in `c-cpp-matchers' besides the
+      ;; preprocessor support, so include it.
+      (c-lang-const c-cpp-matchers)))
+
+(defcustom csharp-font-lock-extra-types nil
+  "*List of extra types (aside from the type keywords) to recognize in C# mode.
+Each list item should be a regexp matching a single identifier.")
+
+(defconst csharp-font-lock-keywords-1 (c-lang-const c-matchers-1 csharp)
+  "Minimal highlighting for C# mode.")
+
+(defconst csharp-font-lock-keywords-2 (c-lang-const c-matchers-2 csharp)
+  "Fast normal highlighting for C# mode.")
+
+(defconst csharp-font-lock-keywords-3 (c-lang-const c-matchers-3 csharp)
+  "Accurate normal highlighting for C# mode.")
+
+(defvar csharp-font-lock-keywords csharp-font-lock-keywords-3
+  "Default expressions to highlight in C# mode.")
 
 (defvar csharp-mode-syntax-table nil
   "Syntax table used in csharp-mode buffers.")
+(or csharp-mode-syntax-table
+    (setq csharp-mode-syntax-table
+	  (funcall (c-lang-const c-make-mode-syntax-table csharp))))
 
-(if csharp-mode-syntax-table
-    ()
-  (setq csharp-mode-syntax-table (make-syntax-table))
-  (c-populate-syntax-table csharp-mode-syntax-table)
-;; @keyword can be used
-  (modify-syntax-entry ?@ "_" csharp-mode-syntax-table)
-;; # start comment
-  (modify-syntax-entry ?\# "< b" csharp-mode-syntax-table)
+(defvar csharp-mode-abbrev-table nil
+  "Abbreviation table used in csharp-mode buffers.")
+(c-define-abbrev-table 'csharp-mode-abbrev-table
+  ;; Keywords that if they occur first on a line might alter the
+  ;; syntactic context, and which therefore should trig reindentation
+  ;; when they are completed.
+  '(("else" "else" c-electric-continued-statement 0)
+    ("while" "while" c-electric-continued-statement 0)
+    ("catch" "catch" c-electric-continued-statement 0)
+    ("finally" "finally" c-electric-continued-statement 0)))
 
-;; try to treat "." as part of the sexp
-;(modify-syntax-entry ?. "_" csharp-mode-syntax-table)
-;; try to treat "." as part of the word
-;(modify-syntax-entry ?. "w" csharp-mode-syntax-table)
-  )
+(defvar csharp-mode-map (let ((map (c-make-inherited-keymap)))
+		      ;; Add bindings which are only useful for C#
+		      map)
+  "Keymap used in csharp-mode buffers.")
 
-(easy-menu-define c-csharp-menu csharp-mode-map "C# Mode Commands"
-		  (c-mode-menu "C#"))
+;;(easy-menu-define csharp-menu csharp-mode-map "C# Mode Commands"
+;;		  ;; Can use `csharp' as the language for `c-mode-menu'
+;;		  ;; since its definition covers any language.  In
+;;		  ;; this case the language is used to adapt to the
+;;		  ;; nonexistence of a cpp pass and thus removing some
+;;		  ;; irrelevant menu alternatives.
+;;		  (cons "C#" (c-lang-const c-mode-menu csharp)))
 
+;;; Autoload mode trigger
+(add-to-list 'auto-mode-alist '("\\.cs" . csharp-mode))
+
+;; Custom variables
 (defcustom csharp-mode-hook nil
   "*Hook called by `csharp-mode'."
   :type 'hook
   :group 'c)
 
-(defcustom csharp-font-lock-extra-types
-  '()
-  "*List of extra types to fontify in C# mode.
-Each list item should be a regexp not containing word-delimiters.
-For example, a value of (\"System\") means the word string is treated as a type
-name.
-
-The value of this variable is used when Font Lock mode is turned on."
-  :type 'font-lock-extra-types-widget
-  :group 'font-lock-extra-types)
-
-(defconst csharp-font-lock-keywords-1 nil
-  "Subdued level highlighting for C# mode.")
-
-(defconst csharp-font-lock-keywords-2 nil
-  "Medium level highlighting for C# mode.
-See also `csharp-font-lock-extra-types'.")
-
-(defconst csharp-font-lock-keywords-3 nil
-  "Gaudy level highlighting for C# mode.
-See also `csharp-font-lock-extra-types'.")
-
-(let* ((csharp-keywords
-	(eval-when-compile
-	  (regexp-opt
-	   '(
-             "abstract" "as" "base" "bool" "break"
-             "byte" "case" "catch" "char" "checked"
-             "class" "const" "continue" "decimal" "default"
-             "delegate" "do" "double" "else" "enum"
-             "event" "explicit" "extern" "false" "finally"
-             "fixed" "float" "for" "foreach" "goto"
-             "if" "implicit" "in" "int" "interface"
-             "internal" "is" "lock" "long" "namespace"
-             "new" "null" "object" "operator" "out"
-             "override" "params" "private" "protected" "public"
-             "readonly" "ref" "return" "sbyte" "sealed"
-             "short" "sizeof" "stackalloc" "static" "string"
-             "struct" "switch" "this" "throw" "true"
-             "try" "typeof" "uint" "ulong" "unchecked"
-             "unsafe" "ushort" "using" "virtual" "void"
-             "volatile" "while"
-	     ) t)))
-       (csharp-operators
-	(eval-when-compile
-	  (regexp-opt
-	   '(
-             ;;unary
-             "+" "-" "!" "~" "++" "--" "true" "false"
-             ;binary
-             "+" "-" "*" "/" "%" "&" "|" "^" "<<" ">>" "==" "!=" ">"
-             "<" ">=" "<="
-             ))))
-       ;;
-       ;; Classes immediately followed by an object name.
-       (csharp-type-names
-	`(mapconcat 'identity
-	  (cons 
-	   (,@ c-Csharp-primitive-type-kwds)
-	   csharp-font-lock-extra-types)
-	  "\\|"))
-       (csharp-type-names-depth `(regexp-opt-depth (,@ csharp-type-names)))
-       )
- (setq csharp-font-lock-keywords-1
-  (list
-   ;;
-   ;; Fontify symbol names in #elif or #if ... defined preprocessor directives.
-   '("^[ \t]*\\(#[ \t]*\\(?:elif\\|if\\|endif\\|define\\)\\)[ \t]*\\(\\sw+\\)?"
-     (1 font-lock-preprocessor-face) (2 font-lock-variable-name-face prepend t)) 
-
-   ;; #region comment
-   '("^[ \t]*#\\(\\(?:end\\)?region[ \t]*.*\\)" 1 font-lock-warning-face prepend)
-
-   ;; Fontify class names.
-   '("\\<\\(class\\|struct\\|enum\\|interface\\)\\>[ \t]*\\(\\sw+\\)?"
-     (1 font-lock-keyword-face) (2 font-lock-type-face nil t))
-   )
-  )
-
- (setq csharp-font-lock-keywords-2
-  (append csharp-font-lock-keywords-1
-   (list
-    ;;
-    ;; Fontify class names.
-    `(eval .
-      (cons (concat "\\<\\(" (,@ csharp-type-names) "\\)\\>")
-	    '(1 font-lock-type-face)
-	    ))
-    ;;
-    ;; Fontify get/set operators.
-    (list (concat "\\(\\<get\\|set\\>\\)")
-	  '(1 font-lock-function-name-face)
-          )
-    ;;
-    ;; Fontify operator overloading.
-    (list (concat "\\<"
-		  "\\(\\(?:implicit\\|explicit\\)?\\)"
-		  "[ \t]*\\(operator\\)"
-		  "\\>[ \t]*"
-		  "\\(" csharp-operators "\\)?")
-	  '(1 font-lock-keyword-face)
-	  '(2 font-lock-function-name-face nil t)
-	  '(3 font-lock-builtin-face nil t)
-          )
-    ;;
-    ;; Fontify all builtin keywords (except below).
-    (concat "\\<\\(" csharp-keywords "\\)\\>")
-    ;;
-    ;; Fontify keywords and targets, and case default/goto tags.
-    (list "\\<\\(break\\|case\\|continue\\|goto\\)\\>[ \t]*\\(-?\\sw+\\)?"
-	  '(1 font-lock-keyword-face)
-	  '(2 font-lock-constant-face nil t)
-	  )
-    ;;
-    ;; This must come after the one for keywords and targets.
-    '(":" ("^[ \t]*\\(\\sw+\\)[ \t]*:[ \t]*$"
-	   (beginning-of-line) (end-of-line)
-	   (1 font-lock-constant-face)
-	   ))
-    ;;
-    ;; Fontify all constants.
-    '("\\<\\(false\\|null\\|true\\)\\>" . font-lock-constant-face)
-    )))
-
- (setq csharp-font-lock-keywords-3
-  (append csharp-font-lock-keywords-2
-   ;;
-   ;; More complicated regexps for more complete highlighting for types.
-   ;; (Note: Need to revisit the styling here.)
-   (list
-    ;;
-    ;; Fontify random types immediately followed by an item or items.
-    `(eval .
-      (list (concat "\\<\\(" (,@ csharp-type-names) "\\)\\>"
-		    "\\([ \t]*\\[[ \t]*\\]\\)*"
-		    "\\([ \t]*\\sw\\)")
-	    ;; Fontify each declaration item.
-	    (list 'font-lock-match-c++-style-declaration-item-and-skip-to-next
-		  ;; Start with point after all type specifiers.
-		  (list 'goto-char (list 'or
-					 (list 'match-beginning
-					       (+ (,@ csharp-type-names-depth) 2))
-					 '(match-end 1)))
-		  ;; Finish with point after first type specifier.
-		  '(goto-char (match-end 1))
-		  ;; Fontify as a variable or function name.
-		  '(1 (if (match-beginning 2)
-			  font-lock-function-name-face
-			font-lock-variable-name-face)))))
-    ;;
-    ;; Fontify structures, or typedef names, plus their items.
-    '("\\(}\\)[ \t*]*\\sw"
-      (font-lock-match-c++-style-declaration-item-and-skip-to-next
-       (goto-char (match-end 1)) nil
-       (1 font-lock-type-face)))
-    ;;
-    ;; Fontify anything at beginning of line as a declaration or definition.
-    '("^\\(\\sw+\\)\\>\\([ \t*]+\\sw+\\>\\)*"
-      (1 font-lock-type-face)
-      (font-lock-match-c++-style-declaration-item-and-skip-to-next
-       (goto-char (or (match-beginning 2) (match-end 1))) nil
-       (1 (if (match-beginning 2)
-	      font-lock-function-name-face
-	    font-lock-variable-name-face))))
-    )))
- )
-
-(defvar csharp-font-lock-keywords csharp-font-lock-keywords-3
-  "Default expressions to highlight in C# mode.
-See also `csharp-font-lock-extra-types'.")
-
-(defvar cc-imenu-csharp-generic-expression
-  cc-imenu-c++-generic-expression
-  "Imenu generic expression for C# mode.  See `imenu-generic-expression'.")
-
-(c-add-style "C#"
- '("Java"
-   (c-basic-offset . 2)
-   (c-comment-only-line-offset . (0 . 0))
-   (c-offsets-alist 
-    . (
-       (access-label . -)
-       (arglist-close . c-lineup-arglist)
-       (arglist-cont . 0)
-       (arglist-cont-nonempty . c-lineup-arglist)
-       (arglist-intro . c-lineup-arglist-intro-after-paren)
-       (block-close . 0)
-       (block-open . 0)
-       (brace-entry-open . 0)
-       (brace-list-close . 0)
-       (brace-list-entry . 0)
-       (brace-list-intro . +)
-       (brace-list-open . +)
-       (c . c-lineup-C-comments)
-       (case-label . 0)
-       (catch-clause . 0)
-       (class-close . 0)
-       (class-open . 0)
-       (comment-intro . c-lineup-comment)
-       (cpp-macro . 0)
-       (cpp-macro-cont . c-lineup-dont-change)
-       (defun-block-intro . +)
-       (defun-close . 0)
-       (defun-open . 0)
-       (do-while-closure . 0)
-       (else-clause . 0)
-       (extern-lang-close . 0)
-       (extern-lang-open . 0)
-       (friend . 0)
-       (func-decl-cont . +)
-       (inclass . +)
-       (inexpr-class . +)
-       (inexpr-statement . 0)
-       (inextern-lang . +)
-       (inher-cont . c-lineup-multi-inher)
-       (inher-intro . +)
-       (inlambda . c-lineup-inexpr-block)
-       (inline-close . 0)
-       (inline-open . 0)
-       (innamespace . +)
-       (knr-argdecl . 0)
-       (knr-argdecl-intro . 5)
-       (label . 0)
-       (lambda-intro-cont . +)
-       (member-init-cont . c-lineup-multi-inher)
-       (member-init-intro . +)
-       (namespace-close . 0)
-       (namespace-open . 0)
-       (objc-method-args-cont . c-lineup-ObjC-method-args)
-       (objc-method-call-cont . c-lineup-ObjC-method-call)
-       (objc-method-intro . [0])
-       (statement . 0)
-       (statement-block-intro . +)
-       (statement-case-intro . +)
-       (statement-case-open . +)
-       (statement-cont . +)
-       (stream-op . c-lineup-streamop)
-       (string . c-lineup-dont-change)
-       (substatement . +)
-       (substatement-open . 0)
-       (template-args-cont c-lineup-template-args +)
-       (topmost-intro . 0)
-       (topmost-intro-cont . 0)
-       ))
-   ))
-
-;;;###autoload
+;;; The entry point into the mode
 (defun csharp-mode ()
-  "Major mode for editing C# code.
-To submit a problem report, enter `\\[c-submit-bug-report]' from a
-csharp-mode buffer.  This automatically sets up a mail buffer with
-version information already added.  You just need to add a description
-of the problem, including a reproducible test case and send the
-message.
+  "Major mode for editing C# (pronounced \"see sharp\") code.
+This is a simple example of a separate mode derived from CC Mode to
+support a language with syntax similar to C/C++/ObjC/Java/IDL/Pike.
 
-To see what version of CC Mode you are running, enter `\\[c-version]'.
-
-The hook variable `csharp-mode-hook' is run with no args, if that value
-is bound and has a non-nil value.  Also the common hook
-`c-mode-common-hook' is run first.  Note that this mode automatically
-sets the \"C#\" style before calling any hooks so be careful if you
-set styles in `c-mode-common-hook'.
+The hook `c-mode-common-hook' is run with no args at mode
+initialization, then `csharp-mode-hook'.
 
 Key bindings:
 \\{csharp-mode-map}"
   (interactive)
-  (c-initialize-cc-mode)
   (kill-all-local-variables)
+  (c-initialize-cc-mode t)
   (set-syntax-table csharp-mode-syntax-table)
   (setq major-mode 'csharp-mode
- 	mode-name "C#"
- 	local-abbrev-table csharp-mode-abbrev-table)
-  (use-local-map csharp-mode-map)
-  (if (not (assq 'csharp-mode c-default-style))
-      (setq c-default-style (cons '(csharp-mode . "C#") c-default-style)))
-  (c-common-init)
-  (make-local-variable 'comment-start)
-  (make-local-variable 'comment-end)
-  (setq comment-start "// "
- 	comment-end   ""
- 	c-conditional-key c-Csharp-conditional-key
- 	c-comment-start-regexp c-Csharp-comment-start-regexp
-  	c-class-key c-Csharp-class-key
-	c-extra-toplevel-key c-Csharp-extra-toplevel-key
-;	c-method-key c-Csharp-method-key
- 	c-baseclass-key nil
-	c-recognize-knr-p nil
- 	c-access-key  c-Csharp-access-key
-	c-inexpr-class-key nil
-	imenu-generic-expression cc-imenu-csharp-generic-expression
-	imenu-case-fold-search nil
-	)
-  ;; Font lock
-  (make-local-variable 'font-lock-defaults)
-  (setq font-lock-defaults
-	'((csharp-font-lock-keywords csharp-font-lock-keywords-1
-				     csharp-font-lock-keywords-2 csharp-font-lock-keywords-3)
-	  nil nil ((?_ . "w") (?$ . "w")) nil
-	  (font-lock-mark-block-function . mark-defun)))
-
-;;   ;; Compile
-;;   (make-local-variable 'compilation-error-regexp-alist)
-;;   (setq compilation-error-regexp-alist
-;; 	(append 
-;; 	 '(
-;; 	   ;;C# Compiler
-;; 	   ;;t.cs(6,18): error SC1006: Name of constructor must match name of class
-;; 	   ("\\(\\([_a-zA-Z]:\\)?[^:(\t\n]+\\)(\\([0-9]+\\)[,]\\([0-9]+\\)): \\(error\\|warning\\) CS[0-9]+:" 1 3 4))
-;; 	 compilation-error-regexp-alist))
-
-  ;; hooks
+	mode-name "C#"
+	local-abbrev-table csharp-mode-abbrev-table
+	abbrev-mode t)
+  (use-local-map c-mode-map)
+  ;; `c-init-language-vars' is a macro that is expanded at compile
+  ;; time to a large `setq' with all the language variables and their
+  ;; customized values for our language.
+  (c-init-language-vars csharp-mode)
+  ;; `c-common-init' initializes most of the components of a CC Mode
+  ;; buffer, including setup of the mode menu, font-lock, etc.
+  ;; There's also a lower level routine `c-basic-common-init' that
+  ;; only makes the necessary initialization to get the syntactic
+  ;; analysis and similar things working.
+  (c-common-init 'csharp-mode)
+  ;;(easy-menu-add csharp-menu)
   (run-hooks 'c-mode-common-hook)
   (run-hooks 'csharp-mode-hook)
   (c-update-modeline))
+
+
+(provide 'csharp-mode)
 
 ;;; csharp-mode.el ends here

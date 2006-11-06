@@ -1,8 +1,8 @@
 ;; Pesche' Modes
 ;;
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#28 $
-;;     $Change: 24783 $
-;;   $DateTime: 2006/06/18 11:30:07 $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#29 $
+;;     $Change: 25699 $
+;;   $DateTime: 2006/11/06 17:01:32 $
 ;;     $Author: peter.steiner $
 ;;    $Created: 1999/06/02 $
 ;;  $Copyright: Peter Steiner <pesche@schlau.ch> $
@@ -120,9 +120,12 @@ Javadoc comments."
   (c-set-offset 'statement-case-open '+)
   (c-set-offset 'arglist-close 0)
   (c-set-offset 'inextern-lang 0)
-  (c-set-offset 'innamespace 0)
   (c-set-offset 'cpp-macro 'c-lineup-dont-change)
   (c-set-offset 'cpp-macro-cont '+)
+  (if (not (eq major-mode 'csharp-mode))
+      (c-set-offset 'innamespace 0))
+  (if (eq major-mode 'csharp-mode)
+      (c-set-offset 'inline-open 0))
 
   ;; den Tabulator dressieren
   (setq tab-width                4
@@ -165,6 +168,7 @@ Javadoc comments."
 (defun my-doxymacs-font-lock-hook ()
   (if (or (eq major-mode 'c-mode)
           (eq major-mode 'hw-c-mode)
+          (eq major-mode 'csharp-mode)
           (eq major-mode 'c++-mode))
       (doxymacs-font-lock)))
 (add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)

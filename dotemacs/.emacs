@@ -2,9 +2,9 @@
 ;;  Emacs Startup File
 ;;
 ;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id: //netzadmin/emacs/pesche/.emacs#52 $
-;;     $Change: 23320 $
-;;   $DateTime: 2006/01/31 09:01:44 $
+;;         $Id: //netzadmin/emacs/pesche/.emacs#53 $
+;;     $Change: 25688 $
+;;   $DateTime: 2006/11/06 08:12:06 $
 ;;     $Author: peter.steiner $
 ;;    $Created: Wed Jul 6 19:52:18 1994 $
 
@@ -125,6 +125,11 @@
     (defvar font12pix "12-90-*-*-c-*-")
     (defvar font13pix "13-97-*-*-c-*-")
     (defvar fontcharset "iso10646-1")
+    (defvar fontstring-consolas "Consolas")
+    (defvar font-rr-consolas "normal-r")
+    (defvar font-ri-consolas "normal-i")
+    (defvar font-br-consolas "bold-r")
+    (defvar font-bi-consolas "bold-i")
     (defvar fontstring-courier "Courier New")
     (defvar font-rr-courier "normal-r")
     (defvar font-ri-courier "normal-i")
@@ -155,16 +160,29 @@
 
 (cond
  ((eq (string-match "DONNERVOGEL" (system-name)) 0)
-  (progn (setq pesche-family "lucida")  (setq pesche-font-size font13pix)))
+  (progn (setq pesche-family "lucida")   (setq pesche-font-size font13pix)))
  ((eq (string-match "INUVIK" (system-name)) 0)
-  (progn (setq pesche-family "lucida")  (setq pesche-font-size font11pix)))
+  (progn (setq pesche-family "lucida")   (setq pesche-font-size font11pix)))
+ ((eq (string-match "GIMMELWALD" (system-name)) 0)
+  (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
  ((eq (string-match "PIAZZABOOK" (system-name)) 0)
-  (progn (setq pesche-family "courier") (setq pesche-font-size font12pix)))
+  (progn (setq pesche-family "courier")  (setq pesche-font-size font12pix)))
  ((eq (string-match "PAQBOOK" (system-name)) 0)
-  (progn (setq pesche-family "courier") (setq pesche-font-size font11pix)))
+  (progn (setq pesche-family "courier")  (setq pesche-font-size font11pix)))
  (t
-  (progn (setq pesche-family "courier") (setq pesche-font-size font12pix)))
+  (progn (setq pesche-family "courier")  (setq pesche-font-size font12pix)))
  )
+
+; Beispiel "-outline-Consolas-normal-r-normal-normal-12-90-96-96-c-*-iso8859-1"
+(defvar pesche-consolas-rr
+  (concat "-*-" fontstring-consolas "-" font-rr-consolas "-*-*-" pesche-font-size fontcharset))
+(defvar pesche-consolas-ri
+  (concat "-*-" fontstring-consolas "-" font-ri-consolas "-*-*-" pesche-font-size fontcharset))
+(defvar pesche-consolas-br
+  (concat "-*-" fontstring-consolas "-" font-br-consolas "-*-*-" pesche-font-size fontcharset))
+(defvar pesche-consolas-bi
+  (concat "-*-" fontstring-consolas "-" font-bi-consolas "-*-*-" pesche-font-size fontcharset))
+
 
 ; Beispiel "-outline-Lucida Sans Typewriter-normal-r-normal-normal-16-120-96-96-c-*-iso10646-1"
 (defvar pesche-lucida-rr
@@ -187,6 +205,12 @@
   (concat "-*-" fontstring-courier "-" font-bi-courier "-*-*-" pesche-font-size fontcharset))
 
 (cond
+ ((eq (string-match "consolas" pesche-family) 0)
+  (progn
+    (defvar pesche-default-regular     pesche-consolas-rr)
+    (defvar pesche-default-italic      pesche-consolas-ri)
+    (defvar pesche-default-bold        pesche-consolas-br)
+    (defvar pesche-default-bold-italic pesche-consolas-bi)))
  ((eq (string-match "lucida" pesche-family) 0)
   (progn
     (defvar pesche-default-regular     pesche-lucida-rr)

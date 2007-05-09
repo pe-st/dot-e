@@ -1,8 +1,8 @@
 ;; Pesche' Modes
 ;;
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#29 $
-;;     $Change: 25699 $
-;;   $DateTime: 2006/11/06 17:01:32 $
+;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#30 $
+;;     $Change: 27321 $
+;;   $DateTime: 2007/05/09 12:19:44 $
 ;;     $Author: peter.steiner $
 ;;    $Created: 1999/06/02 $
 ;;  $Copyright: Peter Steiner <pesche@schlau.ch> $
@@ -173,6 +173,10 @@ Javadoc comments."
       (doxymacs-font-lock)))
 (add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)
 
+
+;; dot mode --------------------------------------------------------------------
+(add-to-list 'auto-mode-alist '("\\.dot\\'" . graphviz-dot-mode))
+(autoload 'graphviz-dot-mode "graphviz-dot-mode" "Major mode for editing dot files." t)
 
 ;; compilation mode ------------------------------------------------------------
 (if (>= emacs-major-version 22)

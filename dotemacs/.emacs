@@ -2,10 +2,10 @@
 ;;  Emacs Startup File
 ;;
 ;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id: //netzadmin/emacs/pesche/.emacs#53 $
-;;     $Change: 25688 $
-;;   $DateTime: 2006/11/06 08:12:06 $
-;;     $Author: peter.steiner $
+;;         $Id$
+;;     $Change$
+;;   $DateTime$
+;;     $Author$
 ;;    $Created: Wed Jul 6 19:52:18 1994 $
 
 
@@ -146,6 +146,11 @@
       (defvar font12pix "12-120-75-75-m-*-")
       (defvar font14pix "14-140-75-75-m-*-")
       (defvar fontcharset "iso8859-1")
+      (defvar fontstring-consolas "courier")
+      (defvar font-rr-consolas "medium-r")
+      (defvar font-ri-consolas "medium-o")
+      (defvar font-br-consolas "bold-r")
+      (defvar font-bi-consolas "bold-o")
       (defvar fontstring-courier "courier")
       (defvar font-rr-courier "medium-r")
       (defvar font-ri-courier "medium-o")

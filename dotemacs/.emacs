@@ -174,6 +174,8 @@
   (progn (setq pesche-family "courier")  (setq pesche-font-size font12pix)))
  ((eq (string-match "PAQBOOK" (system-name)) 0)
   (progn (setq pesche-family "courier")  (setq pesche-font-size font11pix)))
+ ((eq (string-match "PC-92560" (system-name)) 0)
+  (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
  (t
   (progn (setq pesche-family "courier")  (setq pesche-font-size font12pix)))
  )
@@ -367,7 +369,11 @@ saving keyboard macros (see insert-kbd-macro)."
 
 ;; pc-bufsw implementiert ein Umschalten zwischen Buffern mit Ctrl-Tab
 ;; ähnlich wie Alt-Tab unter Windows die Applikationen umschaltet
+;(require 'swbuff)
 (require 'pc-bufsw)
+;(setq swbuff-load-hook nil)
+;(global-set-key (kbd "C-<tab>") 'swbuff-switch-to-next-buffer)
+;(global-set-key (kbd "S-C-<tab>") 'swbuff-switch-to-previous-buffer)
 (global-set-key (kbd "C-<tab>") 'pc-bufsw::previous)
 (global-set-key (kbd "S-C-<tab>") 'pc-bufsw::lru)
 ; ; pc-bufsw 0.9 funktionierte noch rekursiv, denn mit dem default-Wert 300
@@ -448,6 +454,7 @@ saving keyboard macros (see insert-kbd-macro)."
 (setq-default indent-tabs-mode nil)
 
 ;; ausgelagerte Mode-Anpassungen -----------------------------------------------
+(require 'tandem-modes)
 (require 'pesche-modes)
 
 ;; dynamische Abkürzungen ------------------------------------------------------
@@ -514,7 +521,7 @@ saving keyboard macros (see insert-kbd-macro)."
 ;; verschiedene andere Modi ----------------------------------------------------
 ; die generic-Modi sollten erst nach dem font-lock Setup geladen werden,
 ; da sie sonst ihre eigene Initialisierung vornehmen
-(require 'generic-pilrc)        ; Palm/Pilot Ressourcen-Definitionen
+;(require 'generic-pilrc)        ; Palm/Pilot Ressourcen-Definitionen
 (require 'generic-x)
 (require 'pplog-mode)
 
@@ -534,15 +541,15 @@ saving keyboard macros (see insert-kbd-macro)."
 ;; (setq gnus-directory "~/gnus/")
 
 
-;; gnuserv (nur mit NT), sonst emacsserver
-(if (or (eq window-system 'win32)
-        (eq window-system 'w32))
-    (progn
-      (require 'gnuserv)
-      (setq gnuserv-frame (selected-frame)) ;; immer das gleiche Fenster verwenden
-      (gnuserv-start)
-      )
-  (server-start))
+;;; gnuserv (nur mit NT), sonst emacsserver
+;(if (or (eq window-system 'win32)
+;        (eq window-system 'w32))
+;    (progn
+;      (require 'gnuserv)
+;      (setq gnuserv-frame (selected-frame)) ;; immer das gleiche Fenster verwenden
+;      (gnuserv-start)
+;      )
+;  (server-start))
 
 ;; printing --------------------------------------------------------------------
 (require 'pesche-print)

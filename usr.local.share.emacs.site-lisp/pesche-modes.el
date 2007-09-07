@@ -62,7 +62,7 @@
 ;;                 ("/subsys/[^/]+/[^/]+\\.[ch]\\'" . hw-c-mode)
 ;;                 ("/vmi/[^/]+\\.[ch]\\'" . hw-c-mode))
 ;;               auto-mode-alist))
-(autoload 'hw-c-mode "hw-c-mode" "Major mode for HW C files." t)
+;(autoload 'hw-c-mode "hw-c-mode" "Major mode for HW C files." t)
 
 ;; cc-mode 5.21 kennt das "richtige" Verhalten von Delete und Backspace
 ;; (aber nur wenn delete-key-deletes-forward existiert)
@@ -191,16 +191,16 @@ Javadoc comments."
       ))
 
 
-;; eiffel mode -----------------------------------------------------------------
-(add-to-list 'auto-mode-alist '("\\.e\\'" . eiffel-mode))
-(autoload 'eiffel-mode "eiffel" "Major mode for Eiffel programs" t)
-(add-hook 'eiffel-mode-hook
-          '(lambda ()
-             (progn
-               (setq eif-indent-increment 4
-                     tab-width            4
-                     indent-tabs-mode     t)
-               )))
+;;; eiffel mode -----------------------------------------------------------------
+;(add-to-list 'auto-mode-alist '("\\.e\\'" . eiffel-mode))
+;(autoload 'eiffel-mode "eiffel" "Major mode for Eiffel programs" t)
+;(add-hook 'eiffel-mode-hook
+;          '(lambda ()
+;             (progn
+;               (setq eif-indent-increment 4
+;                     tab-width            4
+;                     indent-tabs-mode     t)
+;               )))
 
 ;; makefile mode ---------------------------------------------------------------
 ;; Files auf .mak sollen auch Makefiles sein (ist offenbar nicht üblich)
@@ -244,7 +244,7 @@ Javadoc comments."
 
 
 ;; jam mode --------------------------------------------------------------------
-(require 'jam-mode)
+;(require 'jam-mode)
 
 
 ;; assembler mode --------------------------------------------------------------
@@ -308,18 +308,18 @@ Javadoc comments."
 (autoload 'ruby-mode "ruby-mode" "Load ruby-mode")
 
 ;; lingo-mode ------------------------------------------------------------------
-(autoload 'lingo-mode "lingo-mode" "Major mode for editing Lingo files." t)
-(setq auto-mode-alist (append '(("\\.[Ll][Ss]\\'" . lingo-mode)) auto-mode-alist))
-
-(defun pesche-lingo-mode-hook()
-  ;; den Tabulator dressieren
-  (setq tab-width                2
-        indent-tabs-mode         nil)
-
-  (imenu-add-to-menubar "Index")
-  )
-
-(add-hook 'lingo-mode-hook 'pesche-lingo-mode-hook)
+;(autoload 'lingo-mode "lingo-mode" "Major mode for editing Lingo files." t)
+;(setq auto-mode-alist (append '(("\\.[Ll][Ss]\\'" . lingo-mode)) auto-mode-alist))
+;
+;(defun pesche-lingo-mode-hook()
+;  ;; den Tabulator dressieren
+;  (setq tab-width                2
+;        indent-tabs-mode         nil)
+;
+;  (imenu-add-to-menubar "Index")
+;  )
+;
+;(add-hook 'lingo-mode-hook 'pesche-lingo-mode-hook)
 
 ;; WoMan mode ------------------------------------------------------------------
 ;; mode zum Lesen von 'man' Dokumentation ohne externes Programm
@@ -336,12 +336,12 @@ Javadoc comments."
           '("C:/cygwin/usr/man" "C:/mingw/man")))
 
 ;; todo-mode -------------------------------------------------------------------
-(autoload 'todo-mode "todo-mode"
-  "Major mode for editing TODO lists." t)
-(autoload 'todo-show "todo-mode"
-  "Show TODO items." t)
-(autoload 'todo-insert-item "todo-mode"
-  "Add TODO item." t)
+;(autoload 'todo-mode "todo-mode"
+;  "Major mode for editing TODO lists." t)
+;(autoload 'todo-show "todo-mode"
+;  "Show TODO items." t)
+;(autoload 'todo-insert-item "todo-mode"
+;  "Add TODO item." t)
 
 ;; text-mode -------------------------------------------------------------------
 (defun pesche-text-mode-hook()
@@ -390,17 +390,17 @@ Javadoc comments."
 
 
 ;; html-helper-mode mode -------------------------------------------------------
-(autoload 'html-helper-mode "html-helper-mode" "HTML major mode." t)
-
-(setq html-helper-use-expert-menu t)
-(setq html-helper-mode-uses-visual-basic nil)
-(setq html-helper-mode-uses-bold-italic t)
-
-(defun pesche-html-helper-mode-hook()
-  (html-msb-fix)
-  )
-
-(add-hook 'html-helper-mode-hook 'pesche-html-helper-mode-hook)
+;(autoload 'html-helper-mode "html-helper-mode" "HTML major mode." t)
+;
+;(setq html-helper-use-expert-menu t)
+;(setq html-helper-mode-uses-visual-basic nil)
+;(setq html-helper-mode-uses-bold-italic t)
+;
+;(defun pesche-html-helper-mode-hook()
+;  (html-msb-fix)
+;  )
+;
+;(add-hook 'html-helper-mode-hook 'pesche-html-helper-mode-hook)
 
 
 ;; xml-mode --------------------------------------------------------------------
@@ -434,23 +434,23 @@ Javadoc comments."
 ;;     (setq sgml-xml-declaration (concat (getenv "SGML") "/dtd/html/xml.dcl"))
     )
 
-;; dtd-mode --------------------------------------------------------------------
-(autoload 'dtd-mode "tdtd" "Major mode for SGML and XML DTDs." t)
-(autoload 'dtd-etags "tdtd"
-  "Execute etags on FILESPEC and match on DTD-specific regular expressions."
-  t)
-(autoload 'dtd-grep "tdtd" "Grep for PATTERN in files matching FILESPEC." t)
-
-(setq auto-mode-alist
-      (append
-       (list
-        '("\\.dcl\\'" . dtd-mode)
-        '("\\.dec\\'" . dtd-mode)
-        '("\\.dtd\\'" . dtd-mode)
-        '("\\.ele\\'" . dtd-mode)
-        '("\\.ent\\'" . dtd-mode)
-        '("\\.mod\\'" . dtd-mode))
-       auto-mode-alist))
+;;; dtd-mode --------------------------------------------------------------------
+;(autoload 'dtd-mode "tdtd" "Major mode for SGML and XML DTDs." t)
+;(autoload 'dtd-etags "tdtd"
+;  "Execute etags on FILESPEC and match on DTD-specific regular expressions."
+;  t)
+;(autoload 'dtd-grep "tdtd" "Grep for PATTERN in files matching FILESPEC." t)
+;
+;(setq auto-mode-alist
+;      (append
+;       (list
+;        '("\\.dcl\\'" . dtd-mode)
+;        '("\\.dec\\'" . dtd-mode)
+;        '("\\.dtd\\'" . dtd-mode)
+;        '("\\.ele\\'" . dtd-mode)
+;        '("\\.ent\\'" . dtd-mode)
+;        '("\\.mod\\'" . dtd-mode))
+;       auto-mode-alist))
 
 
 ;; Modul abschliessen ----------------------------------------------------------

@@ -174,6 +174,8 @@
   (progn (setq pesche-family "courier")  (setq pesche-font-size font12pix)))
  ((eq (string-match "PAQBOOK" (system-name)) 0)
   (progn (setq pesche-family "courier")  (setq pesche-font-size font11pix)))
+ ((eq (string-match "BOSKOOP" (system-name)) 0)
+  (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
  ((eq (string-match "PC-92560" (system-name)) 0)
   (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
  (t

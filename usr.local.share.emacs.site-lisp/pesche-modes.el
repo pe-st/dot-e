@@ -1,9 +1,9 @@
 ;; Pesche' Modes
 ;;
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-modes.el#30 $
-;;     $Change: 27321 $
-;;   $DateTime: 2007/05/09 12:19:44 $
-;;     $Author: peter.steiner $
+;;         $Id$
+;;     $Change$
+;;   $DateTime$
+;;     $Author$
 ;;    $Created: 1999/06/02 $
 ;;  $Copyright: Peter Steiner <pesche@schlau.ch> $
 
@@ -145,7 +145,7 @@ Javadoc comments."
   (setq imenu-generic-expression
         (append imenu-generic-expression
                 '(("Outline"
-                   "^/\\*[-]+\\+[ \t]*\n|[ \t]+\\([^ \t][- A-Za-zÄÖÜäöü0-9+()]*\\).*|"
+                   "^/\\*[-]+\\+[ \t]*\n|[ \t]+\\([^ \t][- _A-Za-zÄÖÜäöü0-9+()]*\\).*|"
                    1)
                   ("Types"
                    "^[ \t]*typedef[ \t]+\\(struct[ \t]+[_A-Za-z0-9]+\\)"

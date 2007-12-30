@@ -1,11 +1,12 @@
 ;;----------------------------------------------------------- -*- Emacs-Lisp -*-
 ;;  Emacs Site Startup File
 ;;
-;;      Author: Peter Steiner <unistein@isbe.ch>
-;;     $Source: g:/archiv/cvsroot/site-lisp/site-start.el,v $
-;;   $Revision: 1.1 $
-;;       $Date: 1998/11/06 23:28:43 $
-;;     $Author: pesche $
+;;      Author: Peter Steiner <pesche@schlau.ch>
+;;         $Id$
+;;     $Change$
+;;   $DateTime$
+;;     $Author$
+;;    $Created: 1998/11/06 $
 
 
 ;; nach einem Posting von Larry Smith <lsmith@cio2000.eds.com>
@@ -30,7 +31,8 @@
 (let ((lisp-dir (expand-file-name (concat exec-directory "../../EmacsW32/lisp/"))))
   (unless (file-accessible-directory-p lisp-dir)
     (message "Can't find %s" lisp-dir)
-    (sit-for 10))
+    ;(sit-for 10)
+    )
   (when (file-accessible-directory-p lisp-dir)
     (message "Adding %s to load-path" lisp-dir)
     (add-to-list 'load-path lisp-dir)))

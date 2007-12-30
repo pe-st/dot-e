@@ -1,9 +1,9 @@
 ;; Pesche's Druckerei
 ;;
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-print.el#9 $
-;;     $Change: 22590 $
-;;   $DateTime: 2005/10/20 14:17:14 $
-;;     $Author: peter.steiner $
+;;         $Id$
+;;     $Change$
+;;   $DateTime$
+;;     $Author$
 ;;    $Created: 1997/12/19 $
 ;;  $Copyright: Peter Steiner <pesche@schlau.ch> $
 
@@ -56,6 +56,16 @@
         (defvar ghost-dir     "C:\\L\\gs\\gs8.50")
         (defvar ghost-printer "-sDEVICE=ljet4 -r600")
         (defvar ghost-view    "C:\\L\\gs\\gsview\\gsview32.exe")))
+     ((eq (string-match "PC-92560"    (system-name)) 0)
+      (progn                            ; Der Toaster
+        (defvar ghost-dir     "C:\\prog\\gs\\gs8.60")
+        (defvar ghost-printer "-sDEVICE=ljet4 -r600")
+        (defvar ghost-view    "C:\\prog\\gs\\gsview\\gsview32.exe")))
+     ((eq (string-match "NB-97883"    (system-name)) 0)
+      (progn                            ; Das Notebook Compaq 6710b
+        (defvar ghost-dir     "C:\\P\\gs\\gs8.60")
+        (defvar ghost-printer "-sDEVICE=ljet4 -r600")
+        (defvar ghost-view    "C:\\P\\gs\\gsview\\gsview32.exe")))
      (t
       (progn                            ; Default-Verzeichnisse
         (defvar ghost-dir     "C:\\gs\\gs8.14")

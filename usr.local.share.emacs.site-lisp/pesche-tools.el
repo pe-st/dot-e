@@ -1,10 +1,10 @@
 ;; Pesche' Tools
 ;;
 ;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-tools.el#2 $
-;;     $Change: 19205 $
-;;   $DateTime: 2004/06/07 16:45:31 $
-;;     $Author: peter.steiner $
+;;         $Id$
+;;     $Change$
+;;   $DateTime$
+;;     $Author$
 ;;    $Created: 1999/06/02 $
 
 
@@ -109,6 +109,20 @@ This function is the opposite of `bury-buffer'."
     (if (stringp string)
         (tags-search string))))
 
+;; from EmacsWiki, page "Scrolling"
+(defun sfp-page-down ()
+  (interactive)
+  (setq this-command 'next-line)
+  (next-line
+   (- (window-text-height)
+      next-screen-context-lines)))
+
+(defun sfp-page-up ()
+  (interactive)
+  (setq this-command 'previous-line)
+  (previous-line
+   (- (window-text-height)
+      next-screen-context-lines)))
 
 ;; Modul abschliessen ----------------------------------------------------------
 (provide 'pesche-tools)

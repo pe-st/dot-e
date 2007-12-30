@@ -72,7 +72,7 @@
       ))
  ;; ab Version 21 automatisch richtig...
  )
-(require 'scroll-in-place)
+;;(require 'scroll-in-place)
 
 ;; die gewohnten Windows-Shortcuts C-z, C-x, C-c, C-v möglichst beibehalten
 ; (load "cua-mode")
@@ -177,6 +177,8 @@
  ((eq (string-match "BOSKOOP" (system-name)) 0)
   (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
  ((eq (string-match "PC-92560" (system-name)) 0)
+  (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
+ ((eq (string-match "NB-97883" (system-name)) 0)
   (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
  (t
   (progn (setq pesche-family "courier")  (setq pesche-font-size font12pix)))
@@ -342,6 +344,10 @@ saving keyboard macros (see insert-kbd-macro)."
 (global-set-key (kbd "C-<return>") 'duplicate-line)     ;; self-written
 (global-set-key (kbd "C-<kp-enter>") 'duplicate-line)   ;; self-written
 
+;; PgUp und PgDn haben doch früher funktioniert, oder?
+(global-set-key (kbd "<prior>") 'sfp-page-up)           ;; code from EmacsWiki
+(global-set-key (kbd "<next>") 'sfp-page-down)          ;; code from EmacsWiki
+
 ;; einige Korrekturen für den Mac
 (global-set-key (kbd "C-<kp-home>") 'beginning-of-buffer)
 (global-set-key (kbd "C-<kp-end>") 'end-of-buffer)
@@ -384,8 +390,8 @@ saving keyboard macros (see insert-kbd-macro)."
 ; (setq max-lisp-eval-depth 1000)
 
 ;; perforce Integration
-(require 'p4-edit)
-(global-set-key (kbd "C-c p e") 'p4-edit-edit-file)
+;(require 'p4-edit)
+;(global-set-key (kbd "C-c p e") 'p4-edit-edit-file)
 
 ; Einfügen von beliebigen Zeichen mit C-q im Dezimalsystem (statt oktal)
 (setq read-quoted-char-radix 10)
@@ -528,13 +534,13 @@ saving keyboard macros (see insert-kbd-macro)."
 (require 'pplog-mode)
 
 
-;; Klammer-Gegenstücke anfärben
-(require 'stig-paren)
-(setq blink-matching-paren nil)
-(setq paren-dingaling-mode t)
-(setq paren-sexp-mode nil)
-;(global-set-key [?\C-\(] 'stig-paren-toggle-dingaling-mode)
-;(global-set-key [?\C-\)] 'stig-paren-toggle-sexp-mode)
+;;; Klammer-Gegenstücke anfärben
+;(require 'stig-paren)
+;(setq blink-matching-paren nil)
+;(setq paren-dingaling-mode t)
+;(setq paren-sexp-mode nil)
+;;(global-set-key [?\C-\(] 'stig-paren-toggle-dingaling-mode)
+;;(global-set-key [?\C-\)] 'stig-paren-toggle-sexp-mode)
 
 ;; ;; News und Mail ---------------------------------------------------------------
 ;; ;; weitere Konfiguration siehe .gnus

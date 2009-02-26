@@ -100,7 +100,7 @@
 
       (setq ps-psnup-command "/sw/bin/psnup") ; Name of n-up program (taking ps as input)
       (setq ps-psnup-switches '(" -l -2 -pa4 ")) ; options for program above
-      (setq ps-pdf-command ". /sw/bin/init.sh; ps2pdf")
+      (setq ps-pdf-command "ps2pdf") ; /opt/local/bin/ps2pdf, Part of Ghostscript
       (setq ps-pdf-switches-1 '(" -sPAPERSIZE=a4 -dPDFSETTINGS=/printer "))
       (setq ps-pdf-switches-2 (concat " " ps-pdf-buffer))
       (setq ps-lpr-command "/sw/bin/gs")

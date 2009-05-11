@@ -38,6 +38,10 @@
             (normal-top-level-add-subdirs-to-load-path)))
       ))
 
+;; more directories to search
+(if (file-accessible-directory-p "/opt/local/share/scala/misc/scala-tool-support/emacs")
+    (add-to-list 'load-path "/opt/local/share/scala/misc/scala-tool-support/emacs"))
+
 (require 'pesche-tools)
 (require 'pesche-compile)
 
@@ -629,3 +633,4 @@ saving keyboard macros (see insert-kbd-macro)."
   ;; custom-set-faces was added by Custom -- don't edit or cut/paste it!
   ;; Your init file should contain only one such instance.
  )
+

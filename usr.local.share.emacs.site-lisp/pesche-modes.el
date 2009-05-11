@@ -307,6 +307,13 @@ Javadoc comments."
 (add-to-list 'auto-mode-alist '("\\.rb\\'" . ruby-mode))
 (autoload 'ruby-mode "ruby-mode" "Load ruby-mode")
 
+;; scala-mode ------------------------------------------------------------------
+(require 'scala-mode-auto)
+(defun pesche-scala-mode-hook()
+  (setq indent-tabs-mode nil)
+  )
+(add-hook 'scala-mode-hook 'pesche-scala-mode-hook)
+
 ;; lingo-mode ------------------------------------------------------------------
 ;(autoload 'lingo-mode "lingo-mode" "Major mode for editing Lingo files." t)
 ;(setq auto-mode-alist (append '(("\\.[Ll][Ss]\\'" . lingo-mode)) auto-mode-alist))

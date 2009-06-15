@@ -311,6 +311,8 @@ Javadoc comments."
 (require 'scala-mode-auto)
 (defun pesche-scala-mode-hook()
   (setq indent-tabs-mode nil)
+  ; don't use the annoying C-Tab of the Scala mode...
+  (local-unset-key (kbd "C-<tab>"))
   )
 (add-hook 'scala-mode-hook 'pesche-scala-mode-hook)
 

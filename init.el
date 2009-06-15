@@ -12,31 +12,12 @@
 ;; general configuration -------------------------------------------------------
 
 ;; Emacs-Päckli auch in meinem lokalen emacs-Verzeichnis suchen
-(if (file-accessible-directory-p "~/emacs")
-    (progn
-      (setq load-path (append '("~/emacs") load-path))
-      (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
-          (progn
-            (cd "~/emacs")
-            (normal-top-level-add-subdirs-to-load-path)))
-      ))
-(if (file-accessible-directory-p "~/site-lisp")
-    (progn
-      (setq load-path (append '("~/site-lisp") load-path))
-      (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
-          (progn
-            (cd "~/site-lisp")
-            (normal-top-level-add-subdirs-to-load-path)))
-      ))
+(if (file-accessible-directory-p "~/.emacs.d/lisp")
+    (add-to-list 'load-path "~/.emacs.d/lisp"))
+
 ;; this is not in the default list for Carbon Emacs...
 (if (file-accessible-directory-p "/usr/local/share/emacs/site-lisp")
-    (progn
-      (setq load-path (append '("/usr/local/share/emacs/site-lisp") load-path))
-      (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
-          (progn
-            (cd "/usr/local/share/emacs/site-lisp")
-            (normal-top-level-add-subdirs-to-load-path)))
-      ))
+    (add-to-list 'load-path "/usr/local/share/emacs/site-lisp"))
 
 ;; more directories to search
 (if (file-accessible-directory-p "/opt/local/share/scala/misc/scala-tool-support/emacs")

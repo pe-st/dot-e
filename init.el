@@ -280,11 +280,18 @@ latin-iso8859-1:-apple-monaco-medium-r-normal--10-*-*-*-*-*-mac-roman")
        ;; Spezial-Behandlung des ersten Fensters
        (setq initial-frame-alist
              '( ; (top . 1) (left . 400)
-               (width . 90) (height . 50)
+               (width . 130) (height . 50)
 ;               (icon-type         . t)         ; gnu picture as Emacs icon
                (icon-name         . nil)       ; use frame title
                ))
-       (setq frame-title-format "Emacs - %b")  ; set frame title to buffer name
+
+       (setq frame-title-format
+             '((buffer-file-name " %f"
+                                 (dired-directory
+                                  dired-directory
+                                  (revert-buffer-function " %b"
+                                                          ("%b - Dir:  " default-directory))))
+               " - " invocation-name "@" system-name))
        (setq icon-title-format  "Emacs - %b")  ; set  icon title to buffer name
        ))
 

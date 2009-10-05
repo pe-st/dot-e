@@ -22,6 +22,8 @@
 ;; more directories to search
 (if (file-accessible-directory-p "/opt/local/share/scala/misc/scala-tool-support/emacs")
     (add-to-list 'load-path "/opt/local/share/scala/misc/scala-tool-support/emacs"))
+(if (file-accessible-directory-p "c:/P/scala/misc/scala-tool-support/emacs")
+    (add-to-list 'load-path "c:/P/scala/misc/scala-tool-support/emacs"))
 
 (require 'pesche-tools)
 (require 'pesche-compile)
@@ -164,6 +166,8 @@
  ((eq (string-match "PC-92560" (system-name)) 0)
   (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
  ((eq (string-match "NB-97883" (system-name)) 0)
+  (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
+ ((eq (string-match "NBP98094" (system-name)) 0)
   (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
  (t
   (progn (setq pesche-family "courier")  (setq pesche-font-size font12pix)))
@@ -356,9 +360,11 @@ saving keyboard macros (see insert-kbd-macro)."
 (global-set-key (kbd "<f4>") 'next-error)
 (global-set-key (kbd "S-<f4>") 'previous-error)
 
-(global-set-key (kbd "C-f") 'nonincremental-re-search-forward)          ;;
-(global-set-key (kbd "S-C-f") 'nonincremental-repeat-re-search-forward) ;;
-(global-set-key (kbd "S-C-s") 'nonincremental-repeat-search-forward)    ;;
+(global-set-key (kbd "C-f") 're-search-forward)          ;;
+;(global-set-key (kbd "C-f") 'nonincremental-re-search-forward)          ;;
+(global-set-key (kbd "S-C-f") 'nonincremental-repeat-search-forward) ;;
+(global-set-key (kbd "S-C-s") 'isearch-repeat-forward)    ;;
+;(global-set-key (kbd "S-C-s") 'nonincremental-repeat-search-forward)    ;;
 (global-set-key (kbd "<f3>") 'nonincremental-repeat-search-forward)     ;;
 (global-set-key (kbd "S-C-q") 'search-quick)            ;; self-written
 (global-set-key (kbd "S-C-t") 'tags-quick)              ;; self-written
@@ -574,6 +580,9 @@ saving keyboard macros (see insert-kbd-macro)."
                                                c-tab-always-indent
                                                c++-tab-always-indent)
                                              desktop-locals-to-save))
+;; save also compile-history
+(setq-default desktop-globals-to-save (append '(compile-history)
+                                              desktop-globals-to-save))
 (desktop-load-default)
 
 ;; Bevor der gespeicherte Desktop geladen werden darf, ändern wir

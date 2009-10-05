@@ -32,8 +32,10 @@
 ;; C mode und alle Verwandten --------------------------------------------------
 ;; Files auf .rh sollen auch Header Files sein (resource header)
 ;; Files auf .dox sollen auch C Files sein (doxygen files)
+;; Files auf .ecpp sollen auch C++ Files sein (C++ with embedded SQL files)
 (setq auto-mode-alist (append '(("\\.rh\\'" . c-mode)
-                                ("\\.dox\\'" . c-mode))
+                                ("\\.dox\\'" . c-mode)
+                                ("\\.ecpp\\'" . c++-mode))
                               auto-mode-alist))
 
 ;; default aus find-file.el leicht abgeändert für .cxx und .cpp (nicht
@@ -54,6 +56,7 @@
 
                         ("\\.cxx$" (".hxx" ".hpp" ".hh" ".h"))
                         ("\\.cpp$" (".hpp" ".hxx" ".hh" ".h"))
+                        ("\\.ecpp$" (".hpp" ".hxx" ".hh" ".h"))
                         ) ff-other-file-alist))
 
 ;; ;; In bestimmten Verzeichnissen gehen wir von HW C Files aus...

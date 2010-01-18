@@ -573,7 +573,8 @@ saving keyboard macros (see insert-kbd-macro)."
 ; für NT den Default-Namen ändern; für andere Systeme können wir seinlassen
 (if (eq system-type 'windows-nt)
     (setq desktop-basefilename ".emacs.d/.emacs.desktop"))
-(setq desktop-missing-file-warning nil)
+(setq desktop-missing-file-warning nil
+      desktop-restore-eager 40)
 ; die Tabulator-Einstellungen auch mit abspeichern
 (setq-default desktop-locals-to-save (append '(tab-width
                                                indent-tabs-mode
@@ -583,7 +584,9 @@ saving keyboard macros (see insert-kbd-macro)."
 ;; save also compile-history
 (setq-default desktop-globals-to-save (append '(compile-history)
                                               desktop-globals-to-save))
-(desktop-load-default)
+;; desktop-load-default scheint (zumindest in neueren Emacsen wie 22.3)
+;; nicht mehr nötig zu sein.
+;;(desktop-load-default)
 
 ;; Bevor der gespeicherte Desktop geladen werden darf, ändern wir
 ;; noch einen während der Übersetzung von Emacs hart codierten Pfad.
@@ -594,7 +597,10 @@ saving keyboard macros (see insert-kbd-macro)."
 (if (eq system-type 'windows-nt)
     (setq source-directory "c:\\emacs\\"))  ;; Inhalt unwichtig, solange nicht D:
 
-(desktop-read)
+;; desktop-read ist (zumindest in neueren Emacsen wie 22.3) nicht mehr
+;; nötig und kann sogar zu einer Warnung "desktop file appears to be in
+;; use by PID xxx" führen.
+;;(desktop-read)
 
 ;; verschiedene Histories verkürzen, damit mit 'desktop' nicht zu viel
 ;; gespeichert wird

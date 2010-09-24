@@ -417,9 +417,10 @@ Javadoc comments."
 
 ;; xml-mode --------------------------------------------------------------------
 
-;; wenn möglich nxml-mode verwenden (ab Emacs 21)
+;; wenn möglich nxml-mode verwenden (Emacs 21 und 22, ab 23 ist es eingebaut)
 (if (and (fboundp 'make-hash-table)
-         (boundp 'fontification-functions))
+         (boundp 'fontification-functions)
+         (< emacs-major-version 23))
     (progn
       (load "rng-auto.el")
       (add-to-list 'auto-mode-alist

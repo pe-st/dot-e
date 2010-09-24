@@ -61,12 +61,11 @@
  )
 ;;(require 'scroll-in-place)
 
-;; die gewohnten Windows-Shortcuts C-z, C-x, C-c, C-v möglichst beibehalten
-; (load "cua-mode")
-; (CUA-mode t)
-(require 'pc-select)
-(pc-bindings-mode)
-(pc-selection-mode)
+;; Die gewohnten Windows-Shortcuts C-z, C-x, C-c, C-v möglichst beibehalten:
+(cua-mode t)
+;(require 'pc-select)
+;(pc-bindings-mode)
+;(pc-selection-mode)
 
 
 ;; display configuration -------------------------------------------------------
@@ -339,7 +338,7 @@ saving keyboard macros (see insert-kbd-macro)."
 (global-set-key (kbd "C-x C->") 'comment-region)        ;; standard emacs lisp
 (global-set-key (kbd "C-<kp-space>") 'recenter)         ;; Shift-Ctrl-Keypad-5 (NT)
 (global-set-key (kbd "C-<kp-begin>") 'recenter)         ;; Shift-Ctrl-Keypad-5 (Linux)
-(global-set-key (kbd "C-<return>") 'duplicate-line)     ;; self-written
+;(global-set-key (kbd "C-<return>") 'duplicate-line)     ;; self-written (conflicts with cua-mode)
 (global-set-key (kbd "C-<kp-enter>") 'duplicate-line)   ;; self-written
 (global-set-key (kbd "M-C-<down>") 'duplicate-line)     ;; self-written, key as in Eclipse
 (global-set-key (kbd "M-<up>") 'move-text-up)           ;; pesche-tools, key as in Eclipse
@@ -634,11 +633,15 @@ saving keyboard macros (see insert-kbd-macro)."
       ))
 
 (custom-set-variables
-  ;; custom-set-variables was added by Custom -- don't edit or cut/paste it!
+  ;; custom-set-variables was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
- )
-(custom-set-faces
-  ;; custom-set-faces was added by Custom -- don't edit or cut/paste it!
-  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
  )
 
+(custom-set-faces
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ )

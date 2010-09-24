@@ -1,10 +1,10 @@
 ;; Pesche's Menu
 ;;
 ;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-menu.el#11 $
-;;     $Change: 18727 $
-;;   $DateTime: 2004/02/26 10:33:54 $
-;;     $Author: p4admin $
+;;         $Id$
+;;     $Change$
+;;   $DateTime$
+;;     $Author$
 ;;    $Created: Wed Jul 6 19:52:18 1994 $
 
 
@@ -27,7 +27,7 @@ files are selected, depending on the value of 'dlgopen-give-focus-always'
 files will be brought to foreground"
   (interactive)
 
-  ; der Windows-Dialog mach t natülich nur mit Windows Sinn...
+  ; der Windows-Dialog macht natürlich nur mit Windows Sinn...
   (if (or (eq window-system 'win32)
           (eq window-system 'w32))
       (let ((buffer "") (file-fqn "") (lines-in-page 0) (dir-path ""))
@@ -156,6 +156,9 @@ files will be brought to foreground"
 (define-key pesche-tab-menu [pesche-separator-1]
   '("--"))
 
+(define-key pesche-tab-menu [pesche-tab-12]
+  '("Tabstop 12" . (lambda()(interactive) (setq tab-width 12) (redraw-display))))
+
 (define-key pesche-tab-menu [pesche-tab-8]
   '("Tabstop 8" . (lambda()(interactive) (setq tab-width 8) (redraw-display))))
 
@@ -164,6 +167,9 @@ files will be brought to foreground"
 
 (define-key pesche-tab-menu [pesche-tab-3]
   '("Tabstop 3" . (lambda()(interactive) (setq tab-width 3) (redraw-display))))
+
+(define-key pesche-tab-menu [pesche-tab-2]
+  '("Tabstop 2" . (lambda()(interactive) (setq tab-width 2) (redraw-display))))
 
 (define-key pesche-tab-menu [pesche-entab-region]
   '("Entab Region" . tabify))

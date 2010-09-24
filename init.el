@@ -163,11 +163,13 @@
   (progn (setq pesche-family "courier")  (setq pesche-font-size font11pix)))
  ((eq (string-match "BOSKOOP" (system-name)) 0)
   (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
- ((eq (string-match "PC-92560" (system-name)) 0)
+ ((eq (string-match "PC-92560" (system-name)) 0)  ; Telekurs "Toaster"
   (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
- ((eq (string-match "NB-97883" (system-name)) 0)
+ ((eq (string-match "NB-97883" (system-name)) 0)  ; Telekurs HP Compaq 6710b (XP)
   (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
- ((eq (string-match "NBP98094" (system-name)) 0)
+ ((eq (string-match "NBP98094" (system-name)) 0)  ; SIX HP Compaq 6710b (Vista)
+  (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
+ ((eq (string-match "NBP61268" (system-name)) 0)  ; SIX HP EliteBook 6930p (Vista)
   (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
  (t
   (progn (setq pesche-family "courier")  (setq pesche-font-size font12pix)))

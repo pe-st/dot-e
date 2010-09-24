@@ -341,6 +341,9 @@ saving keyboard macros (see insert-kbd-macro)."
 (global-set-key (kbd "C-<kp-begin>") 'recenter)         ;; Shift-Ctrl-Keypad-5 (Linux)
 (global-set-key (kbd "C-<return>") 'duplicate-line)     ;; self-written
 (global-set-key (kbd "C-<kp-enter>") 'duplicate-line)   ;; self-written
+(global-set-key (kbd "M-C-<down>") 'duplicate-line)     ;; self-written, key as in Eclipse
+(global-set-key (kbd "M-<up>") 'move-text-up)           ;; pesche-tools, key as in Eclipse
+(global-set-key (kbd "M-<down>") 'move-text-down)       ;; pesche-tools, key as in Eclipse
 
 ;; PgUp und PgDn haben doch früher funktioniert, oder?
 (global-set-key (kbd "<prior>") 'sfp-page-up)           ;; code from EmacsWiki

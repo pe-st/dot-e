@@ -73,6 +73,41 @@
   ;; put the point in the lowest line and return
   (next-line arg))
 
+;; diese drei Funktionen sind von Stackoverflow (Steve Purcell) bzw.
+;; einem Posting von Andreas Politz in gnu.emacs.help :
+;; http://stackoverflow.com/questions/2423834/move-line-region-up-and-down-in-emacs
+(defun move-text-internal (arg)
+  (cond
+   ((and mark-active transient-mark-mode)
+    (if (> (point) (mark))
+        (exchange-point-and-mark))
+    (let ((column (current-column))
+          (text (delete-and-extract-region (point) (mark))))
+      (forward-line arg)
+      (move-to-column column t)
+      (set-mark (point))
+      (insert text)
+      (exchange-point-and-mark)
+      (setq deactivate-mark nil)))
+   (t
+    (let ((column (current-column)))
+      (beginning-of-line)
+      (when (or (> arg 0) (not (bobp)))
+        (forward-line)
+        (when (or (< arg 0) (not (eobp)))
+          (transpose-lines arg))
+        (forward-line -1))
+      (move-to-column column t)))))
+
+(defun move-text-down (arg)
+  "Move region (transient-mark-mode active) or current line arg lines down."
+  (interactive "*p")
+  (move-text-internal arg))
+
+(defun move-text-up (arg)
+  "Move region (transient-mark-mode active) or current line arg lines up."
+  (interactive "*p")
+  (move-text-internal (- arg)))
 
 ;; diese Funktion habe ich aus dem .emacs von Jack Repenning <jackr@informix.com>
 (defun toggle-line-wrap ()

@@ -7,7 +7,7 @@
 ;; Author: Ryan T. Sammartino <ryan.sammartino at gmail dot com>
 ;;      Kris Verbeeck <kris.verbeeck at advalvas dot be>
 ;; Created: 24/03/2001
-;; Version: 1.8.0
+;; Version: 1.8.1 (Pesche)
 ;; Keywords: doxygen documentation
 ;;
 ;; This file is NOT part of GNU Emacs or XEmacs.
@@ -564,7 +564,7 @@ Key bindings:
    ;; keywords that take a type name as an argument
    (list
     (concat "\\([@\\\\]\\(class\\|struct\\|union\\|exception\\|enum"
-	    "\\|throw\\|interface\\|protocol\\)\\)\\s-+\\(\\(\\sw\\|:\\)+\\)")
+	    "\\|throws?\\|interface\\|protocol\\)\\)\\s-+\\(\\(\\sw\\|:\\)+\\)")
     '(1 font-lock-keyword-face prepend)
     '(3 font-lock-type-face prepend))
    ;; keywords that take a function name as an argument

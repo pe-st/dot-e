@@ -75,7 +75,7 @@
       (progn                            ; Das SIX HP EliteBook 6930p (Vista)
         (defvar ghost-dir     "C:\Progra~1\\gs\\gs8.70")
         (defvar ghost-printer "-sDEVICE=ljet4 -r600")
-        (defvar ghost-view    "C:\\P\\gs\\gsview\\gsview32.exe")))
+        (defvar ghost-view    "C:\\Progra~1\\Adobe\\Reader~1.0\\Reader\\AcroRd32.exe")))
      (t
       (progn                            ; Default-Verzeichnisse
         (defvar ghost-dir     "C:\\gs\\gs8.14")
@@ -89,7 +89,7 @@
 
     (setq ps-psnup-command "psnup") ; Name of n-up program (taking ps as input)
     (setq ps-psnup-switches '(" -l -2 -pa4 ")) ; options for program above
-    (setq ps-pdf-command (concat "start /min " ghost-dir "\\bin\\gswin32c"))
+    (setq ps-pdf-command (concat "start /wait /min " ghost-dir "\\bin\\gswin32c"))
     (setq ps-pdf-switches-1 `(,(concat "-q -dSAVER -dNOPAUSE -dBATCH "
                                        "-sDEVICE=pdfwrite -sPAPERSIZE=a4 "
                                        "-dPDFSETTINGS=/printer \"-sOutputFile="
@@ -120,7 +120,8 @@
       )))
 
 
-(setq ps-print-color-p nil)
+; kann mit toggle-print-color-mode ein- und ausgeschaltet werden
+(setq ps-print-color-p t)
 (setq ps-bold-faces '(font-lock-keyword-face info-xref info-node woman-bold-face))
 (setq ps-italic-faces '(font-lock-comment-face info-node woman-italic-face))
 
@@ -135,11 +136,9 @@
 (setq ps-zebra-color 0.92)
 
 ;; Hilfsfunktionen -------------------------------------------------------------
-(require 'time-stamp)
 (defun pesche-time-stamp ()
   "Format time and date for inclusion in print header."
-  ;; die time-stamp-Funktionen sind aus time-stamp.el
-  (concat (time-stamp-dd-mon-yy) " " (time-stamp-hh:mm:ss))
+  (format-time-string "%d-%b-%Y %H:%M:%S")
   )
 
 ;; font size -------------------------------------------------------------------
@@ -333,6 +332,14 @@
                         "Paper Orientation Landscape"
                         "Landscape mode %s"
                         "Print Orientation Landscape")
+  'kill-buffer)
+
+; toggle für die Farbe beim Drucken
+(define-key-after menu-bar-file-menu [toggle-print-color-mode]
+  (menu-bar-make-toggle toggle-print-color-mode ps-print-color-p
+                        "Print in colour"
+                        "Colour mode %s"
+                        "Print in colour")
   'kill-buffer)
 
 ; toggle für die Zebrastreifen beim Drucken

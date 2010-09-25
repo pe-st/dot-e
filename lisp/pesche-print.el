@@ -66,6 +66,16 @@
         (defvar ghost-dir     "C:\\P\\gs\\gs8.60")
         (defvar ghost-printer "-sDEVICE=ljet4 -r600")
         (defvar ghost-view    "C:\\P\\gs\\gsview\\gsview32.exe")))
+     ((eq (string-match "NBP98094"    (system-name)) 0)
+      (progn                            ; Das Notebook Compaq 6710b
+        (defvar ghost-dir     "C:\\P\\gs\\gs8.60")
+        (defvar ghost-printer "-sDEVICE=ljet4 -r600")
+        (defvar ghost-view    "C:\\P\\gs\\gsview\\gsview32.exe")))
+     ((eq (string-match "NBP61268"    (system-name)) 0)
+      (progn                            ; Das SIX HP EliteBook 6930p (Vista)
+        (defvar ghost-dir     "C:\Progra~1\\gs\\gs8.70")
+        (defvar ghost-printer "-sDEVICE=ljet4 -r600")
+        (defvar ghost-view    "C:\\P\\gs\\gsview\\gsview32.exe")))
      (t
       (progn                            ; Default-Verzeichnisse
         (defvar ghost-dir     "C:\\gs\\gs8.14")

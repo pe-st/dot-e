@@ -228,7 +228,8 @@
 ;; Doch noch eine weitere Fallunterscheidung: Beim Mac arbeiten wir
 ;; bereits mit fontsets
 (cond (window-system
-       (if (not (eq window-system 'mac))
+       (if (and (not (eq window-system 'mac))
+                (not (eq window-system 'ns)))
            (progn
              ; Windows oder Linux
              (set-default-font           pesche-default-regular)
@@ -511,6 +512,7 @@ saving keyboard macros (see insert-kbd-macro)."
 
 ; Für alle Window-System ausser Mac
 (if (and (not (eq window-system nil))
+         (not (eq window-system 'ns))
          (not (eq window-system 'mac)))
     (progn
       (set-face-font 'font-lock-comment-face       pesche-default-italic)

@@ -25,7 +25,7 @@
 ;; Definition tab und space face ---------------------------------------
 ;; für Tabs zwei Faces, eines für solche Modi, wo Tab nicht erwünscht ist
 ;; (strong) und eines für erwünschte Tabs (zB assembler/makefile)
-(if (memq (framep (selected-frame)) '(x pc win32 w32 mac))
+(if (memq (framep (selected-frame)) '(x pc win32 w32 ns mac))
     (progn
       (make-face 'pesche-tab-face)
       (make-face 'pesche-strong-tab-face)

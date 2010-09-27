@@ -1,9 +1,9 @@
 ;; Improvements to Electric Font Lock Mode
 ;;
-;;         $Id: //netzadmin/emacs/site-lisp/pesche-font-lock.el#14 $
-;;     $Change: 22651 $
-;;   $DateTime: 2005/10/28 13:58:11 $
-;;     $Author: peter.steiner $
+;;         $Id$
+;;     $Change$
+;;   $DateTime$
+;;     $Author$
 ;;    $Created: 1997/11/27 $
 ;;  $Copyright: Peter Steiner <pesche@schlau.ch>
 

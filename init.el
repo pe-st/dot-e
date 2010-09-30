@@ -477,14 +477,16 @@ saving keyboard macros (see insert-kbd-macro)."
 (require 'tandem-modes)
 (require 'pesche-modes)
 
-;; dynamische Abkürzungen ------------------------------------------------------
-;; immer case-sensitiv !
+;; Gross/Klein Zeugs ------------------------------------------------------------------
+
+;; dynamische Abkürzungen immer case-sensitiv !
 (setq dabbrev-case-fold-search nil)
 (setq dabbrev-case-replace nil)
-
-;; tags Zeugs ------------------------------------------------------------------
 ;; in der Regel wollen wir case-sensitive Tags
 (setq tags-case-fold-search nil)
+;; bei File- und Buffernamen 'Tabbing' ist case egal
+(setq read-buffer-completion-ignore-case 't)
+(setq read-file-name-completion-ignore-case 't)
 
 ;; font lock -------------------------------------------------------------------
 

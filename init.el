@@ -317,7 +317,8 @@ saving keyboard macros (see insert-kbd-macro)."
 ; Seit Emacs 20.4 können die drei zusätzlichen Windows-Tasten als Modifier
 ; verwendet werden. Ich verwende nur die linke Fenster-Taste (als Hyper)
 (if (and (>= emacs-major-version 20)
-         (>= emacs-minor-version 4)
+         (or (>= emacs-major-version 21)
+             (>= emacs-minor-version 4))
          (eq window-system 'w32))
     (progn
       (setq w32-lwindow-modifier 'hyper)
@@ -325,6 +326,14 @@ saving keyboard macros (see insert-kbd-macro)."
 ;       (setq w32-apps-modifier 'super)
       (setq w32-pass-lwindow-to-system nil)
 ;       (setq w32-pass-rwindow-to-system nil)
+      ))
+
+; Verwendung der Mac-Tasten Cmd und Option/Alt ab Cocoa Emacs (Emacs 23;
+; vorher war window-system 'mac statt 'ns), siehe auch ns-win.el
+(if (eq window-system 'ns)
+    (progn
+      (setq ns-command-modifier 'meta)
+      (setq ns-alternate-modifier 'none) ; Standard Mac Verwendung für Sonderzeichen
       ))
 
 (global-set-key (kbd "C-g") 'goto-line)

@@ -550,6 +550,7 @@ saving keyboard macros (see insert-kbd-macro)."
 
 
 ;;; Klammer-Gegenstücke anfärben
+; rainbow-delimiters-mode siehe pesche-modes.el
 ;(require 'stig-paren)
 ;(setq blink-matching-paren nil)
 ;(setq paren-dingaling-mode t)

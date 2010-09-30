@@ -29,6 +29,12 @@
   )
 (add-hook 'emacs-lisp-mode-hook 'pesche-emacs-lisp-mode-hook)
 
+;; Minor modes für lisp- und andere Modes
+(require 'rainbow-delimiters)
+;;(autoload 'paredit-mode "paredit"
+;;  "Minor mode for pseudo-structurally editing Lisp code." t)
+(add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
+
 ;; C mode und alle Verwandten --------------------------------------------------
 ;; Files auf .rh sollen auch Header Files sein (resource header)
 ;; Files auf .dox sollen auch C Files sein (doxygen files)

@@ -84,6 +84,13 @@
     (tool-bar-mode 0)
   )
 
+; ab Emacs 23 wird (zB bei compile-mode) das Fenster 'falsch' gesplittet
+(if (>= emacs-major-version 23)
+    (setq split-height-threshold 40)
+    (setq split-width-threshold 300)
+    ;(setq split-window-preferred-function 'split-window-vertically)
+  )
+
 ;; fonts -----------------------------------------------------------------------
 ;; Paare von Werten (gilt unter Windows; der erste Werte ist die Höhe in
 ;; Pixel, der zweite die Grösse in Zehntel-Punkt). Die Paare findet man
@@ -321,11 +328,11 @@ saving keyboard macros (see insert-kbd-macro)."
              (>= emacs-minor-version 4))
          (eq window-system 'w32))
     (progn
-      (setq w32-lwindow-modifier 'hyper)
-;       (setq w32-rwindow-modifier 'meta)
-;       (setq w32-apps-modifier 'super)
-      (setq w32-pass-lwindow-to-system nil)
-;       (setq w32-pass-rwindow-to-system nil)
+;      (setq w32-lwindow-modifier 'hyper)
+;;       (setq w32-rwindow-modifier 'meta)
+;;       (setq w32-apps-modifier 'super)
+;      (setq w32-pass-lwindow-to-system nil)
+;;       (setq w32-pass-rwindow-to-system nil)
       ))
 
 ; Verwendung der Mac-Tasten Cmd und Option/Alt ab Cocoa Emacs (Emacs 23;
@@ -575,6 +582,18 @@ saving keyboard macros (see insert-kbd-macro)."
 ;      )
 ;  (server-start))
 
+(if (eq window-system 'w32)
+    (progn
+      ;; Prevent issues with the Windows null device (NUL)
+      ;; when using cygwin grep.
+      (setq grep-use-null-device nil)
+;      (defadvice grep-compute-defaults (around grep-compute-defaults-advice-null-device)
+;        "Use cygwin's /dev/null as the null-device."
+;        (let ((null-device "/dev/null"))
+;          ad-do-it))
+;      (ad-activate 'grep-compute-defaults)
+      ))
+
 ;; printing --------------------------------------------------------------------
 (require 'pesche-print)
 
@@ -600,7 +619,11 @@ saving keyboard macros (see insert-kbd-macro)."
                                                c++-tab-always-indent)
                                              desktop-locals-to-save))
 ;; save also compile-history
-(setq-default desktop-globals-to-save (append '(compile-history)
+(setq-default desktop-globals-to-save (append '(compile-history
+                                                grep-history
+                                                grep-find-history
+                                                grep-regexp-history
+                                                grep-files-history)
                                               desktop-globals-to-save))
 ;; desktop-load-default scheint (zumindest in neueren Emacsen wie 22.3)
 ;; nicht mehr nötig zu sein.
@@ -622,10 +645,10 @@ saving keyboard macros (see insert-kbd-macro)."
 
 ;; verschiedene Histories verkürzen, damit mit 'desktop' nicht zu viel
 ;; gespeichert wird
-(add-hook 'kill-emacs-hook
-          '(lambda ()
-             (desktop-truncate search-ring 3)
-             (desktop-truncate regexp-search-ring 3)))
+;(add-hook 'kill-emacs-hook
+;          '(lambda ()
+;             (desktop-truncate search-ring 3)
+;             (desktop-truncate regexp-search-ring 3)))
 
 
 ;; Verkünden wir, dass die Arbeit getan (und den Splash-Screen wollen wir nicht)

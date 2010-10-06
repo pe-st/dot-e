@@ -1,12 +1,15 @@
 ;;; pplog-mode.el --- major mode for personal process logging
 ;;                                   ^        ^       ^^^
+;;       $Id$
+;;   $Change$
+;; $DateTime$
 
 ;;File:     evalpplog - evaluate pplog-file(s)
 ;;Author:   Markus Middendorf <markusm@writeme.com>
 ;;          Lutz Prechelt <prechelt@computer.org>
 ;;created:  May through August 1998
 ;;changed:  1998-09-02   Markus Middendorf
-;;RCS:      $Id: pplog-mode.el,v 1.3 1998/09/04 07:09:56 prechelt Exp $
+;;RCS:      Id: pplog-mode.el,v 1.3 1998/09/04 07:09:56 prechelt Exp
 
 ;; This programm is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -36,8 +39,8 @@
 
 ;;; Commentary:
 
-(defconst pplog-mode-version "0.9.2 ps") ;; revision
-(defconst pplog-mode-last-change "2005-11-22") ;; date
+(defconst pplog-mode-version "0.9.3 ps") ;; revision
+(defconst pplog-mode-last-change "2010-10-06") ;; date
 
 ;;; Code:
 
@@ -489,7 +492,8 @@ Delete whitespaces, tabs and newlines at the end of the buffer before. You can u
   (insert " ")
   (setq pplog-line-number (current-line))
   (setq pplog-buffer (current-buffer))
-  (add-hook 'post-command-hook 'pplog-watch-for-line-change)
+  ; this makes problems with Emacs 23
+  ;(add-hook 'post-command-hook 'pplog-watch-for-line-change)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

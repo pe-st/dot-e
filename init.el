@@ -177,6 +177,8 @@
   (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
  ((eq (string-match "NBP61268" (system-name)) 0)  ; SIX HP EliteBook 6930p (Vista)
   (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
+ ((eq (string-match "NBP61970" (system-name)) 0)  ; SIX HP EliteBook 6930p (Vista, SIM-Karte)
+  (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
  (t
   (progn (setq pesche-family "courier")  (setq pesche-font-size font12pix)))
  )

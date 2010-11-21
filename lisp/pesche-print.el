@@ -76,6 +76,11 @@
         (defvar ghost-dir     "C:\Progra~1\\gs\\gs8.70")
         (defvar ghost-printer "-sDEVICE=ljet4 -r600")
         (defvar ghost-view    "C:\\Progra~1\\Adobe\\Reader~1.0\\Reader\\AcroRd32.exe")))
+     ((eq (string-match "NBP61970"    (system-name)) 0)
+      (progn                            ; Das SIX HP EliteBook 6930p (Vista)
+        (defvar ghost-dir     "C:\Progra~1\\gs\\gs8.70")
+        (defvar ghost-printer "-sDEVICE=ljet4 -r600")
+        (defvar ghost-view    "C:\\Progra~1\\Adobe\\Reader~1.0\\Reader\\AcroRd32.exe")))
      (t
       (progn                            ; Default-Verzeichnisse
         (defvar ghost-dir     "C:\\gs\\gs8.14")

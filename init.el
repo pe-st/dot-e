@@ -262,14 +262,14 @@
 ;            "-apple-monaco-medium-r-normal--9-*-*-*-*-*-fontset-monaco,
 ;ascii:-apple-monaco-medium-r-normal--9-*-*-*-*-*-iso10646-1,
 ;latin-iso8859-1:-apple-monaco-medium-r-normal--9-*-*-*-*-*-iso10646-1")
-           (create-fontset-from-fontset-spec
-            "-apple-monaco-medium-r-normal--10-*-*-*-*-*-fontset-monaco,
-ascii:-apple-monaco-medium-r-normal--10-*-*-*-*-*-mac-roman,
-latin-iso8859-1:-apple-monaco-medium-r-normal--10-*-*-*-*-*-mac-roman")
 ;           (create-fontset-from-fontset-spec
-;            "-apple-monaco-medium-r-normal--11-*-*-*-*-*-fontset-monaco,
-;ascii:-apple-monaco-medium-r-normal--11-*-*-*-*-*-iso10646-1,
-;latin-iso8859-1:-apple-monaco-medium-r-normal--11-*-*-*-*-*-iso10646-1")
+;            "-apple-monaco-medium-r-normal--10-*-*-*-*-*-fontset-monaco,
+;ascii:-apple-monaco-medium-r-normal--10-*-*-*-*-*-mac-roman,
+;latin-iso8859-1:-apple-monaco-medium-r-normal--10-*-*-*-*-*-mac-roman")
+           (create-fontset-from-fontset-spec
+            "-apple-monaco-medium-r-normal--12-*-*-*-*-*-fontset-monaco,
+ascii:-apple-monaco-medium-r-normal--12-*-*-*-*-*-iso10646-1,
+latin-iso8859-1:-apple-monaco-medium-r-normal--12-*-*-*-*-*-iso10646-1")
 ;;           (create-fontset-from-fontset-spec
 ;;            "-apple-monaco-medium-r-normal--9-*-*-*-*-*-fontset-monaco,
 ;;ascii:-apple-monaco-medium-r-normal--9-90-75-75-m-90-mac-roman,
@@ -359,6 +359,7 @@ saving keyboard macros (see insert-kbd-macro)."
 (global-set-key (kbd "C-<kp-begin>") 'recenter)         ;; Shift-Ctrl-Keypad-5 (Linux)
 ;(global-set-key (kbd "C-<return>") 'duplicate-line)     ;; self-written (conflicts with cua-mode)
 (global-set-key (kbd "C-<kp-enter>") 'duplicate-line)   ;; self-written
+(global-set-key (kbd "M-C-<up>") 'duplicate-line)     ;; self-written, key as in Eclipse
 (global-set-key (kbd "M-C-<down>") 'duplicate-line)     ;; self-written, key as in Eclipse
 (global-set-key (kbd "M-<up>") 'move-text-up)           ;; pesche-tools, key as in Eclipse
 (global-set-key (kbd "M-<down>") 'move-text-down)       ;; pesche-tools, key as in Eclipse

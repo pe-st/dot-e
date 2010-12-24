@@ -145,19 +145,23 @@ This function is the opposite of `bury-buffer'."
         (tags-search string))))
 
 ;; from EmacsWiki, page "Scrolling"
-(defun sfp-page-down ()
-  (interactive)
+(defun sfp-page-down (&optional arg)
+  (interactive "^P")
   (setq this-command 'next-line)
   (next-line
    (- (window-text-height)
       next-screen-context-lines)))
+(put 'sfp-page-down 'isearch-scroll t)
+(put 'sfp-page-down 'CUA 'move)
 
-(defun sfp-page-up ()
-  (interactive)
+(defun sfp-page-up (&optional arg)
+  (interactive "^P")
   (setq this-command 'previous-line)
   (previous-line
    (- (window-text-height)
       next-screen-context-lines)))
+(put 'sfp-page-up 'isearch-scroll t)
+(put 'sfp-page-up 'CUA 'move)
 
 ;; Modul abschliessen ----------------------------------------------------------
 (provide 'pesche-tools)

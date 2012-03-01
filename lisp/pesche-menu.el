@@ -80,6 +80,13 @@ files will be brought to foreground"
 (define-key menu-bar-pesche-menu [tab-menu]
   '("Tabulators" . pesche-tab-menu))
 
+(define-key menu-bar-pesche-menu [pesche-separator-5]
+  '("--"))
+
+; Coding-Systems-Untermenü einhängen
+(define-key menu-bar-pesche-menu [coding-menu]
+  '("Coding systems" . pesche-coding-menu))
+
 (define-key menu-bar-pesche-menu [pesche-separator-4]
   '("--"))
 
@@ -140,6 +147,23 @@ files will be brought to foreground"
   '("Annotations /*-*/" .
     (lambda()(interactive)
       (nonincremental-re-search-forward "/\\*-?-?-?\\*/"))))
+
+
+;; Coding Systems Untermenü ----------------------------------------------------
+(defvar pesche-coding-menu (make-sparse-keymap "Coding-menu"))
+(define-key global-map [menu-bar pesche-menu coding-menu]
+  (cons "Coding Systems" pesche-coding-menu))
+
+(define-key pesche-coding-menu [pesche-set-buffer-to-utf8]
+  '("Set buffer to utf-8 (set-buffer-file-coding-system)" .
+    (lambda()(interactive) (set-buffer-file-coding-system 'utf-8))))
+
+(define-key pesche-coding-menu [pesche-revert-buffer-with-utf8]
+  '("Reread using utf-8 (revert-buffer-with-coding-system)"  .
+    (lambda()(interactive) (revert-buffer-with-coding-system 'utf-8))))
+
+(define-key pesche-coding-menu [pesche-list-coding-systems]
+  '("List coding systems" . list-coding-systems))
 
 
 ;; Tabulator Untermenü ---------------------------------------------------------

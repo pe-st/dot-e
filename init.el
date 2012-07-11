@@ -28,7 +28,14 @@
 (require 'pesche-tools)
 (require 'pesche-compile)
 
+;; make plenty of backups, but not alongside the originals
 (setq make-backup-files t)
+(setq backup-directory-alist `(("." . "~/.emacs.d/backups")))
+(setq delete-old-versions t
+      kept-new-versions 6
+      kept-old-versions 2
+      version-control t)
+
 (put 'eval-expression 'disabled nil)    ;; enable `eval-expression'
 
 ;; filling and sentences -------------------------------------------------------
@@ -80,16 +87,18 @@
 ; Emacs >= 22 unterstützt tool-bar...
 (if (and (>= emacs-major-version 22)
          (or (eq window-system 'mac)
+             (eq window-system 'ns)     ; nextstep for Mac Cocoa
              (eq window-system 'w32)))
     (tool-bar-mode 0)
   )
 
 ; ab Emacs 23 wird (zB bei compile-mode) das Fenster 'falsch' gesplittet
 (if (>= emacs-major-version 23)
-    (setq split-height-threshold 40)
-    (setq split-width-threshold 300)
-    ;(setq split-window-preferred-function 'split-window-vertically)
-  )
+    (progn
+      (setq split-height-threshold 40)
+      (setq split-width-threshold 300)
+      ;(setq split-window-preferred-function 'split-window-vertically)
+      ))
 
 ;; fonts -----------------------------------------------------------------------
 ;; Paare von Werten (gilt unter Windows; der erste Werte ist die Höhe in

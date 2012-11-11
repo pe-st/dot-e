@@ -97,6 +97,10 @@ files will be brought to foreground"
 (define-key menu-bar-pesche-menu [pesche-separator-3]
   '("--"))
 
+(define-key menu-bar-pesche-menu [pesche-revert-buffer-with-eol-dos]
+  '("Reread using CRLF (revert-buffer-with-coding-system)"  .
+    (lambda()(interactive) (revert-buffer-with-coding-system 'utf-8-dos))))
+
 (define-key menu-bar-pesche-menu [pesche-eol-unix]
   '("EOL LF" . (lambda()(interactive) (set-buffer-file-coding-system 'undecided-unix))))
 

@@ -153,11 +153,14 @@ Javadoc comments."
   ;; alle 'Kästchen' in das 'Outline'-Menü aufnehmen
   (setq imenu-generic-expression
         (append imenu-generic-expression
-                '(("Outline"
+                '(("Outline"    ;; alle 'Kästchen' in das 'Outline'-Menü aufnehmen
                    "^/\\*[-]+\\+[ \t]*\n|[ \t]+\\([^ \t][- _A-Za-zÄÖÜäöü0-9+()]*\\).*|"
                    1)
-                  ("Types"
+                  ("Types"      ;; typedefs
                    "^[ \t]*typedef[ \t]+\\(struct[ \t]+[_A-Za-z0-9]+\\)"
+                   1)
+                  ("Unit Tests" ;; googletest unit tests: TEST_F( TestCase, unit test )
+                   "^[ \t]*TEST\\(?:_F\\)?[ \t]*([ \t_A-Za-z0-9]+,[ \t]*\\(.+\\)[ \t])"
                    1)
                   )))
   (imenu-add-to-menubar "Index")
@@ -317,13 +320,13 @@ Javadoc comments."
 (autoload 'ruby-mode "ruby-mode" "Load ruby-mode")
 
 ;; scala-mode ------------------------------------------------------------------
-(require 'scala-mode-auto)
-(defun pesche-scala-mode-hook()
-  (setq indent-tabs-mode nil)
-  ; don't use the annoying C-Tab of the Scala mode...
-  (local-unset-key (kbd "C-<tab>"))
-  )
-(add-hook 'scala-mode-hook 'pesche-scala-mode-hook)
+;(require 'scala-mode-auto)
+;(defun pesche-scala-mode-hook()
+;  (setq indent-tabs-mode nil)
+;  ; don't use the annoying C-Tab of the Scala mode...
+;  (local-unset-key (kbd "C-<tab>"))
+;  )
+;(add-hook 'scala-mode-hook 'pesche-scala-mode-hook)
 
 ;; lingo-mode ------------------------------------------------------------------
 ;(autoload 'lingo-mode "lingo-mode" "Major mode for editing Lingo files." t)

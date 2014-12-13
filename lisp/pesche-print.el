@@ -40,52 +40,76 @@
       (progn                          ; Zuhause
           (defvar ghost-dir     "F:\\Progra~1\\gs\\gs7.00")
           (defvar ghost-printer "-sDEVICE=djet500 -r300")
+          (defvar ghost-gswin   "gswin32")
           (defvar ghost-view    "F:\\Progra~1\\gs\\gsview\\gsview32.exe")))
      ((eq (string-match "INUVIK" (system-name)) 0)
       (progn                            ; im Büro
         (defvar ghost-dir     "L:\\tools\\ghost\\gs7.00")
         (defvar ghost-printer "-sDEVICE=ljet4 -r600")
+        (defvar ghost-gswin   "gswin32")
         (defvar ghost-view    "L:\\tools\\ghost\\gsview\\gsview32.exe")))
      ((eq (string-match "PIAZZABOOK"  (system-name)) 0)
       (progn                            ; das Notebook
         (defvar ghost-dir     "C:\\L\\gs\\gs8.14")
         (defvar ghost-printer "-sDEVICE=ljet4 -r600")
+        (defvar ghost-gswin   "gswin32")
         (defvar ghost-view    "C:\\L\\gs\\gsview\\gsview32.exe")))
      ((eq (string-match "GIMMELWALD"  (system-name)) 0)
       (progn                            ; der P4-Renner im Büro
         (defvar ghost-dir     "C:\\L\\gs\\gs8.50")
         (defvar ghost-printer "-sDEVICE=ljet4 -r600")
+        (defvar ghost-gswin   "gswin32")
         (defvar ghost-view    "C:\\L\\gs\\gsview\\gsview32.exe")))
      ((eq (string-match "PC-92560"    (system-name)) 0)
       (progn                            ; Der Toaster
         (defvar ghost-dir     "C:\\prog\\gs\\gs8.60")
         (defvar ghost-printer "-sDEVICE=ljet4 -r600")
+        (defvar ghost-gswin   "gswin32")
         (defvar ghost-view    "C:\\prog\\gs\\gsview\\gsview32.exe")))
      ((eq (string-match "NB-97883"    (system-name)) 0)
       (progn                            ; Das Notebook Compaq 6710b
         (defvar ghost-dir     "C:\\P\\gs\\gs8.60")
         (defvar ghost-printer "-sDEVICE=ljet4 -r600")
+        (defvar ghost-gswin   "gswin32")
         (defvar ghost-view    "C:\\P\\gs\\gsview\\gsview32.exe")))
      ((eq (string-match "NBP98094"    (system-name)) 0)
       (progn                            ; Das Notebook Compaq 6710b
         (defvar ghost-dir     "C:\\P\\gs\\gs8.60")
         (defvar ghost-printer "-sDEVICE=ljet4 -r600")
+        (defvar ghost-gswin   "gswin32")
         (defvar ghost-view    "C:\\P\\gs\\gsview\\gsview32.exe")))
      ((eq (string-match "NBP61268"    (system-name)) 0)
       (progn                            ; Das SIX HP EliteBook 6930p (Vista)
-        (defvar ghost-dir     "C:\Progra~1\\gs\\gs8.70")
+        (defvar ghost-dir     "C:\\Progra~1\\gs\\gs8.70")
         (defvar ghost-printer "-sDEVICE=ljet4 -r600")
+        (defvar ghost-gswin   "gswin32")
         (defvar ghost-view    "C:\\Progra~1\\Adobe\\Reader~1.0\\Reader\\AcroRd32.exe")))
      ((eq (string-match "NBP61970"    (system-name)) 0)
       (progn                            ; Das SIX HP EliteBook 6930p (Vista)
-        (defvar ghost-dir     "C:\Progra~1\\gs\\gs8.70")
+        (defvar ghost-dir     "C:\\Progra~1\\gs\\gs8.70")
         (defvar ghost-printer "-sDEVICE=ljet4 -r600")
+        (defvar ghost-gswin   "gswin32")
         (defvar ghost-view    "C:\\Progra~1\\Adobe\\Reader~1.0\\Reader\\AcroRd32.exe")))
+     ((eq (string-match "NBP30333"    (system-name)) 0)
+      (progn                            ; Das SIX HP EliteBook 8560w (Vista)
+        ; ghostscript installed by FreePDF
+        (defvar ghost-dir     "C:\\Progra~1\\gs\\gs8.70")
+        (defvar ghost-printer "-sDEVICE=ljet4 -r600")
+        (defvar ghost-gswin   "gswin32")
+        (defvar ghost-view    "C:\\Progra~1\\Adobe\\Reader~1.0\\Reader\\AcroRd32.exe")))
+     ((eq (string-match "N32393"      (system-name)) 0)
+      (progn                            ; Das SIX HP EliteBook 8560w (Win7-64)
+        ; ghostscript installed by FreePDF
+        (defvar ghost-dir     "C:\\Progra~1\\gs")
+        (defvar ghost-printer "-sDEVICE=ljet4 -r600")
+        (defvar ghost-gswin   "gswin64")
+        (defvar ghost-view    "C:\\Progra~2\\Adobe\\Reader~1.0\\Reader\\AcroRd32.exe")))
      (t
       (progn                            ; Default-Verzeichnisse
-        (defvar ghost-dir     "C:\\gs\\gs8.14")
+        (defvar ghost-dir     "C:\\Progra~1\\gs")
         (defvar ghost-printer "-sDEVICE=ljet4 -r600")
-        (defvar ghost-view    "C:\\Progra~1\\ghostgum\\gsview\\gsview32.exe")))
+        (defvar ghost-gswin   "gswin64")
+        (defvar ghost-view    "C:\\Progra~2\\Adobe\\Reader~1.0\\Reader\\AcroRd32.exe")))
      )
 
     (setq ps-lpr-buffer (concat (getenv "TEMP") "\\psspool.ps"))
@@ -94,13 +118,13 @@
 
     (setq ps-psnup-command "psnup") ; Name of n-up program (taking ps as input)
     (setq ps-psnup-switches '(" -l -2 -pa4 ")) ; options for program above
-    (setq ps-pdf-command (concat "start /wait /min " ghost-dir "\\bin\\gswin32c"))
+    (setq ps-pdf-command (concat "start /wait /min " ghost-dir "\\bin\\" ghost-gswin "c")) ; gswinXXc
     (setq ps-pdf-switches-1 `(,(concat "-q -dSAVER -dNOPAUSE -dBATCH "
                                        "-sDEVICE=pdfwrite -sPAPERSIZE=a4 "
                                        "-dPDFSETTINGS=/printer \"-sOutputFile="
                                        ps-pdf-buffer "\" -c .setpdfwrite -f ")))
     (setq ps-pdf-switches-2 "")
-    (setq ps-lpr-command (concat "start /min " ghost-dir "\\bin\\gswin32"))
+    (setq ps-lpr-command (concat "start /min " ghost-dir "\\bin\\" ghost-gswin))
     (setq ps-lpr-switches `(,(concat "-q -sPAPERSIZE=a4 "
                                      ghost-printer " -dNOPAUSE")))
     (setq ps-preview-command ghost-view)

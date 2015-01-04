@@ -1,4 +1,4 @@
-;; Pesche' Modes
+;; Pesche's Modes
 ;;
 ;;         $Id$
 ;;     $Change$
@@ -9,6 +9,19 @@
 
 ;; Default-Liste für find-file löschen, damit wir unsere eigene pflegen können
 (setq-default ff-other-file-alist nil)
+
+;; configure CEDET (used e.g. by malabar-mode for java) ------------------------
+(if (file-accessible-directory-p "~/.emacs.d/lisp/cedet-1.1")
+    (load-file "~/.emacs.d/lisp/cedet-1.1/common/cedet.el"))
+
+;; MELPA (Milkypostman's Emacs Lisp Package Archive) ---------------------------
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.org/packages/") t)
+(when (< emacs-major-version 24)
+  ;; For important compatibility libraries like cl-lib
+  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
+(package-initialize)
 
 ;; lisp modes ------------------------------------------------------------------
 (defun pesche-emacs-lisp-mode-hook()
@@ -327,6 +340,9 @@ Javadoc comments."
 ;  (local-unset-key (kbd "C-<tab>"))
 ;  )
 ;(add-hook 'scala-mode-hook 'pesche-scala-mode-hook)
+
+;; java stuff ------------------------------------------------------------------
+;(load-file "cedet-1.1/common/cedet.el")
 
 ;; lingo-mode ------------------------------------------------------------------
 ;(autoload 'lingo-mode "lingo-mode" "Major mode for editing Lingo files." t)

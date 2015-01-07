@@ -15,13 +15,13 @@
     (load-file "~/.emacs.d/lisp/cedet-1.1/common/cedet.el"))
 
 ;; MELPA (Milkypostman's Emacs Lisp Package Archive) ---------------------------
-(require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.org/packages/") t)
-(when (< emacs-major-version 24)
-  ;; For important compatibility libraries like cl-lib
-  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
-(package-initialize)
+(when (require 'package nil t)
+  (add-to-list 'package-archives
+               '("melpa" . "http://melpa.org/packages/") t)
+  (when (< emacs-major-version 24)
+    ;; For important compatibility libraries like cl-lib
+    (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
+  (package-initialize))
 
 ;; lisp modes ------------------------------------------------------------------
 (defun pesche-emacs-lisp-mode-hook()

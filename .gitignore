@@ -4,7 +4,11 @@
 /.emacs.desktop
 /.emacs.desktop.lock
 *.elc
-auto-save-list
-backups
-tramp
 .\#*
+
+abbrev_defs
+auto-save-list
+tramp
+
+# this is specific to my init.el
+backups

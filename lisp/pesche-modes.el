@@ -11,8 +11,8 @@
 (setq-default ff-other-file-alist nil)
 
 ;; configure CEDET (used e.g. by malabar-mode for java) ------------------------
-(if (file-accessible-directory-p "~/.emacs.d/lisp/cedet-1.1")
-    (load-file "~/.emacs.d/lisp/cedet-1.1/common/cedet.el"))
+;(if (file-accessible-directory-p "~/.emacs.d/lisp/cedet-1.1")
+;    (load-file "~/.emacs.d/lisp/cedet-1.1/common/cedet.el"))
 
 ;; MELPA (Milkypostman's Emacs Lisp Package Archive) ---------------------------
 (when (require 'package nil t)
@@ -37,7 +37,7 @@
   ;; in das 'Outline'-Menü eintragen
   (setq imenu-generic-expression
         (append imenu-generic-expression
-                '(("Outline" ";+[ \\t]+\\([ A-Za-z0-9äöüÄÖÜ/+]+\\)---*[ \\t]*$" 1))))
+                '(("Outline" ";+[ \\t]+\\([- A-Za-z0-9äöüÄÖÜ/+]+?\\)---*[ \\t]*$" 1))))
   (imenu-add-to-menubar "Index")
   )
 (add-hook 'emacs-lisp-mode-hook 'pesche-emacs-lisp-mode-hook)
@@ -391,6 +391,12 @@ Javadoc comments."
 )
 (add-hook 'text-mode-hook 'pesche-text-mode-hook)
 
+
+;; markdown-mode ---------------------------------------------------------------
+(autoload 'markdown-mode "markdown-mode"
+   "Major mode for editing Markdown files" t)
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
 ;; outline-mode ----------------------------------------------------------------
 (defun pesche-outline-mode-hook()

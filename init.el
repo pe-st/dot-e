@@ -188,7 +188,7 @@
   (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
  ((eq (string-match "NBP61970" (system-name)) 0)  ; SIX HP EliteBook 6930p (Vista, SIM-Karte)
   (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
- ((eq (string-match "NBP30333" (system-name)) 0)  ; SIX HP EliteBook 8560w (Vista, SIM-Karte)
+ ((eq (string-match "NBP30333" (system-name)) 0)  ; SIX HP EliteBook 8560w (Vista, SIM-Karte) 2012-Feb/Jul
   (progn (setq pesche-family "consolas") (setq pesche-font-size font13pix)))
  ((eq (string-match "N63239" (system-name)) 0)    ; SIX HP EliteBook 8560w (Win7, SIM-Karte)
   (progn (setq pesche-family "consolas") (setq pesche-font-size font13pix)))

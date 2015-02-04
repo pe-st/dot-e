@@ -178,21 +178,21 @@
   (progn (setq pesche-family "courier")  (setq pesche-font-size font11pix)))
  ((eq (string-match "BOSKOOP" (system-name)) 0)
   (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
- ((eq (string-match "PC-92560" (system-name)) 0)  ; Telekurs "Toaster"
+ ((eq (string-match "PC-92560" (system-name)) 0)  ; "Toaster"
   (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
- ((eq (string-match "NB-97883" (system-name)) 0)  ; Telekurs HP Compaq 6710b (XP)
+ ((eq (string-match "NB-97883" (system-name)) 0)  ; HP Compaq 6710b (XP)
   (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
- ((eq (string-match "NBP98094" (system-name)) 0)  ; SIX HP Compaq 6710b (Vista)
+ ((eq (string-match "NBP98094" (system-name)) 0)  ; HP Compaq 6710b (Vista)
   (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
- ((eq (string-match "NBP61268" (system-name)) 0)  ; SIX HP EliteBook 6930p (Vista)
+ ((eq (string-match "NBP61268" (system-name)) 0)  ; HP EliteBook 6930p (Vista)
   (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
- ((eq (string-match "NBP61970" (system-name)) 0)  ; SIX HP EliteBook 6930p (Vista, SIM-Karte)
+ ((eq (string-match "NBP61970" (system-name)) 0)  ; HP EliteBook 6930p (Vista, SIM-Karte)
   (progn (setq pesche-family "consolas") (setq pesche-font-size font12pix)))
- ((eq (string-match "NBP30333" (system-name)) 0)  ; SIX HP EliteBook 8560w (Vista, SIM-Karte) 2012-Feb/Jul
+ ((eq (string-match "NBP30333" (system-name)) 0)  ; HP EliteBook 8560w (Vista, SIM-Karte) 2012-Feb/Jul
   (progn (setq pesche-family "consolas") (setq pesche-font-size font13pix)))
- ((eq (string-match "N63239" (system-name)) 0)    ; SIX HP EliteBook 8560w (Win7, SIM-Karte)
+ ((eq (string-match "N63239" (system-name)) 0)    ; HP EliteBook 8560w (Win7, SIM-Karte) 2013-Jul
   (progn (setq pesche-family "consolas") (setq pesche-font-size font13pix)))
- ((eq (string-match "N32393" (system-name)) 0)    ; SIX HP EliteBook 8560w (Win7, SIM-Karte)
+ ((eq (string-match "N32393" (system-name)) 0)    ; HP EliteBook 8570w (Win7, SIM-Karte) 2013-Aug
   (progn (setq pesche-family "consolas") (setq pesche-font-size font13pix)))
  (t
   (progn (setq pesche-family "courier")  (setq pesche-font-size font12pix)))

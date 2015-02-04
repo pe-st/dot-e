@@ -397,6 +397,26 @@ Javadoc comments."
    "Major mode for editing Markdown files" t)
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+(defun pesche-markdown-mode-hook()
+  ;; don't let markdown-mode overwrite these bindings
+  (local-unset-key (kbd "M-<up>"))
+  (local-unset-key (kbd "M-<down>"))
+
+  (setq imenu-generic-expression
+        (append imenu-generic-expression
+                '(("title"  "^\\(.*\\)[\n]=+$" 1)
+                  ("h2-"    "^\\(.*\\)[\n]-+$" 1)
+                  ("h1"   "^# \\(.*\\)$" 1)
+                  ("h2"   "^## \\(.*\\)$" 1)
+                  ("h3"   "^### \\(.*\\)$" 1)
+                  ("h4"   "^#### \\(.*\\)$" 1)
+                  ("h5"   "^##### \\(.*\\)$" 1)
+                  ("h6"   "^###### \\(.*\\)$" 1)
+                  ("fn"   "^\\[\\^\\(.*\\)\\]" 1)
+                  )))
+  (imenu-add-to-menubar "Index")
+  )
+(add-hook 'markdown-mode-hook 'pesche-markdown-mode-hook)
 
 ;; outline-mode ----------------------------------------------------------------
 (defun pesche-outline-mode-hook()

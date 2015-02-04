@@ -1,11 +1,8 @@
 ;; Pesche's Modes
 ;;
-;;         $Id$
-;;     $Change$
-;;   $DateTime$
-;;     $Author$
-;;    $Created: 1999/06/02 $
 ;;  $Copyright: Peter Steiner <pesche@schlau.ch> $
+;;    $Created: 1999-06-02 $
+;;        $URL: https://github.com/pe-st/dot-e $
 
 ;; Default-Liste für find-file löschen, damit wir unsere eigene pflegen können
 (setq-default ff-other-file-alist nil)
@@ -402,16 +399,15 @@ Javadoc comments."
   (local-unset-key (kbd "M-<up>"))
   (local-unset-key (kbd "M-<down>"))
 
+  ;; markdown-mode comes with a hierarchical menu I don't like;
+  ;; this one is maybe a bit ugly, but much clearer
+  (setq imenu-create-index-function 'imenu-default-create-index-function)
+  (setq imenu-sort-function nil)
   (setq imenu-generic-expression
         (append imenu-generic-expression
-                '(("title"  "^\\(.*\\)[\n]=+$" 1)
-                  ("h2-"    "^\\(.*\\)[\n]-+$" 1)
-                  ("h1"   "^# \\(.*\\)$" 1)
-                  ("h2"   "^## \\(.*\\)$" 1)
-                  ("h3"   "^### \\(.*\\)$" 1)
-                  ("h4"   "^#### \\(.*\\)$" 1)
-                  ("h5"   "^##### \\(.*\\)$" 1)
-                  ("h6"   "^###### \\(.*\\)$" 1)
+                '((nil  "^\\(.*\\)[\n]=+$" 1) ;; underlined H1 titles
+                  (nil  "^\\(.*\\)[\n]-+$" 1) ;; underlined H2 titles
+                  (nil  "^\\(##?#? .*\\)$" 1) ;; H1..H3 titles
                   ("fn"   "^\\[\\^\\(.*\\)\\]" 1)
                   )))
   (imenu-add-to-menubar "Index")

@@ -13,3 +13,4 @@ tramp
 # this is specific to my init.el
 backups
 cedet-*
+__*

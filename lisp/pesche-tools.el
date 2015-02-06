@@ -1,11 +1,8 @@
-;; Pesche' Tools
+;; Pesche's Tools
 ;;
-;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id$
-;;     $Change$
-;;   $DateTime$
-;;     $Author$
-;;    $Created: 1999/06/02 $
+;;  $Copyright: Peter Steiner <pesche@schlau.ch> $
+;;    $Created: 1999-06-02 $
+;;        $URL: https://github.com/pe-st/dot-e $
 
 
 ;; Funktionen ------------------------------------------------------------------
@@ -162,6 +159,17 @@ This function is the opposite of `bury-buffer'."
       next-screen-context-lines)))
 (put 'sfp-page-up 'isearch-scroll t)
 (put 'sfp-page-up 'CUA 'move)
+
+
+;; This is from http://www.emacswiki.org/emacs/EmacsAsDaemon
+;; define function to shutdown emacs server instance
+(defun server-shutdown ()
+  "Save buffers, Quit, and Shutdown (kill) server"
+  (interactive)
+  (save-some-buffers)
+  (kill-emacs)
+  )
+
 
 ;; Modul abschliessen ----------------------------------------------------------
 (provide 'pesche-tools)

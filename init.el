@@ -1,12 +1,8 @@
-;;----------------------------------------------------------- -*- Emacs-Lisp -*-
 ;;  Emacs Startup File
 ;;
-;;      Author: Peter Steiner <pesche@schlau.ch>
-;;         $Id$
-;;     $Change$
-;;   $DateTime$
-;;     $Author$
+;;  $Copyright: Peter Steiner <pesche@schlau.ch> $
 ;;    $Created: Wed Jul 6 19:52:18 1994 $
+;;        $URL: https://github.com/pe-st/dot-e $
 
 
 ;; general configuration -------------------------------------------------------
@@ -27,6 +23,10 @@
 
 (require 'pesche-tools)
 (require 'pesche-compile)
+
+;; start the server for emacsclient
+;; (stop it with server-shutdown)
+(server-start)
 
 ;; make plenty of backups, but not alongside the originals
 (setq make-backup-files t)

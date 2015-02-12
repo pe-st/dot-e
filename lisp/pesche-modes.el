@@ -390,10 +390,10 @@ Javadoc comments."
 
 
 ;; markdown-mode ---------------------------------------------------------------
-(autoload 'markdown-mode "markdown-mode"
-   "Major mode for editing Markdown files" t)
+(autoload 'markdown-mode "markdown-mode" "Major mode for editing Markdown files" t)
+(autoload 'gfm-mode "markdown-mode" "Major mode for editing GitHub Flavored Markdown files" t)
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . gfm-mode))
 (defun pesche-markdown-mode-hook()
   ;; don't let markdown-mode overwrite these bindings
   (local-unset-key (kbd "M-<up>"))

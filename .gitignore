@@ -8,6 +8,7 @@
 
 abbrev_defs
 auto-save-list
+server
 tramp
 
 # this is specific to my init.el

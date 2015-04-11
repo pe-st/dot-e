@@ -328,6 +328,14 @@ Javadoc comments."
 ;; ruby-mode -------------------------------------------------------------------
 (add-to-list 'auto-mode-alist '("\\.rb\\'" . ruby-mode))
 (autoload 'ruby-mode "ruby-mode" "Load ruby-mode")
+(defun pesche-ruby-mode-hook()
+  ; ruby-electric-brace on Mac with
+  ; GNU Emacs 24.3.1 (x86_64-apple-darwin11.4.2, Carbon Version 1.6.0 AppKit 1138.51) of 2014-04-04 on Yukikaze.local
+  ; gives "ruby-electric-brace: Symbol's value as variable is void: last-command-char"
+  (local-unset-key (kbd "{"))
+  (local-unset-key (kbd "}"))
+  )
+(add-hook 'ruby-mode-hook 'pesche-ruby-mode-hook)
 
 ;; scala-mode ------------------------------------------------------------------
 ;(require 'scala-mode-auto)

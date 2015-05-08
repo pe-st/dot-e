@@ -194,6 +194,8 @@
   (progn (setq pesche-family "consolas") (setq pesche-font-size font13pix)))
  ((eq (string-match "N32393" (system-name)) 0)    ; HP EliteBook 8570w (Win7, SIM-Karte) 2013-Aug
   (progn (setq pesche-family "consolas") (setq pesche-font-size font13pix)))
+ ((eq (string-match "N33996" (system-name)) 0)    ; HP EliteBook G850 (Win7, SIM-Karte) 2015-May
+  (progn (setq pesche-family "consolas") (setq pesche-font-size font13pix)))
  (t
   (progn (setq pesche-family "courier")  (setq pesche-font-size font12pix)))
  )

@@ -224,6 +224,10 @@ Javadoc comments."
 ;                     indent-tabs-mode     t)
 ;               )))
 
+;; shell mode ------------------------------------------------------------------
+;; Files auf .cli (JBoss CLI) sind besser bedient mit shell mode statt makefile mode
+(setq auto-mode-alist (append '(("\\.cli\\'" . sh-mode)) auto-mode-alist))
+
 ;; makefile mode ---------------------------------------------------------------
 ;; Files auf .mak sollen auch Makefiles sein (ist offenbar nicht üblich)
 (setq auto-mode-alist (append '(("\\.mak\\'" . makefile-mode)) auto-mode-alist))

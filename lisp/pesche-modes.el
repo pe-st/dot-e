@@ -320,6 +320,10 @@ Javadoc comments."
 (add-hook 'cperl-mode-hook 'pesche-cperl-mode-hook)
 
 
+;; protobuf mode ---------------------------------------------------------------
+(require 'protobuf-mode)
+(add-to-list 'auto-mode-alist '("\\.proto\\'" . protobuf-mode))
+
 ;; python-mode -----------------------------------------------------------------
 (setq auto-mode-alist
       (append '(("\\.py\\'" . python-mode)
